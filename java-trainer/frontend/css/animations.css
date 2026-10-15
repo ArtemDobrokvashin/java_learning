@@ -1,0 +1,13 @@
+/* Motion communicates state; reduced-motion users get the same information. */
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes card-in { from { opacity: 0; transform: translateY(13px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+@keyframes pop { 0% { transform: scale(.86); } 65% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes confetti { 0% { opacity: 0; transform: translateY(-80px) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translateY(460px) rotate(620deg); } }
+.page-enter { animation: page-in .35s ease both; }
+.reveal { animation: card-in .43s ease both; animation-delay: var(--reveal-delay, 0ms); }
+.button-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .65s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

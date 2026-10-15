@@ -1,0 +1,15 @@
+# User-submitted Java is compiled into disposable per-request directories.
+temp/*
+!temp/.gitkeep
+*.py[cod]
+__pycache__/
+.venv/
+node_modules/
+.javada/
+.gradle/
+idea-plugin/build/
+idea-plugin/.gradle/
+idea-plugin/.idea/
+.scratch/
+.pytest_cache/
+.DS_Store

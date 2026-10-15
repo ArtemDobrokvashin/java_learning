@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '1.17.4'
+}
+
+group = 'io.javada'
+version = '1.0.0'
+
+repositories { mavenCentral() }
+
+intellij {
+    version = '2024.1.7'
+    type = 'IC'
+    plugins = ['com.intellij.java']
+    downloadSources = false
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+patchPluginXml {
+    sinceBuild = '241'
+}

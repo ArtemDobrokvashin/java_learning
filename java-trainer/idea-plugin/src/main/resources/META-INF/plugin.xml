@@ -1,0 +1,16 @@
+<idea-plugin>
+    <id>io.javada.trainer</id>
+    <name>JavaДа — тренажёр</name>
+    <version>1.0.0</version>
+    <vendor>Javada</vendor>
+    <description><![CDATA[
+        Решайте 44 существующие задачи JavaДа с кодом, 99 необязательных хардов
+        и пять лабораторий прямо в IntelliJ IDEA. Подключается к уже запущенному
+        локальному Flask-серверу; использует его компилятор и общее сохранение.
+    ]]></description>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="JavaДа" anchor="right" factoryClass="io.javada.idea.TrainerToolWindowFactory"/>
+    </extensions>
+</idea-plugin>

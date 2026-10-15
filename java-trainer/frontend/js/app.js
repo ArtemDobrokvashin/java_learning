@@ -161,6 +161,15 @@ async function showRoute(route) {
     }
   } else if (route.name === 'settings') {
     renderSettings(view, { state, health, onBack: () => navigate('/'),
+      onRefreshHealth: async () => {
+        try {
+          health = await getHealth(true);
+        } catch (error) {
+          console.warn('Не удалось обновить статус JDK', error);
+          health = null;
+        }
+        if (activeRoute.name === 'settings') navigate('/settings');
+      },
       onThemeChange: (theme) => {
         state.theme = theme; saveState(state); document.documentElement.dataset.theme = theme;
         navigate('/settings');
@@ -255,6 +264,9 @@ async function start() {
       getModules(state),
       getHealth().catch((error) => { console.warn('Не удалось проверить JDK', error); return null; }),
     ]);
+    if (health?.revision) {
+      import('./api.js').then(m => m.setCourseRevision(health.revision));
+    }
     subscribe(showRoute);
     checkReminders();
     setInterval(checkReminders, 60_000);

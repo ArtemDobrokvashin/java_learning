@@ -2,16 +2,23 @@ import { escapeHtml } from '../utils/helpers.js';
 import { downloadCalendarReminder, isValidReminderTime, requestBrowserReminders } from '../reminders.js';
 import { icon } from './icons.js';
 
-export function renderSettings(root, { state, health, onThemeChange, onReminderChange, onReset, onBack }) {
+export function renderSettings(root, { state, health, onRefreshHealth, onThemeChange, onReminderChange, onReset, onBack }) {
   const dark = state.theme === 'dark';
   const enabled = state.remindersEnabled;
   const blocked = enabled && (globalThis.isSecureContext === false
     || globalThis.Notification?.permission !== 'granted');
+  const jdkText = health === null
+    ? 'Статус JDK неизвестен (нет связи с сервером)'
+    : health.jdkAvailable
+      ? 'JDK готов к работе'
+      : health.message?.includes('отключён')
+        ? 'Компиляция отключена в предпросмотре'
+        : 'JDK пока не найден';
   root.innerHTML = `<div class="settings-page page-enter"><button type="button" class="back-link" data-back>${icon('back', 18)} К карте курса</button>
     <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> ВАШ ТРЕНАЖЁР</div><h1>Настройки <em>и помощь.</em></h1><p>Учитесь так, как удобно именно вам.</p></div></div>
     <div class="settings-grid">
       <section class="settings-panel"><span class="section-overline">ИНТЕРФЕЙС</span><h2>Внешний вид</h2><div class="setting-row"><span class="setting-icon">${icon(dark ? 'moon' : 'sun', 22)}</span><span class="setting-text"><strong>Тёмная тема</strong><small>Бережнее к глазам вечером</small></span><button type="button" role="switch" aria-label="Тёмная тема" aria-checked="${dark}" class="toggle ${dark ? 'is-on' : ''}" data-theme><span></span></button></div><div class="settings-divider"></div><span class="section-overline">ПРОГРЕСС</span><h2>Ваши данные</h2><p>XP, уроки, история ответов, настройки и черновики хранятся только в localStorage этого браузера. Сервер не создаёт учётную запись.</p><button type="button" class="button button-danger-outline" data-reset>Сбросить прогресс и черновики</button></section>
-      <section class="settings-panel"><span class="section-overline">НАСТРОЙКА КОМПИЛЯТОРА</span><h2>Пишите настоящую Java</h2><div class="jdk-status ${health?.jdkAvailable ? 'is-ready' : ''}">${icon(health?.jdkAvailable ? 'check' : 'warning', 20)} ${health?.jdkAvailable ? 'JDK готов к работе' : health?.message?.includes('отключён') ? 'Компиляция отключена в предпросмотре' : 'JDK пока не найден'}</div><p>Для заданий с кодом установите <strong>JDK 17 или новее</strong>. Убедитесь, что команды <code>java -version</code> и <code>javac -version</code> работают в том же терминале, где запускается сервер.</p><div class="setup-commands"><code>pip install -r requirements.txt</code><code>python server.py</code></div><p class="settings-footnote">${escapeHtml(health?.message || 'Если JDK установлен, перезапустите сервер и обновите страницу.')}</p></section>
+      <section class="settings-panel"><span class="section-overline">НАСТРОЙКА КОМПИЛЯТОРА</span><h2>Пишите настоящую Java</h2><div class="jdk-status ${health?.jdkAvailable ? 'is-ready' : ''}">${icon(health?.jdkAvailable ? 'check' : 'warning', 20)} ${jdkText}</div><p>Для заданий с кодом установите <strong>JDK 17 или новее</strong>. Убедитесь, что команды <code>java -version</code> и <code>javac -version</code> работают в том же терминале, где запускается сервер.</p><div class="setup-commands"><code>pip install -r requirements.txt</code><code>python server.py</code></div><p class="settings-footnote">${escapeHtml(health?.message || 'Если JDK установлен, перезапустите сервер или нажмите кнопку обновления.')}</p>${onRefreshHealth ? `<button type="button" class="button button-outline" data-refresh-jdk style="margin-top:0.75rem">${icon('refresh', 16)} Проверить JDK снова</button>` : ''}</section>
       <section class="settings-panel reminders-panel"><span class="section-overline">ПРИВЫЧКА УЧИТЬСЯ</span><h2>Напоминания о занятиях</h2><p>Выберите время по часам вашего устройства. Напоминания не включаются без вашего согласия.</p>
         <label class="reminder-label" for="reminder-time">Каждый день в</label><input class="reminder-time" id="reminder-time" type="time" value="${escapeHtml(state.reminderTime)}" required>
         <div class="setting-row reminder-switch-row"><span class="setting-icon">${icon('clock', 22)}</span><span class="setting-text"><strong>Уведомления браузера</strong><small>Пока вкладка работает; спящий браузер не отправит</small></span><button type="button" role="switch" aria-label="Уведомления браузера" aria-checked="${enabled}" class="toggle ${enabled ? 'is-on' : ''}" data-reminders><span></span></button></div>
@@ -22,6 +29,11 @@ export function renderSettings(root, { state, health, onThemeChange, onReminderC
     </div>
   </div>`;
   root.querySelector('[data-back]').addEventListener('click', onBack);
+  root.querySelector('[data-refresh-jdk]')?.addEventListener('click', async () => {
+    const btn = root.querySelector('[data-refresh-jdk]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Проверяем…'; }
+    await onRefreshHealth();
+  });
   root.querySelector('[data-theme]').addEventListener('click', () => onThemeChange(dark ? 'light' : 'dark'));
   root.querySelector('[data-reset]').addEventListener('click', () => {
     if (window.confirm('Удалить весь прогресс, историю ответов, настройки напоминаний и черновики кода в этом браузере? Импортированное событие в календаре удаляется отдельно.')) onReset();

@@ -105,7 +105,7 @@ export function renderLab(root, { lab, state, health, onPassed, onExit }) {
       }
     } catch (error) {
       if (!alive) return;
-      showFeedback(feedback, { status: 'notice', title: 'Проверка недоступна', message: error.message });
+      showFeedback(feedback, { status: 'notice', title: 'Не удалось проверить код', message: error.message });
     } finally {
       if (alive) {
         pending = false;

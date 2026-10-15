@@ -217,16 +217,19 @@ class ServerTests(unittest.TestCase):
     def test_compiler_errors_timeout_and_compile_only(self, _which, command):
         payload = {"code": "public class Main {}", "taskType": "compile"}
         command.return_value = server.CommandResult(1, "", "/tmp/Main.java:2: ';' expected")
-        response = self.client.post("/api/compile", json=payload).json
-        self.assertEqual(response["kind"], "compile_error")
-        self.assertIn("expected", response["error"])
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["kind"], "compile_error")
+        self.assertIn("expected", response.json["error"])
         command.return_value = server.CommandResult(-9, "", "", timed_out=True)
-        response = self.client.post("/api/compile", json=payload).json
-        self.assertEqual(response["kind"], "timeout")
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json["kind"], "compile_timeout")
         command.return_value = server.CommandResult(0, "", "")
-        response = self.client.post("/api/compile", json=payload).json
-        self.assertTrue(response["success"])
-        self.assertIn("успешно", response["output"])
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json["success"])
+        self.assertIn("успешно", response.json["output"])
 
     @patch("server.shutil.which", return_value=None)
     def test_missing_jdk_is_service_error_not_wrong_answer(self, _which):
@@ -247,6 +250,67 @@ class ServerTests(unittest.TestCase):
                 Path(directory), 3, compile_step=False, stdin_data="привет")
         self.assertEqual(result.stdout.strip(), "ПРИВЕТ")
         self.assertEqual(list(server.TEMP.glob("java-*")), [])
+
+    @patch("server.run_command")
+    @patch("server.shutil.which", side_effect=lambda tool: "/usr/bin/" + tool)
+    def test_javac_failure_without_diagnostic_is_503(self, _which, command):
+        payload = {"code": "public class Main {}", "taskType": "compile"}
+        command.return_value = server.CommandResult(1, "", "Could not reserve enough space for 2097152KB object heap")
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json["kind"], "unavailable")
+        self.assertIn("Сбой запуска компилятора javac", response.json["error"])
+
+    @patch("server.run_command")
+    @patch("server.shutil.which", side_effect=lambda tool: "/usr/bin/" + tool)
+    def test_jvm_start_failure_is_503(self, _which, command):
+        payload = {"code": "public class Main { public static void main(String[] args) {} }",
+                   "taskType": "run", "taskId": "m01-p06"}
+        command.side_effect = [
+            server.CommandResult(0, "", ""),
+            server.CommandResult(1, "", "Error: Could not create the Java Virtual Machine.\nError: A fatal exception has occurred."),
+        ]
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json["kind"], "unavailable")
+        self.assertIn("Сбой запуска виртуальной машины JVM", response.json["error"])
+
+    @patch("server.run_command")
+    @patch("server.shutil.which", side_effect=lambda tool: "/usr/bin/" + tool)
+    def test_cyrillic_output_matching(self, _which, command):
+        code = 'public class Main { public static void main(String[] args) { System.out.println("Надень куртку"); } }'
+        payload = {"code": code, "taskType": "run", "taskId": "m02-p06"}
+        command.side_effect = [
+            server.CommandResult(0, "", ""),
+            server.CommandResult(0, "Надень куртку\r\n", ""),
+        ]
+        response = self.client.post("/api/compile", json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json["success"])
+
+        # And screenshot task m01-p06
+        code_p06 = 'public class Main { public static void main(String[] args) {} }'
+        payload_p06 = {"code": code_p06, "taskType": "run", "taskId": "m01-p06"}
+        command.side_effect = [
+            server.CommandResult(0, "", ""),
+            server.CommandResult(0, "30\r\nAlice\r\nfalse\r\n", ""),
+        ]
+        res_p06 = self.client.post("/api/compile", json=payload_p06)
+        self.assertEqual(res_p06.status_code, 200)
+        self.assertTrue(res_p06.json["success"])
+
+    @patch("server.run_command")
+    @patch("server.shutil.which", side_effect=lambda tool: "/usr/bin/" + tool)
+    def test_health_check_trial_probe(self, _which, command):
+        command.side_effect = [
+            server.CommandResult(0, "javac 17.0.2\n", ""),
+            server.CommandResult(0, "", ""),
+            server.CommandResult(0, "ok\n", ""),
+        ]
+        response = self.client.get("/api/health?refresh=1")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json["jdkAvailable"])
+        self.assertIn("готов", response.json["message"].lower())
 
     @unittest.skipUnless(shutil.which("javac") and shutil.which("java"), "JDK not installed")
     def test_real_java_compiles_and_runs(self):

@@ -185,7 +185,7 @@ export function renderSession(root, { module, activity, mode, entries, health, o
         kind = result.kind;
       } catch (error) {
         if (!alive) return;
-        showFeedback(feedback, { status: 'notice', title: 'Не получилось связаться с компилятором', message: error.message });
+        showFeedback(feedback, { status: 'notice', title: 'Не удалось проверить код', message: error.message });
         button.disabled = false;
         button.innerHTML = `Попробовать снова ${icon('refresh', 18)}`;
         pending = false;

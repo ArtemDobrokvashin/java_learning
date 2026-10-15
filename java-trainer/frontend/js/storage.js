@@ -177,8 +177,12 @@ export function listDrafts() {
 export function restoreDrafts(drafts) {
   for (const [id, draft] of Object.entries(drafts || {})) {
     if (!/^[a-zA-Z0-9][a-zA-Z0-9:_.-]{0,99}$/.test(id) || !draft || typeof draft.code !== 'string') continue;
+    const localCode = read(DRAFT_PREFIX + id);
     const localTime = Number(read(DRAFT_TIME_PREFIX + id)) || 0;
-    if ((Number(draft.updatedAt) || 0) < localTime) continue;
+    // Legacy drafts may have no timestamp (both sides read as 0). On a tie,
+    // keep this browser's original work rather than replacing it silently
+    // with a different draft imported earlier from another origin/tab.
+    if (localCode !== null && (Number(draft.updatedAt) || 0) <= localTime) continue;
     if (draft.code === '') {
       try { localStorage.removeItem(DRAFT_PREFIX + id); localStorage.removeItem(DRAFT_TIME_PREFIX + id); }
       catch { memoryFallback.delete(DRAFT_PREFIX + id); memoryFallback.delete(DRAFT_TIME_PREFIX + id); }

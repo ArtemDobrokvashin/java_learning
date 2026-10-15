@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { isCorrect, copyTokens, validateInput } from '../../frontend/js/validator.js';
 import { XP_BY_DIFFICULTY, XP_BY_TYPE } from '../../frontend/js/utils/constants.js';
 import { recordAttempt } from '../../frontend/js/gamification.js';
-import { freshState, loadState, saveState, readDraft } from '../../frontend/js/storage.js';
+import { freshState, loadState, saveState, readDraft, restoreDrafts } from '../../frontend/js/storage.js';
 import { renderSession } from '../../frontend/js/ui/lesson.js';
 import { parseRoute } from '../../frontend/js/router.js';
 import { createSharedProgress } from '../../frontend/js/shared-progress.js';
@@ -175,6 +175,22 @@ test('legacy browser XP and drafts survive new rewards and reload without double
     assert.equal(readDraft('m01-p07'), 'old code');
   } finally {
     if (prior === undefined) delete globalThis.localStorage; else globalThis.localStorage = prior;
+  }
+});
+
+test('a timestamp tie never overwrites an older browser draft with different imported code', () => {
+  const previous = globalThis.localStorage;
+  const { localStorage } = withStorage();
+  globalThis.localStorage = localStorage;
+  try {
+    localStorage.setItem('javada.draft.v1.m01-p06', 'my original browser code');
+    restoreDrafts({ 'm01-p06': { code: 'another origin', updatedAt: 0 } });
+    assert.equal(readDraft('m01-p06'), 'my original browser code');
+    restoreDrafts({ 'm01-p06': { code: 'fresh IDE code', updatedAt: 42 } });
+    assert.equal(readDraft('m01-p06'), 'fresh IDE code');
+  } finally {
+    if (previous === undefined) delete globalThis.localStorage;
+    else globalThis.localStorage = previous;
   }
 });
 

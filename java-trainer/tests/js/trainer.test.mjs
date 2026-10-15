@@ -142,10 +142,12 @@ test('all ready modules unlock in sequence; 17–22 require a boss pass', () => 
   assert.equal(nextStep(modules[0], state).type, 'practice');
   assert.equal(moduleProgress(modules[0], state).done, 4);
   state.completedPractices = [1, 2, 3];
+  state.examScores = Object.fromEntries([1, 2, 3].map((id) => [id, { best: 80, passed: true }]));
   modules = courseStatuses(index.modules, state);
   assert.equal(modules[3].status, 'available');
   assert.equal(modules[4].status, 'locked');
   state.completedPractices = Array.from({ length: 17 }, (_, i) => i + 1);
+  state.examScores = Object.fromEntries(state.completedPractices.map((id) => [id, { best: 80, passed: true }]));
   modules = courseStatuses(index.modules, state);
   assert.equal(modules[16].status, 'available');
   assert.equal(modules[17].status, 'locked');
@@ -159,6 +161,7 @@ test('all ready modules unlock in sequence; 17–22 require a boss pass', () => 
   assert.equal(modules[17].status, 'available');
   assert.ok(canOpenStep(modules[16], 'practice', state));
   state.completedPractices = Array.from({ length: 22 }, (_, i) => i + 1);
+  state.examScores = Object.fromEntries(state.completedPractices.map((id) => [id, { best: 80, passed: true }]));
   for (let id = 18; id <= 22; id++) state.bossScores[id] = { best: 80, passed: true };
   assert.ok(courseStatuses(index.modules, state).every((module) => module.status === 'completed'));
 });
@@ -304,7 +307,7 @@ test('new course cache never replaces existing learner progress or drafts', () =
   };
   try {
     assert.equal(APP_VERSION, 1);
-    assert.equal(COURSE_VERSION, 8);
+    assert.equal(COURSE_VERSION, 9);
     const state = { ...freshState(), xp: 250, completedPractices: [1, 2, 3] };
     localStorage.setItem('javada.state.v1', JSON.stringify(state));
     localStorage.setItem('javada.draft.v1.m01-p06', 'my code');

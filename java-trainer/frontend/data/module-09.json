@@ -935,5 +935,181 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m09-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 390,
+    "tasks": [
+      {
+        "id": "m-exam-09-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "У Map<String,Integer> для отсутствующего ключа red вызван getOrDefault(\"red\",0). Что он вернёт?",
+        "options": [
+          {
+            "id": "a",
+            "label": "null"
+          },
+          {
+            "id": "b",
+            "label": "0"
+          },
+          {
+            "id": "c",
+            "label": "1"
+          },
+          {
+            "id": "d",
+            "label": "исключение"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "Второй аргумент — значение по умолчанию при отсутствии ключа.",
+        "explanation": "Верно: 0. Второй аргумент — значение по умолчанию при отсутствии ключа."
+      },
+      {
+        "type": "fill",
+        "prompt": "Создайте список строк.",
+        "template": [
+          "java.util.List<String> items = new java.util.",
+          "<>();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "ArrayList",
+            "options": [
+              "ArrayList",
+              "HashSet",
+              "HashMap"
+            ]
+          }
+        ],
+        "hint": "Нужна реализация интерфейса List.",
+        "explanation": "ArrayList — изменяемый список.",
+        "id": "m-exam-09-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Соедините структуру и свойство.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "List",
+            "right": "Интерфейс с порядком и повторами элементов"
+          },
+          {
+            "id": "2",
+            "left": "Set",
+            "right": "Интерфейс без повторов элементов"
+          },
+          {
+            "id": "3",
+            "left": "Map",
+            "right": "Уникальные ключи; значения могут повторяться"
+          },
+          {
+            "id": "4",
+            "left": "HashSet",
+            "right": "Хеш-реализация Set без гарантии порядка"
+          }
+        ],
+        "hint": "Отличите интерфейсы от реализации HashSet; у Map повторяются значения, но не ключи.",
+        "explanation": "List допускает повторы, Set — нет; Map имеет уникальные ключи, а HashSet не гарантирует порядок.",
+        "id": "m-exam-09-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите цикл подсчёта положительных чисел.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int count = 0;"
+          },
+          {
+            "id": "b",
+            "text": "for (int n : numbers) {"
+          },
+          {
+            "id": "c",
+            "text": "if (n > 0) {"
+          },
+          {
+            "id": "d",
+            "text": "count++;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "Сначала счётчик, внутри цикла проверка числа.",
+        "explanation": "count растёт только для n > 0.",
+        "id": "m-exam-09-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Обработайте List<String> со словами \"java\", \"code\", \"java\", \"1\" (1 — число в строке).\nПостройте TreeMap<String,Integer> частот и HashSet уникальных слов. Выведите каждую пару\nиз TreeMap как слово:частота в порядке ключей, затем размер множества. Используйте\ngetOrDefault, а не заранее вычисленные частоты. Отдельный класс WordReport хранит map\nи set, метод add(String) добавляет слово, print() печатает отчёт.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "1:1\ncode:1\njava:2\n3",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n1:1\ncode:1\njava:2\n3",
+        "id": "m-exam-09-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nОбработайте List<String> со словами \"java\", \"code\", \"java\", \"2\" (2 — число в строке).\nПостройте TreeMap<String,Integer> частот и HashSet уникальных слов. Выведите каждую пару\nиз TreeMap как слово:частота в порядке ключей, затем размер множества. Используйте\ngetOrDefault, а не заранее вычисленные частоты. Отдельный класс WordReport хранит map\nи set, метод add(String) добавляет слово, print() печатает отчёт.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "2:1\ncode:1\njava:2\n3",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n2:1\ncode:1\njava:2\n3",
+        "id": "m-exam-09-06"
+      }
+    ]
   }
 }

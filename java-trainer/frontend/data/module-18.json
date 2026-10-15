@@ -1240,5 +1240,213 @@
         "id": "m18-b05"
       }
     ]
+  },
+  "exam": {
+    "id": "m18-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 480,
+    "tasks": [
+      {
+        "id": "m-exam-18-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Как вызвать amount() у объектов CardPayment и CashPayment единообразно в одном цикле?",
+        "options": [
+          {
+            "id": "a",
+            "label": "поместить оба в Payment[] и вызвать общий метод"
+          },
+          {
+            "id": "b",
+            "label": "хранить их только как String"
+          },
+          {
+            "id": "c",
+            "label": "создать два разных main"
+          },
+          {
+            "id": "d",
+            "label": "запретить наследование"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Полиморфизм обрабатывает реализации общего базового типа.",
+        "explanation": "Верно: поместить оба в Payment[] и вызвать общий метод. Полиморфизм обрабатывает реализации общего базового типа."
+      },
+      {
+        "type": "fill",
+        "prompt": "Выберите метод JdbcTemplate для INSERT/UPDATE.",
+        "template": [
+          "jdbcTemplate.",
+          "(\"UPDATE users SET name = ? WHERE id = ?\", name, id);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "update",
+            "options": [
+              "update",
+              "query",
+              "toString"
+            ]
+          }
+        ],
+        "hint": "Нужна операция изменения данных.",
+        "explanation": "update выполняет DML и возвращает число затронутых строк.",
+        "id": "m-exam-18-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте инструмент и понятие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "JdbcTemplate",
+            "right": "Упрощение JDBC-запросов"
+          },
+          {
+            "id": "2",
+            "left": "@Entity",
+            "right": "Пометка JPA-сущности"
+          },
+          {
+            "id": "3",
+            "left": "Hibernate",
+            "right": "Провайдер JPA"
+          },
+          {
+            "id": "4",
+            "left": "EnumType.STRING",
+            "right": "Сохранение enum по имени"
+          }
+        ],
+        "hint": "Отделите доступ к SQL от ORM и способа хранения enum.",
+        "explanation": "Инструменты решают разные задачи слоя данных.",
+        "id": "m-exam-18-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите безопасную модель связи в обычной Java.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Order {"
+          },
+          {
+            "id": "b",
+            "text": "private final Customer customer;"
+          },
+          {
+            "id": "c",
+            "text": "Order(Customer customer) {"
+          },
+          {
+            "id": "d",
+            "text": "this.customer = customer;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "Поле и конструктор находятся внутри Order.",
+        "explanation": "Поле допустимо до или после конструктора; конструктор сохраняет связь с клиентом.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m-exam-18-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Без JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(1*10, DONE), (7, NEW), (5, DONE). Выведите сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "15\nfalse",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n15\nfalse",
+        "id": "m-exam-18-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(2*10, DONE), (7, NEW), (5, DONE). Выведите сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "25\nfalse",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n25\nfalse",
+        "id": "m-exam-18-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(3*10, DONE), (7, NEW), (5, DONE). Выведите сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 35\nОтчёт: false\nСтрок: 2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 35\nОтчёт: false\nСтрок: 2",
+        "id": "m-exam-18-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(4*10, DONE), (7, NEW), (5, DONE). Выведите сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 45\nОтчёт: false\nСтрок: 2\nАудит: 10/2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 45\nОтчёт: false\nСтрок: 2\nАудит: 10/2",
+        "id": "m-exam-18-08"
+      }
+    ]
   }
 }

@@ -921,5 +921,165 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m10-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 400,
+    "tasks": [
+      {
+        "id": "m-exam-10-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "В строке сохранены имя и возраст «Мира;23». Чем преобразовать возраст после split, чтобы создать User с int age?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Integer.parseInt(parts[1])"
+          },
+          {
+            "id": "b",
+            "label": "parts[1].toInt()"
+          },
+          {
+            "id": "c",
+            "label": "(int) parts[1]"
+          },
+          {
+            "id": "d",
+            "label": "String.parse(parts[1])"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Чтение файла даёт текст; целое число нужно разобрать явно.",
+        "explanation": "Верно: Integer.parseInt(parts[1]). Чтение файла даёт текст; целое число нужно разобрать явно."
+      },
+      {
+        "type": "fill",
+        "prompt": "Создайте относительный путь.",
+        "template": [
+          "Path file = Path.",
+          "(\"note.txt\");"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "of",
+            "options": [
+              "of",
+              "read",
+              "new"
+            ]
+          }
+        ],
+        "hint": "Начиная с Java 11 есть фабричный метод.",
+        "explanation": "Path.of(\"note.txt\") создаёт объект пути.",
+        "id": "m-exam-10-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте файловый инструмент.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Path",
+            "right": "Адрес файла или каталога"
+          },
+          {
+            "id": "2",
+            "left": "Files",
+            "right": "Операции чтения и записи"
+          },
+          {
+            "id": "3",
+            "left": "BufferedReader",
+            "right": "Построчное чтение"
+          },
+          {
+            "id": "4",
+            "left": "Serializable",
+            "right": "Маркер бинарной сериализации объекта"
+          }
+        ],
+        "hint": "Подумайте, кто хранит путь, кто читает строки, а кто помечает класс.",
+        "explanation": "У файловых API разные роли.",
+        "id": "m-exam-10-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите блок автоматического закрытия reader.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "try (var reader = Files.newBufferedReader(path)) {"
+          },
+          {
+            "id": "b",
+            "text": "String line = reader.readLine();"
+          },
+          {
+            "id": "c",
+            "text": "System.out.println(line);"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "Ресурс объявляют в скобках try, читают и выводят внутри.",
+        "explanation": "Reader закроется после блока.",
+        "id": "m-exam-10-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Создайте CsvReport с методом load(Path), который через BufferedReader в\ntry-with-resources читает CSV имя,число и возвращает сумму чисел. В main запишите UTF-8\nфайл exam.csv со строками «Мяч,1», «Книга,4», «Ручка,3». Прочитайте его методом load.\nВыведите сумму, затем первую строку файла, прочитанную через Files.readAllLines.\nИспользуйте относительный путь, файл создавайте сами. Никаких внешних библиотек.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "8\nМяч,1",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n8\nМяч,1",
+        "id": "m-exam-10-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nСоздайте CsvReport с методом load(Path), который через BufferedReader в\ntry-with-resources читает CSV имя,число и возвращает сумму чисел. В main запишите UTF-8\nфайл exam.csv со строками «Мяч,2», «Книга,4», «Ручка,3». Прочитайте его методом load.\nВыведите сумму, затем первую строку файла, прочитанную через Files.readAllLines.\nИспользуйте относительный путь, файл создавайте сами. Никаких внешних библиотек.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "9\nМяч,2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n9\nМяч,2",
+        "id": "m-exam-10-06"
+      }
+    ]
   }
 }

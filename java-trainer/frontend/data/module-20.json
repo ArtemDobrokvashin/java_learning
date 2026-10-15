@@ -796,5 +796,195 @@
         "id": "m20-b05"
       }
     ]
+  },
+  "exam": {
+    "id": "m20-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 500,
+    "tasks": [
+      {
+        "id": "m-exam-20-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Зачем передать сервису фейковую реализацию Gateway вместо реальной сетевой зависимости при тестировании?",
+        "options": [
+          {
+            "id": "a",
+            "label": "для детерминированного ответа без сети"
+          },
+          {
+            "id": "b",
+            "label": "чтобы компилятор пропустил все ошибки"
+          },
+          {
+            "id": "c",
+            "label": "чтобы тест выполнялся только в интернете"
+          },
+          {
+            "id": "d",
+            "label": "для изменения сигнатуры сервиса"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Заглушка сохраняет контракт интерфейса и контролирует результат в тесте.",
+        "explanation": "Верно: для детерминированного ответа без сети. Заглушка сохраняет контракт интерфейса и контролирует результат в тесте."
+      },
+      {
+        "type": "fill",
+        "prompt": "Допишите структуру теста AAA.",
+        "template": [
+          "Arrange → Act → ",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Assert",
+            "options": [
+              "Assert",
+              "Abort",
+              "Access"
+            ]
+          }
+        ],
+        "hint": "Последний шаг проверяет результат.",
+        "explanation": "Arrange, Act, Assert — стандартная схема теста.",
+        "id": "m-exam-20-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте инструмент тестирования.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "@Test",
+            "right": "Отметить тест JUnit"
+          },
+          {
+            "id": "2",
+            "left": "assertEquals",
+            "right": "Сравнить ожидаемое и фактическое"
+          },
+          {
+            "id": "3",
+            "left": "when(...).thenReturn",
+            "right": "Настроить ответ mock"
+          },
+          {
+            "id": "4",
+            "left": "verify",
+            "right": "Проверить взаимодействие с mock"
+          }
+        ],
+        "hint": "Отделите проверку результата от настройки и проверки вызова.",
+        "explanation": "JUnit и Mockito отвечают за разные части теста.",
+        "id": "m-exam-20-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите тест по схеме Arrange–Act–Assert.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int left = 2, right = 3;"
+          },
+          {
+            "id": "b",
+            "text": "int actual = add(left, right);"
+          },
+          {
+            "id": "c",
+            "text": "if (actual != 5) {"
+          },
+          {
+            "id": "d",
+            "text": "throw new AssertionError(\"sum\");"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "Подготовьте значения, выполните add, затем проверьте.",
+        "explanation": "Тест сигнализирует об ошибке при неверной сумме.",
+        "id": "m-exam-20-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Без JUnit/Mockito создайте Repository.find(int), FakeRepository со счётчиком calls\nи Service с внедрённым Repository. FakeRepository возвращает «User» + id; Service\nотвергает id <= 0 через IllegalArgumentException до вызова репозитория.\nНапишите три проверки в стиле Arrange–Act–Assert: результат find(1), один вызов fake,\nисключение для 0 без дополнительного вызова fake. При ошибке бросайте AssertionError.\nПри успехе выведите «PASS 3», затем фактическое число вызовов репозитория.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "PASS 3\n1",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nPASS 3\n1",
+        "id": "m-exam-20-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез JUnit/Mockito создайте Repository.find(int), FakeRepository со счётчиком calls\nи Service с внедрённым Repository. FakeRepository возвращает «User» + id; Service\nотвергает id <= 0 через IllegalArgumentException до вызова репозитория.\nНапишите три проверки в стиле Arrange–Act–Assert: результат find(2), один вызов fake,\nисключение для 0 без дополнительного вызова fake. При ошибке бросайте AssertionError.\nПри успехе выведите «PASS 3», затем фактическое число вызовов репозитория.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "PASS 3\n1",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nPASS 3\n1",
+        "id": "m-exam-20-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JUnit/Mockito создайте Repository.find(int), FakeRepository со счётчиком calls\nи Service с внедрённым Repository. FakeRepository возвращает «User» + id; Service\nотвергает id <= 0 через IllegalArgumentException до вызова репозитория.\nНапишите три проверки в стиле Arrange–Act–Assert: результат find(3), один вызов fake,\nисключение для 0 без дополнительного вызова fake. При ошибке бросайте AssertionError.\nПри успехе выведите «PASS 3», затем фактическое число вызовов репозитория.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: PASS 3\nОтчёт: 1\nСтрок: 2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: PASS 3\nОтчёт: 1\nСтрок: 2",
+        "id": "m-exam-20-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JUnit/Mockito создайте Repository.find(int), FakeRepository со счётчиком calls\nи Service с внедрённым Repository. FakeRepository возвращает «User» + id; Service\nотвергает id <= 0 через IllegalArgumentException до вызова репозитория.\nНапишите три проверки в стиле Arrange–Act–Assert: результат find(4), один вызов fake,\nисключение для 0 без дополнительного вызова fake. При ошибке бросайте AssertionError.\nПри успехе выведите «PASS 3», затем фактическое число вызовов репозитория.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: PASS 3\nОтчёт: 1\nСтрок: 2\nАудит: 10/2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: PASS 3\nОтчёт: 1\nСтрок: 2\nАудит: 10/2",
+        "id": "m-exam-20-08"
+      }
+    ]
   }
 }

@@ -37,6 +37,7 @@ export function freshState() {
     completedLabs: [],
     careerChecklist: [],
     bossScores: {},
+    examScores: {},
     attempts: {},
     awardedTasks: [],
     reviewRewards: {},
@@ -68,7 +69,7 @@ function cleanState(saved) {
     xpLedger,
     legacyAwardedTasks: [...new Set(legacyAwardedTasks)],
     achievements: Array.isArray(saved.achievements) ? [...new Set(saved.achievements.filter(
-      (id) => typeof id === 'string' && /^mastery:m\d{2}-l\d{2}$/.test(id)))] : [],
+      (id) => typeof id === 'string' && /^(mastery:m\d{2}-l\d{2}|exam:m\d{2})$/.test(id)))] : [],
     streak: Math.max(0, Number(saved.streak) || 0),
     lastActiveDate: typeof saved.lastActiveDate === 'string' ? saved.lastActiveDate : null,
     milestones: Array.isArray(saved.milestones) ? saved.milestones : [],
@@ -77,6 +78,7 @@ function cleanState(saved) {
     completedLabs: Array.isArray(saved.completedLabs) ? saved.completedLabs : [],
     careerChecklist: Array.isArray(saved.careerChecklist) ? saved.careerChecklist : [],
     bossScores: saved.bossScores && typeof saved.bossScores === 'object' ? saved.bossScores : {},
+    examScores: saved.examScores && typeof saved.examScores === 'object' ? saved.examScores : {},
     attempts: saved.attempts && typeof saved.attempts === 'object' ? saved.attempts : {},
     awardedTasks: Array.isArray(saved.awardedTasks) ? saved.awardedTasks : [],
     reviewRewards: saved.reviewRewards && typeof saved.reviewRewards === 'object' ? saved.reviewRewards : {},
@@ -110,12 +112,12 @@ export function resetState() {
     // Course files remain cached, but submitted drafts are personal progress.
     const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index));
     for (const key of keys) {
-      if (key?.startsWith(DRAFT_PREFIX) || key?.startsWith(DRAFT_TIME_PREFIX)) localStorage.removeItem(key);
+      if (key?.startsWith('javada.exam.') || key?.startsWith(DRAFT_PREFIX) || key?.startsWith(DRAFT_TIME_PREFIX)) localStorage.removeItem(key);
     }
   } catch {
     memoryFallback.delete(STATE_KEY);
     for (const key of memoryFallback.keys()) {
-      if (key.startsWith(DRAFT_PREFIX) || key.startsWith(DRAFT_TIME_PREFIX)) memoryFallback.delete(key);
+      if (key.startsWith('javada.exam.') || key.startsWith(DRAFT_PREFIX) || key.startsWith(DRAFT_TIME_PREFIX)) memoryFallback.delete(key);
     }
   }
   return freshState();
@@ -192,4 +194,12 @@ export function restoreDrafts(drafts) {
       write(DRAFT_TIME_PREFIX + id, String(draft.updatedAt || 0));
     }
   }
+}
+
+// Exam drafts are separate from practice drafts and never merged as code-task rewards.
+export function readExamDraft(moduleId) {
+  try { return JSON.parse(read(`javada.exam.v1.${moduleId}`)); } catch { return null; }
+}
+export function saveExamDraft(moduleId, value) {
+  write(`javada.exam.v1.${moduleId}`, JSON.stringify(value));
 }

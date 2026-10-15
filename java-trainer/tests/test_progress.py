@@ -96,7 +96,7 @@ class SharedProgressTests(unittest.TestCase):
         catalog = self.client.get("/api/ide/tasks").json
         self.assertEqual(len(catalog["tasks"]), 148)
         self.assertEqual((catalog["existingPracticeCount"], catalog["lessonHardcoreCount"]), (44, 99))
-        self.assertEqual(catalog["version"], 8)
+        self.assertEqual(catalog["version"], 9)
         self.assertNotIn("testCases", str(catalog))
         self.assertEqual(len({item["id"] for item in catalog["tasks"]}), 148)
         # Completing a lab cannot accidentally trigger a streak milestone:

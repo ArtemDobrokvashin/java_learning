@@ -2,7 +2,7 @@
 // values shown in the lesson; existing earned XP is never recalculated.
 // Course content can change without invalidating XP or saved drafts.
 export const APP_VERSION = 1;
-export const COURSE_VERSION = 8;
+export const COURSE_VERSION = 9;
 export const REVIEW_AFTER_MS = 7 * 24 * 60 * 60 * 1000;
 export const REVIEW_CHANCE = 0.3;
 export const XP_PER_LEVEL = 250;

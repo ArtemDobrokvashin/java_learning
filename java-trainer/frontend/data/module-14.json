@@ -1069,5 +1069,184 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m14-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 440,
+    "tasks": [
+      {
+        "id": "m-exam-14-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Какой вызов должен предшествовать Iterator.next() для безопасного обхода неизвестной длины?",
+        "options": [
+          {
+            "id": "a",
+            "label": "iterator.hasNext()"
+          },
+          {
+            "id": "b",
+            "label": "list.size() == 0"
+          },
+          {
+            "id": "c",
+            "label": "iterator.remove()"
+          },
+          {
+            "id": "d",
+            "label": "Thread.yield()"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "hasNext сообщает, осталось ли значение для next().",
+        "explanation": "Верно: iterator.hasNext(). hasNext сообщает, осталось ли значение для next()."
+      },
+      {
+        "type": "fill",
+        "prompt": "Назовите категорию, отвечающую за создание объектов.",
+        "template": [
+          "",
+          " паттерны"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Порождающие",
+            "options": [
+              "Порождающие",
+              "Структурные",
+              "Поведенческие"
+            ]
+          }
+        ],
+        "hint": "Фабрика и Builder относятся к этой категории.",
+        "explanation": "Порождающие паттерны помогают создавать объекты.",
+        "id": "m-exam-14-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Соедините паттерн с назначением.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Builder",
+            "right": "Пошаговое создание сложного объекта"
+          },
+          {
+            "id": "2",
+            "left": "Singleton",
+            "right": "Один экземпляр и точка доступа"
+          },
+          {
+            "id": "3",
+            "left": "Proxy",
+            "right": "Посредник перед реальным объектом"
+          },
+          {
+            "id": "4",
+            "left": "Iterator",
+            "right": "Последовательный обход без знания структуры"
+          }
+        ],
+        "hint": "Отделите создание, доступ и перебор.",
+        "explanation": "Четыре паттерна решают разные задачи.",
+        "id": "m-exam-14-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите цепочку вызовов Builder.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "Book book = new Book.Builder()"
+          },
+          {
+            "id": "b",
+            "text": ".title(\"Java\")"
+          },
+          {
+            "id": "c",
+            "text": ".pages(10)"
+          },
+          {
+            "id": "d",
+            "text": ".build();"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          }
+        ],
+        "hint": "Сначала создаётся Builder, затем параметры в любом порядке, в конце build().",
+        "explanation": "Независимые title и pages можно поменять местами: обе цепочки создают Book.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "b",
+            "d"
+          ]
+        ],
+        "id": "m-exam-14-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Реализуйте неизменяемый Report с вложенным Builder: title(String), count(int), build().\nЗначения по умолчанию — «Отчёт» и 0. Интерфейс Formatter имеет format(Report).\nДве стратегии форматируют отчёт: Plain → title:count, Brackets → [title=count].\nПостройте Report с title «Java» и count 1, выведите обе стратегии по порядку.\nПередавайте стратегию в отдельный метод render, не используйте instanceof или switch.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Java:1\n[Java=1]",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nJava:1\n[Java=1]",
+        "id": "m-exam-14-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nРеализуйте неизменяемый Report с вложенным Builder: title(String), count(int), build().\nЗначения по умолчанию — «Отчёт» и 0. Интерфейс Formatter имеет format(Report).\nДве стратегии форматируют отчёт: Plain → title:count, Brackets → [title=count].\nПостройте Report с title «Java» и count 2, выведите обе стратегии по порядку.\nПередавайте стратегию в отдельный метод render, не используйте instanceof или switch.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Java:2\n[Java=2]",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nJava:2\n[Java=2]",
+        "id": "m-exam-14-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nРеализуйте неизменяемый Report с вложенным Builder: title(String), count(int), build().\nЗначения по умолчанию — «Отчёт» и 0. Интерфейс Formatter имеет format(Report).\nДве стратегии форматируют отчёт: Plain → title:count, Brackets → [title=count].\nПостройте Report с title «Java» и count 3, выведите обе стратегии по порядку.\nПередавайте стратегию в отдельный метод render, не используйте instanceof или switch.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: Java:3\nОтчёт: [Java=3]\nСтрок: 2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: Java:3\nОтчёт: [Java=3]\nСтрок: 2",
+        "id": "m-exam-14-07"
+      }
+    ]
   }
 }

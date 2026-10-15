@@ -54,7 +54,8 @@ export async function getModules(state) {
   const completed = state.completedPractices.join(',');
   const bossPassed = Object.entries(state.bossScores)
     .filter(([, score]) => score?.passed).map(([id]) => id).join(',');
-  const query = new URLSearchParams({ completed, bossPassed });
+  const examPassed = Object.entries(state.examScores || {}).filter(([, score]) => score?.passed).map(([id]) => id).join(',');
+  const query = new URLSearchParams({ completed, bossPassed, examPassed });
   try {
     const data = await requestJson(`/api/modules?${query}`);
     if (data.revision) activeCourseRevision = data.revision;
@@ -141,4 +142,19 @@ export async function submitCode(code, taskId, taskType = 'run') {
     throw error;
   }
   return data;
+}
+
+export function getExam(moduleId) {
+  return requestJson(`/api/progress/exams/${moduleId}`);
+}
+export function startExam(moduleId) {
+  return requestJson(`/api/progress/exams/${moduleId}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'start' }),
+  });
+}
+export function submitExam(moduleId, attemptId, answers) {
+  return requestJson(`/api/progress/exams/${moduleId}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'submit', attemptId, answers }),
+  }, 180_000);
 }

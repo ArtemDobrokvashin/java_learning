@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "modules": [
     {
       "id": 1,
@@ -25,7 +25,15 @@
       ],
       "practiceId": "m01-practice",
       "contentFile": "module-01.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m01-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 310,
+        "questionCount": 5
+      }
     },
     {
       "id": 2,
@@ -51,7 +59,15 @@
       ],
       "practiceId": "m02-practice",
       "contentFile": "module-02.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m02-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 320,
+        "questionCount": 5
+      }
     },
     {
       "id": 3,
@@ -77,7 +93,15 @@
       ],
       "practiceId": "m03-practice",
       "contentFile": "module-03.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m03-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 330,
+        "questionCount": 5
+      }
     },
     {
       "id": 4,
@@ -103,7 +127,15 @@
       ],
       "practiceId": "m04-practice",
       "contentFile": "module-04.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m04-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 340,
+        "questionCount": 5
+      }
     },
     {
       "id": 5,
@@ -133,7 +165,15 @@
       ],
       "practiceId": "m05-practice",
       "contentFile": "module-05.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m05-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 350,
+        "questionCount": 5
+      }
     },
     {
       "id": 6,
@@ -163,7 +203,15 @@
       ],
       "practiceId": "m06-practice",
       "contentFile": "module-06.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m06-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 360,
+        "questionCount": 6
+      }
     },
     {
       "id": 7,
@@ -181,7 +229,15 @@
       ],
       "practiceId": "m07-practice",
       "contentFile": "module-07.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m07-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 370,
+        "questionCount": 6
+      }
     },
     {
       "id": 8,
@@ -203,7 +259,15 @@
       ],
       "practiceId": "m08-practice",
       "contentFile": "module-08.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m08-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 380,
+        "questionCount": 6
+      }
     },
     {
       "id": 9,
@@ -233,7 +297,15 @@
       ],
       "practiceId": "m09-practice",
       "contentFile": "module-09.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m09-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 390,
+        "questionCount": 6
+      }
     },
     {
       "id": 10,
@@ -263,7 +335,15 @@
       ],
       "practiceId": "m10-practice",
       "contentFile": "module-10.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m10-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 400,
+        "questionCount": 6
+      }
     },
     {
       "id": 11,
@@ -293,7 +373,15 @@
       ],
       "practiceId": "m11-practice",
       "contentFile": "module-11.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m11-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 410,
+        "questionCount": 7
+      }
     },
     {
       "id": 12,
@@ -331,7 +419,15 @@
       ],
       "practiceId": "m12-practice",
       "contentFile": "module-12.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m12-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 420,
+        "questionCount": 7
+      }
     },
     {
       "id": 13,
@@ -357,7 +453,15 @@
       ],
       "practiceId": "m13-practice",
       "contentFile": "module-13.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m13-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 430,
+        "questionCount": 7
+      }
     },
     {
       "id": 14,
@@ -391,7 +495,15 @@
       ],
       "practiceId": "m14-practice",
       "contentFile": "module-14.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m14-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 440,
+        "questionCount": 7
+      }
     },
     {
       "id": 15,
@@ -417,7 +529,15 @@
       ],
       "practiceId": "m15-practice",
       "contentFile": "module-15.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m15-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 450,
+        "questionCount": 7
+      }
     },
     {
       "id": 16,
@@ -455,7 +575,15 @@
       ],
       "practiceId": "m16-practice",
       "contentFile": "module-16.json",
-      "contentStatus": "ready"
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m16-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 460,
+        "questionCount": 8
+      }
     },
     {
       "id": 17,
@@ -491,6 +619,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m17-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 470,
+        "questionCount": 8
       }
     },
     {
@@ -531,6 +667,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m18-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 480,
+        "questionCount": 8
       }
     },
     {
@@ -559,6 +703,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m19-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 490,
+        "questionCount": 8
       }
     },
     {
@@ -587,6 +739,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m20-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 500,
+        "questionCount": 8
       }
     },
     {
@@ -619,6 +779,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m21-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 510,
+        "questionCount": 8
       }
     },
     {
@@ -651,6 +819,14 @@
         "title": "Стоп-урок",
         "questionCount": 5,
         "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m22-exam",
+        "title": "Мини-экзамен",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 520,
+        "questionCount": 8
       }
     }
   ]

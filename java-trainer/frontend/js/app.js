@@ -1,4 +1,4 @@
-import { getHealth, getLabs, getModuleContent, getModules } from './api.js';
+import { getHealth, getLabs, getModuleContent, getModules, mergeProgress } from './api.js';
 import { levelInfo, recordAttempt, syncState } from './gamification.js';
 import { addSpacedReview, dueQuestions } from './review.js';
 import { sendDueReminder } from './reminders.js';
@@ -13,6 +13,7 @@ import { renderCareer, renderLab } from './ui/career.js';
 import { icon } from './ui/icons.js';
 import { renderSession } from './ui/lesson.js';
 import { renderModule } from './ui/module.js';
+import { renderExam } from './ui/exam.js';
 import { renderSettings } from './ui/settings.js';
 import { renderResult } from './ui/success.js';
 
@@ -57,7 +58,7 @@ function updateHeader() {
   document.querySelector('#sidebar-level').innerHTML = `<div class="level-card"><div class="level-card-top"><span>${icon('spark', 18)} ВАШ УРОВЕНЬ</span><strong>${String(level).padStart(2, '0')}</strong></div><div class="level-card-bar"><span style="width:${Math.round(current / required * 100)}%"></span></div><small>${current} / ${required} XP до нового уровня</small></div>`;
   document.querySelectorAll('[data-nav]').forEach((entry) => {
     const section = activeRoute.name === 'lab' ? 'career'
-      : ['module', 'lesson', 'mastery', 'practice', 'boss', 'result'].includes(activeRoute.name) ? 'dashboard' : activeRoute.name;
+      : ['module', 'lesson', 'mastery', 'practice', 'boss', 'exam', 'result'].includes(activeRoute.name) ? 'dashboard' : activeRoute.name;
     const selected = entry.dataset.nav === section;
     entry.classList.toggle('is-active', selected);
     if (selected) entry.setAttribute('aria-current', 'page');
@@ -110,7 +111,7 @@ function completeSession(result) {
   const nextModule = mode === 'review' ? null : freshModules().find((entry) => entry.id === module?.id + 1 && entry.status === 'available');
   const nextPath = next ? stepUrl(module, next) : nextModule ? `/module/${nextModule.id}` : '/';
   const nextLabel = next?.type === 'lesson' ? 'Следующий урок' : next?.type === 'boss' ? 'К экзамену'
-    : next?.type === 'practice' ? 'К практике' : nextModule ? 'Следующий модуль' : 'На карту курса';
+    : next?.type === 'exam' ? 'К мини-экзамену' : next?.type === 'practice' ? 'К практике' : nextModule ? 'Следующий модуль' : 'На карту курса';
   resultContext = { result, nextPath, nextLabel, retryPath: mode === 'boss' ? `/boss/${module.id}` : null };
   updateHeader();
   navigate('/result');
@@ -199,6 +200,25 @@ async function showRoute(route) {
     renderModule(view, { module, state, onBack: () => navigate('/'),
       onOpenStep: (type, id) => navigate(['lesson', 'mastery'].includes(type)
         ? `/${type}/${module.id}/${id}` : `/${type}/${module.id}`) });
+  } else if (route.name === 'exam') {
+    if (!module || module.status === 'locked' || !canOpenStep(module, 'exam', state)) {
+      showMessage('Сначала завершите практику', 'Мини-экзамен открывается после практики модуля.'); return;
+    }
+    view.innerHTML = '<div class="loading-state">Готовим мини-экзамен…</div>';
+    try {
+      // Flush practice completion even if the debounced profile sync is still in flight.
+      await mergeProgress(state);
+      const content = await getModuleContent(module.id);
+      if (callId !== navigationId) return;
+      cleanup = renderExam(view, { module, exam: content.exam, health,
+        onProfile: (profile) => { Object.assign(state, profile.state); saveState(state); updateHeader(); },
+        onComplete: () => navigate(`/module/${module.id}`),
+        onTheory: () => navigate(`/lesson/${module.id}/${module.lessons[0].id}`),
+        onExit: () => navigate(`/module/${module.id}`) });
+    } catch (error) {
+      if (callId !== navigationId) return;
+      showMessage('Не удалось открыть экзамен', error.message, `/module/${module.id}`);
+    }
   } else if (['lesson', 'mastery', 'practice', 'boss', 'review'].includes(route.name)) {
     if (route.name !== 'review' && (!module || module.status === 'locked' || module.status === 'planned')) {
       showMessage('Урок пока недоступен', 'Начните с доступного модуля на карте курса.'); return;

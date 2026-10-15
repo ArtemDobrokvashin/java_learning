@@ -13,6 +13,7 @@ function renderChoice(host, task) {
   </div>${task.multiple ? '<p class="interaction-help">Можно выбрать несколько вариантов.</p>' : ''}`;
   return {
     getValue: () => [...host.querySelectorAll('input:checked')].map((input) => input.value),
+    setValue: (value) => host.querySelectorAll('input').forEach((input) => { input.checked = Array.isArray(value) && value.includes(input.value); }),
     focus: () => host.querySelector('input')?.focus(),
     destroy: () => {},
   };
@@ -34,19 +35,20 @@ function renderFill(host, task) {
   return {
     getValue: () => Object.fromEntries([...host.querySelectorAll('[data-blank]')]
       .map((element) => [element.dataset.blank, element.value.trim()])),
+    setValue: (value) => host.querySelectorAll('[data-blank]').forEach((input) => { input.value = value?.[input.dataset.blank] ?? ''; }),
     focus: () => host.querySelector('[data-blank]')?.focus(),
     destroy: () => {},
   };
 }
 
-export function renderQuiz(host, task) {
+export function renderQuiz(host, task, options = {}) {
   switch (task.type) {
     case 'choice': return renderChoice(host, task);
     case 'fill': return renderFill(host, task);
     case 'matching': return renderMatching(host, task);
     case 'parsons': return renderParsons(host, task);
     case 'code':
-    case 'copy': return renderCodeEditor(host, task);
+    case 'copy': return renderCodeEditor(host, task, options);
     default: throw new Error(`Неизвестный тип задания: ${task.type}`);
   }
 }

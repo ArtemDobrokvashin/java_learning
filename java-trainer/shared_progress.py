@@ -25,7 +25,7 @@ _DEFAULT = {
     "version": 1, "xp": 0, "legacyXp": 0, "xpLedger": {},
     "streak": 0, "lastActiveDate": None, "milestones": [],
     "completedLessons": [], "completedPractices": [], "completedLabs": [],
-    "legacyAwardedTasks": [], "careerChecklist": [], "bossScores": {}, "attempts": {},
+    "legacyAwardedTasks": [], "careerChecklist": [], "bossScores": {}, "examScores": {}, "attempts": {},
     "awardedTasks": [], "reviewRewards": {}, "achievements": [],
     "theme": "light", "remindersEnabled": False, "reminderTime": "19:00", "lastReminderDay": None,
 }
@@ -90,7 +90,7 @@ def normalize_state(raw):
     state["remindersEnabled"] = raw.get("remindersEnabled") is True
     if isinstance(raw.get("reminderTime"), str) and re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", raw["reminderTime"]):
         state["reminderTime"] = raw["reminderTime"]
-    for field in ("bossScores", "attempts", "reviewRewards"):
+    for field in ("bossScores", "examScores", "attempts", "reviewRewards"):
         state[field] = _keys(raw.get(field))
     return state
 
@@ -123,11 +123,11 @@ def merge_states(stored, incoming, *, browser=False):
     if not merged["lastActiveDate"] or date.fromisoformat(merged["lastActiveDate"]) < date.today() - timedelta(days=1):
         merged["streak"] = 0
         merged["milestones"] = []
-    for field in ("bossScores", "attempts", "reviewRewards"):
+    for field in ("bossScores", "examScores", "attempts", "reviewRewards"):
         merged[field] = {**left[field]}
         for key, value in right[field].items():
             old = merged[field].get(key)
-            if field == "bossScores" and isinstance(value, dict):
+            if field in {"bossScores", "examScores"} and isinstance(value, dict):
                 old = old if isinstance(old, dict) else {}
                 merged[field][key] = {"best": max(_number(old.get("best"), 100), _number(value.get("best"), 100)),
                                        "passed": old.get("passed") is True or value.get("passed") is True}
@@ -164,10 +164,12 @@ def _read() -> dict:
         if isinstance(payload, dict) and payload.get("version") == 1:
             return {"version": 1, "revision": _number(payload.get("revision")),
                     "state": normalize_state(payload.get("state")),
-                    "drafts": normalize_drafts(payload.get("drafts"))}
+                    "drafts": normalize_drafts(payload.get("drafts")),
+                    "exams": {key: value for key, value in _keys(payload.get("exams"), 22).items()
+                              if isinstance(value, dict)}}
     except (OSError, ValueError, TypeError):
         pass
-    return {"version": 1, "revision": 0, "state": normalize_state({}), "drafts": {}}
+    return {"version": 1, "revision": 0, "state": normalize_state({}), "drafts": {}, "exams": {}}
 
 
 def _write(profile: dict) -> None:
@@ -198,6 +200,7 @@ def merge_profile(state, drafts=None, *, browser=False) -> dict:
     with _LOCK:
         current = _read()
         merged = merge_states(current["state"], state, browser=browser)
+        merged["examScores"] = current["state"]["examScores"]  # only the exam judge may certify a pass
         result_drafts = dict(current["drafts"])
         for task_id, draft in normalize_drafts(drafts).items():
             if draft["updatedAt"] > result_drafts.get(task_id, {}).get("updatedAt", -1):
@@ -277,3 +280,13 @@ def reset_profile() -> dict:
         except FileNotFoundError:
             pass
         return _read()
+
+
+def update_profile(update):
+    """Atomic server-owned updates, preserving concurrent browser/IDE saves."""
+    with _LOCK:
+        profile = _read()
+        update(profile)
+        profile["revision"] += 1
+        _write(profile)
+        return profile

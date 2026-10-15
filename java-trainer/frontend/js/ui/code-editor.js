@@ -3,7 +3,7 @@ import { debounce, escapeHtml } from '../utils/helpers.js';
 
 // CodeMirror is bundled locally; a native textarea remains usable if a script
 // fails to load (e.g. an older browser). Drafts are saved after a short pause.
-export function renderCodeEditor(host, task) {
+export function renderCodeEditor(host, task, options = {}) {
   const copy = task.type === 'copy';
   const language = copy ? task.language || 'java' : 'java';
   const name = { java: 'Main.java', xml: 'pom.xml', sql: 'query.sql', yaml: 'pipeline.yml',
@@ -13,7 +13,7 @@ export function renderCodeEditor(host, task) {
   textarea.id = `editor-${task.id}`;
   textarea.setAttribute('aria-label', copy ? 'Перепишите пример здесь' : 'Редактор Java-кода');
   textarea.spellcheck = false;
-  textarea.value = readDraft(task.id) ?? task.starterCode ?? '';
+  textarea.value = options.value ?? (options.exam ? null : readDraft(task.id)) ?? task.starterCode ?? '';
   host.innerHTML = `
     ${copy ? `<div class="copy-reference"><strong>ОБРАЗЕЦ · ${escapeHtml(name)}</strong><pre>${escapeHtml(task.sourceCode)}</pre></div>` : ''}
     <div class="editor-toolbar">
@@ -26,7 +26,10 @@ export function renderCodeEditor(host, task) {
       : 'Код выполняется только на вашем компьютере • лимит 5 секунд')}</div>`;
   host.querySelector('.editor-body').append(textarea);
 
-  const persist = debounce(() => saveDraft(task.id, editor ? editor.getValue() : textarea.value), 350);
+  const persist = debounce(() => {
+    if (!options.exam) saveDraft(task.id, editor ? editor.getValue() : textarea.value);
+  }, 350);
+  const changed = () => { persist(); options.onChange?.(); };
   let editor = null;
   if (window.CodeMirror?.fromTextArea && language === 'java') {
     editor = window.CodeMirror.fromTextArea(textarea, {
@@ -35,11 +38,11 @@ export function renderCodeEditor(host, task) {
       extraKeys: { Tab: (instance) => instance.replaceSelection('    ') },
     });
     editor.setSize('100%', '300px');
-    editor.on('change', persist);
+    editor.on('change', changed);
     // The editor is created inside an already mounted host.
     requestAnimationFrame(() => editor?.refresh());
   } else {
-    textarea.addEventListener('input', persist);
+    textarea.addEventListener('input', changed);
   }
   return {
     getValue: () => editor ? editor.getValue() : textarea.value,
@@ -47,8 +50,8 @@ export function renderCodeEditor(host, task) {
     clearDraft: () => { persist.cancel(); clearDraft(task.id); },
     destroy: () => {
       persist.cancel();
-      if (editor) { editor.off('change', persist); editor.toTextArea(); editor = null; }
-      else textarea.removeEventListener('input', persist);
+      if (editor) { editor.off('change', changed); editor.toTextArea(); editor = null; }
+      else textarea.removeEventListener('input', changed);
     },
   };
 }

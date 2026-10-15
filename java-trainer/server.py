@@ -29,6 +29,7 @@ from urllib.parse import urlsplit
 from flask import Flask, jsonify, request, send_file, send_from_directory
 
 import shared_progress
+import exams
 
 try:
     import resource  # POSIX only; imported before Flask starts worker threads.
@@ -52,6 +53,13 @@ RUN_TIMEOUT_SECONDS = 5
 MAX_PARALLEL_JOBS = 2
 LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
 JOBS = threading.BoundedSemaphore(MAX_PARALLEL_JOBS)
+
+# JDK 17 uses sun.* for standard streams; newer JDKs also expose stdout/stderr.encoding.
+# file.encoding alone does NOT reliably select the Windows console/pipe charset.
+JVM_UTF8_OPTIONS = [f"-D{name}=UTF-8" for name in
+                    ("file.encoding", "sun.stdout.encoding", "sun.stderr.encoding",
+                     "stdout.encoding", "stderr.encoding")]
+JAVAC_UTF8_OPTIONS = ["-J" + option for option in JVM_UTF8_OPTIONS]
 
 
 def execution_enabled() -> bool:
@@ -140,6 +148,8 @@ def code_tasks() -> dict[str, dict]:
         activities = content["lessons"] + [content["practice"]]
         if content.get("boss"):
             activities.append(content["boss"])
+        if content.get("exam"):
+            activities.append(content["exam"])
         for activity in activities:
             for task in activity["tasks"]:
                 if task["type"] == "code":
@@ -189,7 +199,7 @@ def ide_tasks() -> list[dict]:
         result.append({**lab, "prompt": lab["description"], "moduleId": 0,
                        "moduleTitle": "К junior", "section": "Лаборатории", "lessonTitle": lab["title"]})
     if len(result) != 44 + 99 + len(labs):
-        raise ValueError("IDE catalog must contain every coding exercise")
+        raise ValueError("IDE catalog must contain practice, optional hard exercises and labs (not exams)")
     _CACHED_IDE_TASKS = result
     return _CACHED_IDE_TASKS
 
@@ -224,7 +234,7 @@ def check_jdk_health(force: bool = False) -> tuple[bool, str]:
                 return cached_res
         # Probe javac version
         try:
-            ver_res = run_command([javac, "-version"], Path(tempfile.gettempdir()), 5.0, compile_step=True)
+            ver_res = run_command([javac, *JAVAC_UTF8_OPTIONS, "-version"], Path(tempfile.gettempdir()), 5.0, compile_step=True)
             v = parse_java_version((ver_res.stdout or "") + " " + (ver_res.stderr or ""))
             if v is not None and v < 17:
                 res = False, f"Требуется JDK версии 17 или новее (найдена версия {v})."
@@ -244,7 +254,7 @@ def check_jdk_health(force: bool = False) -> tuple[bool, str]:
                     "}\n"
                 )
                 (folder_p / "Main.java").write_text(probe_src, encoding="utf-8")
-                comp = run_command([javac, "-J-Xmx256m", "-J-XX:CompressedClassSpaceSize=64m",
+                comp = run_command([javac, *JAVAC_UTF8_OPTIONS, "-J-Xmx256m", "-J-XX:CompressedClassSpaceSize=64m",
                                     "-J-XX:ReservedCodeCacheSize=64m", "-encoding", "UTF-8", "-d", str(folder_p),
                                     str(folder_p / "Main.java")], folder_p, 10.0, compile_step=True)
                 if comp.returncode != 0:
@@ -254,7 +264,7 @@ def check_jdk_health(force: bool = False) -> tuple[bool, str]:
                     return res
                 run = run_command([java, "-Xms16m", "-Xmx96m", "-XX:MaxMetaspaceSize=128m",
                                    "-XX:CompressedClassSpaceSize=64m", "-XX:ReservedCodeCacheSize=64m",
-                                   "-XX:ActiveProcessorCount=2", "-Dfile.encoding=UTF-8",
+                                   "-XX:ActiveProcessorCount=2", *JVM_UTF8_OPTIONS,
                                    "-cp", str(folder_p), "Main"], folder_p, 5.0, compile_step=False)
                 if run.returncode != 0 or run.stdout.strip() != "ok":
                     diag = (run.stderr or "").strip() or (run.stdout or "").strip()
@@ -282,13 +292,14 @@ def parse_id_set(value: str, valid_ids: set[int]) -> set[int]:
     return result
 
 
-def modules_with_status(completed: set[int], boss_passed: set[int]) -> list[dict]:
+def modules_with_status(completed: set[int], boss_passed: set[int], exam_passed: set[int] | None = None) -> list[dict]:
     """Statuses use query parameters; personal data lives in a separate local profile."""
     unlocked = True
     result = []
     for module in course_index()["modules"]:
         number = module["id"]
-        finished = number in completed and (not module.get("boss") or number in boss_passed)
+        finished = (number in completed and (not module.get("boss") or number in boss_passed)
+                    and (not module.get("exam") or number in (exam_passed or set())))
         if not unlocked:
             status = "locked"
         elif module["contentStatus"] != "ready":
@@ -335,6 +346,7 @@ def run_command(args: list[str], directory: Path, timeout: float, *, compile_ste
         "HOME": str(directory),
         "TMPDIR": str(directory),
         "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
     }
     for var in ("SystemRoot", "WINDIR", "TEMP", "TMP"):
         if var in os.environ:
@@ -402,6 +414,92 @@ def origin_allowed(origin: str, host: str) -> bool:
         )
     except ValueError:
         return False
+
+
+def judge_java(code, task_type, task_id, task, *, record_progress=False):
+    """Shared UTF-8 judge; exam checks never award individual task XP."""
+    if not execution_enabled():
+        return api_error("unavailable", "Запуск Java отключён в сетевом предпросмотре. Используйте локальный адрес 127.0.0.1.", 503)
+
+    javac, java = shutil.which("javac"), shutil.which("java")
+    if not javac or (task_type == "run" and not java):
+        return jsonify(success=False, kind="unavailable", output="",
+                       error="JDK не найден. Установите JDK 17+ и перезапустите сервер."), 503
+    if not JOBS.acquire(blocking=False):
+        return jsonify(success=False, kind="busy", output="",
+                       error="Компилятор занят. Подождите несколько секунд и попробуйте снова."), 429
+
+    try:
+        logging.getLogger(__name__).info("Java check: type=%s task=%s bytes=%d", task_type, task_id, len(code.encode("utf-8")))
+        with tempfile.TemporaryDirectory(prefix="java-", dir=TEMP) as folder:
+            directory = Path(folder)
+            (directory / "Main.java").write_text(code, encoding="utf-8")
+            compiled = run_command([javac, *JAVAC_UTF8_OPTIONS, "-J-Xmx256m", "-J-XX:CompressedClassSpaceSize=64m",
+                                    "-J-XX:ReservedCodeCacheSize=64m", "-encoding", "UTF-8", "-d", str(directory),
+                                    str(directory / "Main.java")], directory, COMPILE_TIMEOUT_SECONDS,
+                                   compile_step=True)
+            if compiled.timed_out:
+                return jsonify(success=False, kind="compile_timeout", output="",
+                               error="Компиляция заняла слишком много времени (лимит 10 секунд). Проверьте структуру кода или повторите попытку."), 503
+            if compiled.returncode != 0:
+                combined_err = compiled.stderr or compiled.stdout or ""
+                if not is_javac_diagnostic(compiled.stderr, compiled.stdout):
+                    return jsonify(success=False, kind="unavailable", output="",
+                                   error="Сбой запуска компилятора javac: " + (combined_err.strip() or "не удалось скомпилировать Main.java.")), 503
+                diagnostic = compiled.stderr.replace(str(directory) + os.sep, "")
+                if not diagnostic.strip() and compiled.stdout:
+                    diagnostic = compiled.stdout.replace(str(directory) + os.sep, "")
+                return jsonify(success=False, kind="compile_error", output="", error=diagnostic or
+                               "Не удалось скомпилировать Main.java.")
+            if task_type == "compile":
+                return jsonify(success=True, kind="ok", output="Компиляция прошла успешно.", error="")
+
+            java_args = [java, "-Xms16m", "-Xmx96m", "-XX:MaxMetaspaceSize=128m",
+                         "-XX:CompressedClassSpaceSize=64m", "-XX:ReservedCodeCacheSize=64m",
+                         "-XX:ActiveProcessorCount=2", *JVM_UTF8_OPTIONS,
+                         "-cp", str(directory), "Main"]
+            is_lab = "testCases" in task
+            cases = task["testCases"] if is_lab else [{"expectedOutput": task["expectedOutput"]}]
+            # Compilation has a separate 10s cap; ALL executions of this
+            # submission share one 5s wall-clock budget, not 5s per case.
+            deadline = time.monotonic() + RUN_TIMEOUT_SECONDS
+            for number, case in enumerate(cases, 1):
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    return jsonify(success=False, kind="timeout", output="",
+                                   error="Проверки превысили общий лимит 5 секунд.")
+                kwargs = {"stdin_data": case["input"]} if is_lab else {}
+                executed = run_command(java_args, directory, remaining,
+                                       compile_step=False, **kwargs)
+                output = executed.stdout
+                diagnostic = executed.stderr.replace(str(directory) + os.sep, "")
+                if executed.timed_out:
+                    label = f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n" if is_lab else ""
+                    return jsonify(success=False, kind="timeout", output=output,
+                                   error=label + "Время выполнения превысило 5 секунд. Проверьте цикл или ожидание ввода.")
+                if executed.returncode != 0:
+                    if is_vm_init_failure(executed.stderr, executed.returncode):
+                        return jsonify(success=False, kind="unavailable", output="",
+                                       error="Сбой запуска виртуальной машины JVM: " + (diagnostic.strip() or f"код завершения {executed.returncode}")), 503
+                    label = f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n" if is_lab else ""
+                    return jsonify(success=False, kind="runtime_error", output=output,
+                                   error=label + (diagnostic or "Программа завершилась с ошибкой."))
+                if normalized_output(output) != normalized_output(case["expectedOutput"]):
+                    detail = (f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n"
+                              f"Ожидалось:\n{case['expectedOutput']}") if is_lab else (
+                              "Программа запустилась, но вывод отличается от ожидаемого.")
+                    return jsonify(success=False, kind="wrong_output", output=output, error=detail)
+            shared = (shared_progress.award_code_task(task_id, task)
+                      if record_progress and not task_id.startswith("m-exam-") else None)
+            return jsonify(success=True, kind="ok",
+                           output=f"Пройдено {len(cases)} из {len(cases)} проверок." if is_lab else output,
+                           error="", **({"progress": shared} if shared else {}))
+    except OSError:
+        logging.getLogger(__name__).exception("Could not start Java toolchain")
+        return jsonify(success=False, kind="unavailable", output="",
+                       error="Не удалось запустить JDK. Проверьте установку и права доступа."), 503
+    finally:
+        JOBS.release()
 
 
 def create_app() -> Flask:
@@ -477,9 +575,10 @@ def create_app() -> Flask:
         try:
             completed = parse_id_set(request.args.get("completed", ""), valid)
             boss_passed = parse_id_set(request.args.get("bossPassed", ""), valid)
+            exam_passed = parse_id_set(request.args.get("examPassed", ""), valid)
         except ValueError as error:
             return jsonify(error=str(error)), 400
-        return jsonify(modules=modules_with_status(completed, boss_passed), total=len(all_modules),
+        return jsonify(modules=modules_with_status(completed, boss_passed, exam_passed), total=len(all_modules),
                        revision=course_revision(),
                        progressSource="browser-query")
 
@@ -512,6 +611,33 @@ def create_app() -> Flask:
         except ValueError as error:
             return api_error("bad_request", str(error), 400)
         return jsonify(result)
+
+    @app.route("/api/progress/exams/<int:module_id>", methods=["GET", "POST"])
+    def module_exam(module_id):
+        metadata = next((m for m in course_index()["modules"] if m["id"] == module_id), None)
+        if metadata is None:
+            return api_error("not_found", "Неизвестный модуль.", 404)
+        module = json.loads((DATA / metadata["contentFile"]).read_text(encoding="utf-8"))
+        try:
+            if request.method == "GET":
+                profile = shared_progress.get_profile()
+                exams.require_practice(module, profile["state"])
+                return jsonify(exams.snapshot(profile["exams"].get(str(module_id), {})))
+            payload = request.get_json(silent=True)
+            if not isinstance(payload, dict):
+                raise exams.ExamError("Ожидается JSON экзамена.")
+            if payload.get("action") == "start":
+                return jsonify(exams.start(module))
+            if payload.get("action") != "submit":
+                raise exams.ExamError("Неизвестное действие экзамена.")
+
+            def judge(task, code):
+                response = app.make_response(judge_java(code, "run", task["id"], task))
+                return response.get_json(), response.status_code
+
+            return jsonify(exams.submit(module, payload.get("attemptId"), payload.get("answers"), judge))
+        except exams.ExamError as error:
+            return api_error("exam", str(error), error.status)
 
     @app.post("/api/progress/reset")
     def reset_shared_progress():
@@ -563,88 +689,7 @@ def create_app() -> Flask:
         task = code_tasks().get(task_id) if task_id else None
         if (task_id and not task) or (task and task.get("mode") != task_type) or (task_type == "run" and not task):
             return api_error("bad_request", "Неизвестное задание для выполнения.", 400)
-        if not execution_enabled():
-            return api_error("unavailable", "Запуск Java отключён в сетевом предпросмотре. Используйте локальный адрес 127.0.0.1.", 503)
-
-        javac, java = shutil.which("javac"), shutil.which("java")
-        if not javac or (task_type == "run" and not java):
-            return jsonify(success=False, kind="unavailable", output="",
-                           error="JDK не найден. Установите JDK 17+ и перезапустите сервер."), 503
-        if not JOBS.acquire(blocking=False):
-            return jsonify(success=False, kind="busy", output="",
-                           error="Компилятор занят. Подождите несколько секунд и попробуйте снова."), 429
-
-        try:
-            app.logger.info("Java check: type=%s task=%s bytes=%d", task_type, task_id, len(code.encode("utf-8")))
-            with tempfile.TemporaryDirectory(prefix="java-", dir=TEMP) as folder:
-                directory = Path(folder)
-                (directory / "Main.java").write_text(code, encoding="utf-8")
-                compiled = run_command([javac, "-J-Xmx256m", "-J-XX:CompressedClassSpaceSize=64m",
-                                        "-J-XX:ReservedCodeCacheSize=64m", "-encoding", "UTF-8", "-d", str(directory),
-                                        str(directory / "Main.java")], directory, COMPILE_TIMEOUT_SECONDS,
-                                       compile_step=True)
-                if compiled.timed_out:
-                    return jsonify(success=False, kind="compile_timeout", output="",
-                                   error="Компиляция заняла слишком много времени (лимит 10 секунд). Проверьте структуру кода или повторите попытку."), 503
-                if compiled.returncode != 0:
-                    combined_err = compiled.stderr or compiled.stdout or ""
-                    if not is_javac_diagnostic(compiled.stderr, compiled.stdout):
-                        return jsonify(success=False, kind="unavailable", output="",
-                                       error="Сбой запуска компилятора javac: " + (combined_err.strip() or "не удалось скомпилировать Main.java.")), 503
-                    diagnostic = compiled.stderr.replace(str(directory) + os.sep, "")
-                    if not diagnostic.strip() and compiled.stdout:
-                        diagnostic = compiled.stdout.replace(str(directory) + os.sep, "")
-                    return jsonify(success=False, kind="compile_error", output="", error=diagnostic or
-                                   "Не удалось скомпилировать Main.java.")
-                if task_type == "compile":
-                    return jsonify(success=True, kind="ok", output="Компиляция прошла успешно.", error="")
-
-                java_args = [java, "-Xms16m", "-Xmx96m", "-XX:MaxMetaspaceSize=128m",
-                             "-XX:CompressedClassSpaceSize=64m", "-XX:ReservedCodeCacheSize=64m",
-                             "-XX:ActiveProcessorCount=2", "-Dfile.encoding=UTF-8",
-                             "-cp", str(directory), "Main"]
-                is_lab = "testCases" in task
-                cases = task["testCases"] if is_lab else [{"expectedOutput": task["expectedOutput"]}]
-                # Compilation has a separate 10s cap; ALL executions of this
-                # submission share one 5s wall-clock budget, not 5s per case.
-                deadline = time.monotonic() + RUN_TIMEOUT_SECONDS
-                for number, case in enumerate(cases, 1):
-                    remaining = deadline - time.monotonic()
-                    if remaining <= 0:
-                        return jsonify(success=False, kind="timeout", output="",
-                                       error="Проверки превысили общий лимит 5 секунд.")
-                    kwargs = {"stdin_data": case["input"]} if is_lab else {}
-                    executed = run_command(java_args, directory, remaining,
-                                           compile_step=False, **kwargs)
-                    output = executed.stdout
-                    diagnostic = executed.stderr.replace(str(directory) + os.sep, "")
-                    if executed.timed_out:
-                        label = f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n" if is_lab else ""
-                        return jsonify(success=False, kind="timeout", output=output,
-                                       error=label + "Время выполнения превысило 5 секунд. Проверьте цикл или ожидание ввода.")
-                    if executed.returncode != 0:
-                        if is_vm_init_failure(executed.stderr, executed.returncode):
-                            return jsonify(success=False, kind="unavailable", output="",
-                                           error="Сбой запуска виртуальной машины JVM: " + (diagnostic.strip() or f"код завершения {executed.returncode}")), 503
-                        label = f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n" if is_lab else ""
-                        return jsonify(success=False, kind="runtime_error", output=output,
-                                       error=label + (diagnostic or "Программа завершилась с ошибкой."))
-                    if normalized_output(output) != normalized_output(case["expectedOutput"]):
-                        detail = (f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n"
-                                  f"Ожидалось:\n{case['expectedOutput']}") if is_lab else (
-                                  "Программа запустилась, но вывод отличается от ожидаемого.")
-                        return jsonify(success=False, kind="wrong_output", output=output, error=detail)
-                shared = (shared_progress.award_code_task(task_id, task)
-                          if record_progress else None)
-                return jsonify(success=True, kind="ok",
-                               output=f"Пройдено {len(cases)} из {len(cases)} проверок." if is_lab else output,
-                               error="", **({"progress": shared} if shared else {}))
-        except OSError:
-            app.logger.exception("Could not start Java toolchain")
-            return jsonify(success=False, kind="unavailable", output="",
-                           error="Не удалось запустить JDK. Проверьте установку и права доступа."), 503
-        finally:
-            JOBS.release()
+        return judge_java(code, task_type, task_id, task, record_progress=record_progress)
 
     @app.get("/<path:filename>")
     def frontend_file(filename: str):

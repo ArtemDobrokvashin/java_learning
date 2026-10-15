@@ -944,5 +944,180 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m05-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 350,
+    "tasks": [
+      {
+        "id": "m-exam-05-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Как создать экземпляр static-вложенного класса Config внутри Outer без Outer-объекта?",
+        "options": [
+          {
+            "id": "a",
+            "label": "new Outer().new Config()"
+          },
+          {
+            "id": "b",
+            "label": "new Config(Outer)"
+          },
+          {
+            "id": "c",
+            "label": "new Outer.Config()"
+          },
+          {
+            "id": "d",
+            "label": "Outer.new Config()"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "Статический вложенный тип доступен через имя внешнего класса.",
+        "explanation": "Верно: new Outer.Config(). Статический вложенный тип доступен через имя внешнего класса."
+      },
+      {
+        "type": "fill",
+        "prompt": "Создайте объект Counter.",
+        "template": [
+          "Counter c = ",
+          " Counter();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "new",
+            "options": [
+              "this",
+              "new",
+              "final"
+            ]
+          }
+        ],
+        "hint": "Оператор создаёт экземпляр в памяти.",
+        "explanation": "new Counter() создаёт новый объект.",
+        "id": "m-exam-05-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте термины ООП.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Класс",
+            "right": "Шаблон структуры и поведения"
+          },
+          {
+            "id": "2",
+            "left": "Объект",
+            "right": "Экземпляр класса с состоянием"
+          },
+          {
+            "id": "3",
+            "left": "Конструктор",
+            "right": "Начальная настройка объекта"
+          },
+          {
+            "id": "4",
+            "left": "static",
+            "right": "Принадлежность классу, а не экземпляру"
+          }
+        ],
+        "hint": "Разделите чертёж, экземпляр, создание и общее состояние.",
+        "explanation": "Один класс может создавать много объектов.",
+        "id": "m-exam-05-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Упорядочьте объявление класса Book.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Book {"
+          },
+          {
+            "id": "b",
+            "text": "String title;"
+          },
+          {
+            "id": "c",
+            "text": "Book(String title) {"
+          },
+          {
+            "id": "d",
+            "text": "this.title = title;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "Поле и конструктор находятся в классе; присваивание внутри конструктора.",
+        "explanation": "Конструктор сохраняет полученное название.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m-exam-05-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Создайте класс Ticket: название, цена и число проданных билетов — поля объекта;\nконструктор принимает название и цену. Метод sell(int) увеличивает проданное количество,\nrevenue() возвращает выручку, label() — название. Статическое поле created считает объекты.\nСоздайте Ticket(\"Java\", 100) и Ticket(\"Кино\", 80), продайте 1 и 2 билета соответственно.\nВыведите название первого события, его выручку, выручку второго и число созданных объектов.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Java\n100\n160\n2",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nJava\n100\n160\n2",
+        "id": "m-exam-05-05"
+      }
+    ]
   }
 }

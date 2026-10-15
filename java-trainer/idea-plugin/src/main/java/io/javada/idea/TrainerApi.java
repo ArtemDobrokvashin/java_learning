@@ -84,8 +84,11 @@ final class TrainerApi {
         body.addProperty("taskId", task.id());
         body.addProperty("recordProgress", true);
         JsonObject answer = post(port, "/api/compile", body);
+        if (!answer.has("success") || !answer.has("kind")) {
+            throw new IOException("Сервер вернул неполный ответ без success/kind.");
+        }
         Profile progress = answer.has("progress") ? parseProfile(answer.getAsJsonObject("progress")) : null;
-        return new CompileResult(answer.has("success") && answer.get("success").getAsBoolean(),
+        return new CompileResult(answer.get("success").getAsBoolean(),
                 text(answer, "kind"), text(answer, "output"), text(answer, "error"), progress);
     }
 
@@ -103,6 +106,20 @@ final class TrainerApi {
         return send(request);
     }
 
+    static class ServerException extends IOException {
+        private final int statusCode;
+        private final String kind;
+
+        ServerException(int statusCode, String kind, String message) {
+            super(message);
+            this.statusCode = statusCode;
+            this.kind = kind;
+        }
+
+        int statusCode() { return statusCode; }
+        String kind() { return kind; }
+    }
+
     private JsonObject send(HttpRequest request) throws IOException, InterruptedException {
         HttpResponse<String> response = client.send(request,
                 HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -113,8 +130,8 @@ final class TrainerApi {
             throw new IOException("Сервер ответил не JSON. Проверьте адрес и версию JavaДа.", badJson);
         }
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new IOException(text(body, "error").isBlank()
-                    ? "Ошибка HTTP " + response.statusCode() : text(body, "error"));
+            String msg = text(body, "error").isBlank() ? "Ошибка HTTP " + response.statusCode() : text(body, "error");
+            throw new ServerException(response.statusCode(), text(body, "kind"), msg);
         }
         return body;
     }

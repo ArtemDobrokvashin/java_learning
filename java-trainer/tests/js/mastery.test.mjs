@@ -227,3 +227,42 @@ test('an in-flight sync cannot overwrite a newer browser answer', async () => {
     }
   }
 });
+
+test('compiler timeout 503 and non-JSON server responses do not record mistakes or blame the student', () => withDom(async (root) => {
+  const activity = moduleOne.lessons[0];
+  const state = freshState();
+  const entry = { task: activity.tasks[4], review: false }; // code task
+  let attemptsRecorded = 0;
+  const props = {
+    module: moduleOne, activity, mode: 'lesson', entries: [entry],
+    health: { jdkAvailable: true },
+    onAttempt: (t, correct, r) => { attemptsRecorded++; return recordAttempt(state, t, correct, { review: r, now: clock }); },
+    onComplete: () => {}, onExit: () => {},
+  };
+
+  // Scenario A: 503 compile_timeout
+  globalThis.fetch = async () => ({
+    ok: false, status: 503,
+    json: async () => ({ success: false, kind: 'compile_timeout', error: 'Компиляция заняла слишком много времени.' }),
+  });
+  let cleanup = renderSession(root, props);
+  root.querySelector('.code-textarea').value = 'public class Main { public static void main(String[] args) {} }';
+  root.querySelector('[data-primary]').click();
+  await new Promise(r => setTimeout(r, 0));
+  assert.equal(attemptsRecorded, 0, 'No mistakes recorded on compile_timeout 503');
+  assert.match(root.querySelector('#feedback').textContent, /Не удалось проверить код/);
+  cleanup();
+
+  // Scenario B: HTTP 200 with non-JSON or missing success
+  globalThis.fetch = async () => ({
+    ok: true, status: 200,
+    json: async () => ({}),
+  });
+  cleanup = renderSession(root, props);
+  root.querySelector('.code-textarea').value = 'public class Main { public static void main(String[] args) {} }';
+  root.querySelector('[data-primary]').click();
+  await new Promise(r => setTimeout(r, 0));
+  assert.equal(attemptsRecorded, 0, 'No mistakes recorded on malformed 200 response');
+  assert.match(root.querySelector('#feedback').textContent, /Не удалось проверить код/);
+  cleanup();
+}));

@@ -68,15 +68,69 @@ class CommandResult:
     timed_out: bool = False
 
 
-@lru_cache(maxsize=1)
+VM_INIT_ERRORS = (
+    "could not create the java virtual machine",
+    "error occurred during initialization of vm",
+    "could not reserve enough space",
+    "failed to reserve memory",
+    "unrecognized option",
+    "invalid maximum heap size",
+    "invalid initial heap size",
+)
+
+
+def is_vm_init_failure(stderr: str, returncode: int | None) -> bool:
+    low = (stderr or "").lower()
+    if any(err in low for err in VM_INIT_ERRORS):
+        return True
+    if returncode is not None and returncode in (-6, -11, -7, -4, 134, 139, 135, 132):
+        return True
+    return False
+
+
+def is_javac_diagnostic(stderr: str, stdout: str) -> bool:
+    combined = (stderr or "") + "\n" + (stdout or "")
+    return bool(re.search(r'(?:^|[\\/\n])Main\.java:\d+:', combined))
+
+
+def _course_files_token() -> tuple:
+    files = [DATA / "modules.json", DATA / "labs.json", PRIVATE / "lab_cases.json"]
+    files.extend(DATA.glob("module-*.json"))
+    return tuple((str(p), p.stat().st_mtime_ns) for p in sorted(files) if p.exists())
+
+
+_CACHED_TOKEN = None
+_CACHED_INDEX = None
+_CACHED_CODE_TASKS = None
+_CACHED_IDE_TASKS = None
+
+
+def course_revision() -> str:
+    token = _course_files_token()
+    import hashlib
+    h = hashlib.sha256()
+    for item in token:
+        h.update(str(item).encode("utf-8"))
+    return h.hexdigest()[:16]
+
+
 def course_index() -> dict:
-    with (DATA / "modules.json").open(encoding="utf-8") as source:
-        return json.load(source)
+    global _CACHED_TOKEN, _CACHED_INDEX, _CACHED_CODE_TASKS, _CACHED_IDE_TASKS
+    current_token = _course_files_token()
+    if _CACHED_INDEX is None or _CACHED_TOKEN != current_token:
+        with (DATA / "modules.json").open(encoding="utf-8") as source:
+            _CACHED_INDEX = json.load(source)
+        _CACHED_CODE_TASKS = None
+        _CACHED_IDE_TASKS = None
+        _CACHED_TOKEN = current_token
+    return _CACHED_INDEX
 
 
-@lru_cache(maxsize=1)
 def code_tasks() -> dict[str, dict]:
-    """Only the exercise IDs defined in our own course data may be executed."""
+    global _CACHED_TOKEN, _CACHED_CODE_TASKS
+    course_index()
+    if _CACHED_CODE_TASKS is not None:
+        return _CACHED_CODE_TASKS
     tasks = {}
     for module in course_index()["modules"]:
         if not module["contentFile"]:
@@ -92,8 +146,6 @@ def code_tasks() -> dict[str, dict]:
                     if task["id"] in tasks:
                         raise ValueError(f"Duplicate task ID: {task['id']}")
                     tasks[task["id"]] = task
-    # Lab metadata and examples are public. Additional test inputs are read
-    # only by the local judge, never served as a static frontend file.
     with (DATA / "labs.json").open(encoding="utf-8") as source:
         labs = json.load(source)["labs"]
     with (PRIVATE / "lab_cases.json").open(encoding="utf-8") as source:
@@ -111,15 +163,15 @@ def code_tasks() -> dict[str, dict]:
                or len(case["expectedOutput"].encode("utf-8")) > 1024 for case in cases):
             raise ValueError(f"Invalid lab cases: {lab['id']}")
         tasks[lab["id"]] = {**lab, "testCases": cases}
-    return tasks
+    _CACHED_CODE_TASKS = tasks
+    return _CACHED_CODE_TASKS
 
 
-@lru_cache(maxsize=1)
 def ide_tasks() -> list[dict]:
-    """All 44 pre-existing practice tasks plus lesson hardcores and labs.
-
-    Do not serialize private lab_cases.json (or answers for hidden inputs).
-    """
+    global _CACHED_IDE_TASKS
+    course_index()
+    if _CACHED_IDE_TASKS is not None:
+        return _CACHED_IDE_TASKS
     result = []
     for module in course_index()["modules"]:
         content = json.loads((DATA / module["contentFile"]).read_text(encoding="utf-8"))
@@ -138,7 +190,84 @@ def ide_tasks() -> list[dict]:
                        "moduleTitle": "К junior", "section": "Лаборатории", "lessonTitle": lab["title"]})
     if len(result) != 44 + 99 + len(labs):
         raise ValueError("IDE catalog must contain every coding exercise")
-    return result
+    _CACHED_IDE_TASKS = result
+    return _CACHED_IDE_TASKS
+
+
+def parse_java_version(output: str) -> int | None:
+    m = re.search(r'(?:javac|version)\s+["\']?(\d+)(?:\.(\d+))?', output, re.IGNORECASE)
+    if not m:
+        m = re.search(r'["\']?(\d+)(?:\.(\d+))?', output)
+    if m:
+        major = int(m.group(1))
+        if major == 1 and m.group(2):
+            return int(m.group(2))
+        return major
+    return None
+
+
+_JDK_HEALTH_CACHE: tuple[float, tuple[str | None, str | None], tuple[bool, str]] | None = None
+_JDK_LOCK = threading.Lock()
+
+
+def check_jdk_health(force: bool = False) -> tuple[bool, str]:
+    global _JDK_HEALTH_CACHE
+    javac = shutil.which("javac")
+    java = shutil.which("java")
+    if not javac or not java:
+        return False, "JDK не найден. Установите JDK 17+ и перезапустите сервер."
+    now = time.monotonic()
+    with _JDK_LOCK:
+        if not force and _JDK_HEALTH_CACHE is not None:
+            cached_time, cached_paths, cached_res = _JDK_HEALTH_CACHE
+            if cached_paths == (javac, java) and now - cached_time < 30.0:
+                return cached_res
+        # Probe javac version
+        try:
+            ver_res = run_command([javac, "-version"], Path(tempfile.gettempdir()), 5.0, compile_step=True)
+            v = parse_java_version((ver_res.stdout or "") + " " + (ver_res.stderr or ""))
+            if v is not None and v < 17:
+                res = False, f"Требуется JDK версии 17 или новее (найдена версия {v})."
+                _JDK_HEALTH_CACHE = (now, (javac, java), res)
+                return res
+        except Exception:
+            pass
+        # Trial compilation and execution
+        try:
+            with tempfile.TemporaryDirectory(prefix="jdk-probe-", dir=TEMP) as folder:
+                folder_p = Path(folder)
+                probe_src = (
+                    "public class Main {\n"
+                    "    public static void main(String[] args) {\n"
+                    "        System.out.println(\"ok\");\n"
+                    "    }\n"
+                    "}\n"
+                )
+                (folder_p / "Main.java").write_text(probe_src, encoding="utf-8")
+                comp = run_command([javac, "-J-Xmx256m", "-J-XX:CompressedClassSpaceSize=64m",
+                                    "-J-XX:ReservedCodeCacheSize=64m", "-encoding", "UTF-8", "-d", str(folder_p),
+                                    str(folder_p / "Main.java")], folder_p, 10.0, compile_step=True)
+                if comp.returncode != 0:
+                    diag = (comp.stderr or "").strip() or (comp.stdout or "").strip()
+                    res = False, f"Ошибка пробной компиляции JDK: {diag or 'не удалось скомпилировать'}"
+                    _JDK_HEALTH_CACHE = (now, (javac, java), res)
+                    return res
+                run = run_command([java, "-Xms16m", "-Xmx96m", "-XX:MaxMetaspaceSize=128m",
+                                   "-XX:CompressedClassSpaceSize=64m", "-XX:ReservedCodeCacheSize=64m",
+                                   "-XX:ActiveProcessorCount=2", "-Dfile.encoding=UTF-8",
+                                   "-cp", str(folder_p), "Main"], folder_p, 5.0, compile_step=False)
+                if run.returncode != 0 or run.stdout.strip() != "ok":
+                    diag = (run.stderr or "").strip() or (run.stdout or "").strip()
+                    res = False, f"Ошибка пробного запуска JDK: {diag or 'не удалось запустить JVM'}"
+                    _JDK_HEALTH_CACHE = (now, (javac, java), res)
+                    return res
+        except Exception as e:
+            res = False, f"Не удалось выполнить проверку JDK: {e}"
+            _JDK_HEALTH_CACHE = (now, (javac, java), res)
+            return res
+        res = True, "JDK готов к работе."
+        _JDK_HEALTH_CACHE = (now, (javac, java), res)
+        return res
 
 
 def parse_id_set(value: str, valid_ids: set[int]) -> set[int]:
@@ -207,6 +336,11 @@ def run_command(args: list[str], directory: Path, timeout: float, *, compile_ste
         "TMPDIR": str(directory),
         "LANG": "C.UTF-8",
     }
+    for var in ("SystemRoot", "WINDIR", "TEMP", "TMP"):
+        if var in os.environ:
+            environment[var] = os.environ[var]
+        elif var.upper() in os.environ:
+            environment[var] = os.environ[var.upper()]
     with tempfile.TemporaryFile(dir=directory) as stdout, tempfile.TemporaryFile(dir=directory) as stderr:
         input_file = tempfile.TemporaryFile(dir=directory) if stdin_data is not None else None
         try:
@@ -328,11 +462,13 @@ def create_app() -> Flask:
     def health():
         if not execution_enabled():
             return jsonify(jdkAvailable=False,
+                           revision=course_revision(),
                            message="Запуск Java отключён в сетевом предпросмотре. Запустите сервер локально без TRAINER_HOST.")
-        available = bool(shutil.which("javac") and shutil.which("java"))
+        force = request.args.get("refresh") == "1"
+        available, msg = check_jdk_health(force=force)
         return jsonify(jdkAvailable=available,
-                       message="JDK готов" if available
-                       else "JDK не найден. Установите JDK 17+ и перезапустите сервер.")
+                       revision=course_revision(),
+                       message=msg)
 
     @app.get("/api/modules")
     def modules():
@@ -344,11 +480,12 @@ def create_app() -> Flask:
         except ValueError as error:
             return jsonify(error=str(error)), 400
         return jsonify(modules=modules_with_status(completed, boss_passed), total=len(all_modules),
+                       revision=course_revision(),
                        progressSource="browser-query")
 
     @app.get("/api/ide/tasks")
     def idea_catalog():
-        return jsonify(version=course_index()["version"], tasks=ide_tasks(),
+        return jsonify(version=course_index()["version"], revision=course_revision(), tasks=ide_tasks(),
                        existingPracticeCount=44, lessonHardcoreCount=99)
 
     @app.get("/api/progress")
@@ -447,10 +584,16 @@ def create_app() -> Flask:
                                         str(directory / "Main.java")], directory, COMPILE_TIMEOUT_SECONDS,
                                        compile_step=True)
                 if compiled.timed_out:
-                    return jsonify(success=False, kind="timeout", output="",
-                                   error="Компиляция заняла слишком много времени (лимит 10 секунд).")
+                    return jsonify(success=False, kind="compile_timeout", output="",
+                                   error="Компиляция заняла слишком много времени (лимит 10 секунд). Проверьте структуру кода или повторите попытку."), 503
                 if compiled.returncode != 0:
+                    combined_err = compiled.stderr or compiled.stdout or ""
+                    if not is_javac_diagnostic(compiled.stderr, compiled.stdout):
+                        return jsonify(success=False, kind="unavailable", output="",
+                                       error="Сбой запуска компилятора javac: " + (combined_err.strip() or "не удалось скомпилировать Main.java.")), 503
                     diagnostic = compiled.stderr.replace(str(directory) + os.sep, "")
+                    if not diagnostic.strip() and compiled.stdout:
+                        diagnostic = compiled.stdout.replace(str(directory) + os.sep, "")
                     return jsonify(success=False, kind="compile_error", output="", error=diagnostic or
                                    "Не удалось скомпилировать Main.java.")
                 if task_type == "compile":
@@ -458,7 +601,8 @@ def create_app() -> Flask:
 
                 java_args = [java, "-Xms16m", "-Xmx96m", "-XX:MaxMetaspaceSize=128m",
                              "-XX:CompressedClassSpaceSize=64m", "-XX:ReservedCodeCacheSize=64m",
-                             "-XX:ActiveProcessorCount=2", "-cp", str(directory), "Main"]
+                             "-XX:ActiveProcessorCount=2", "-Dfile.encoding=UTF-8",
+                             "-cp", str(directory), "Main"]
                 is_lab = "testCases" in task
                 cases = task["testCases"] if is_lab else [{"expectedOutput": task["expectedOutput"]}]
                 # Compilation has a separate 10s cap; ALL executions of this
@@ -479,6 +623,9 @@ def create_app() -> Flask:
                         return jsonify(success=False, kind="timeout", output=output,
                                        error=label + "Время выполнения превысило 5 секунд. Проверьте цикл или ожидание ввода.")
                     if executed.returncode != 0:
+                        if is_vm_init_failure(executed.stderr, executed.returncode):
+                            return jsonify(success=False, kind="unavailable", output="",
+                                           error="Сбой запуска виртуальной машины JVM: " + (diagnostic.strip() or f"код завершения {executed.returncode}")), 503
                         label = f"Проверка {number}/{len(cases)}. Ввод:\n{case['input']}\n" if is_lab else ""
                         return jsonify(success=False, kind="runtime_error", output=output,
                                        error=label + (diagnostic or "Программа завершилась с ошибкой."))

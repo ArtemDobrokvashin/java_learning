@@ -334,12 +334,32 @@ final class TrainerPanel implements Disposable {
                             + " · " + task.id() + "\n\n" + result.error()
                             + (result.output().isBlank() ? "" : "\nВывод:\n" + result.output()));
                     output.setCaretPosition(0);
-                    status.setText(result.success()
-                            ? cleared ? task.id().startsWith("lab-")
-                                            ? "Лаборатория отмечена в общем профиле (без XP)."
-                                            : "Прогресс и XP записаны в общий профиль."
-                                      : "Прогресс записан, но черновик не очищен: обновите соединение."
-                            : "Черновик сохранён. Исправьте ошибку и повторите проверку.");
+                    String statusMsg;
+                    if (result.success()) {
+                        statusMsg = cleared ? task.id().startsWith("lab-")
+                                        ? "Лаборатория отмечена в общем профиле (без XP)."
+                                        : "Прогресс и XP записаны в общий профиль."
+                                  : "Прогресс записан, но черновик не очищен: обновите соединение.";
+                    } else if ("compile_error".equals(result.kind()) || "wrong_output".equals(result.kind())) {
+                        statusMsg = "Черновик сохранён. Исправьте ошибку и повторите проверку.";
+                    } else if ("timeout".equals(result.kind())) {
+                        statusMsg = "Черновик сохранён. Программа выполнялась слишком долго: проверьте цикл или завершение.";
+                    } else if ("compile_timeout".equals(result.kind())) {
+                        statusMsg = "Черновик сохранён. Компиляция заняла слишком много времени. Попробуйте снова.";
+                    } else if ("busy".equals(result.kind())) {
+                        statusMsg = "Черновик сохранён. Компилятор занят, подождите пару секунд и повторите проверку.";
+                    } else {
+                        statusMsg = "Черновик сохранён. Проверка не завершена из-за проблемы с окружением.";
+                    }
+                    status.setText(statusMsg);
+                });
+            } catch (TrainerApi.ServerException serverError) {
+                onUi(() -> {
+                    String title = serverError.statusCode() == 503 ? "Сбой сервиса/JDK (HTTP 503)"
+                            : serverError.statusCode() == 429 ? "Компилятор занят (HTTP 429)"
+                            : "Ошибка проверки (HTTP " + serverError.statusCode() + ")";
+                    output.setText(title + "\n\n" + serverError.getMessage());
+                    status.setText("Черновик сохранён на сервере. " + (serverError.statusCode() == 503 ? "Проверьте установку JDK." : "Попробуйте снова через несколько секунд."));
                 });
             } catch (IOException | InterruptedException error) {
                 onUi(() -> { output.setText("Ошибка связи: " + error.getMessage());

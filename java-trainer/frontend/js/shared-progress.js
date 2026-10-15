@@ -41,8 +41,11 @@ export function createSharedProgress({ getState, applyState }) {
           restoreDrafts(response.drafts);
         }
       } catch (error) {
-        if (error.status === 503) unavailable = true; // public preview: local-only save
-        else console.warn('Общее хранилище пока недоступно; сохранение браузера оставлено.', error);
+        if (error.status === 503 && (error.message?.includes('предпросмотр') || error.message?.includes('preview') || error.message?.includes('только локально'))) {
+          unavailable = true; // public preview: local-only save
+        } else {
+          console.warn('Общее хранилище пока недоступно; сохранение браузера оставлено.', error);
+        }
       } finally {
         running = false;
         inFlight = null;

@@ -121,17 +121,18 @@ export function resetState() {
   return freshState();
 }
 
-export function readCache(key, { allowStale = false } = {}) {
+export function readCache(key, { allowStale = false, revision = null } = {}) {
   try {
     const cached = JSON.parse(read(CACHE_PREFIX + key));
     if (cached?.version !== COURSE_VERSION || !cached?.data) return null;
+    if (revision && cached?.revision && cached.revision !== revision) return null;
     if (!allowStale && Date.now() - cached.savedAt > CACHE_MAX_AGE_MS) return null;
     return cached.data;
   } catch { return null; }
 }
 
-export function writeCache(key, data) {
-  write(CACHE_PREFIX + key, JSON.stringify({ version: COURSE_VERSION, savedAt: Date.now(), data }));
+export function writeCache(key, data, revision = null) {
+  write(CACHE_PREFIX + key, JSON.stringify({ version: COURSE_VERSION, revision, savedAt: Date.now(), data }));
 }
 
 export function readDraft(taskId) {

@@ -14,7 +14,7 @@ import re
 import tempfile
 import threading
 import time
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -56,7 +56,13 @@ def _keys(value, max_items=5000):
 
 
 def _date(value):
-    return value if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) else None
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return None
+    try:
+        date.fromisoformat(value)
+        return value
+    except ValueError:
+        return None
 
 
 def normalize_state(raw):
@@ -104,8 +110,19 @@ def merge_states(stored, incoming, *, browser=False):
     merged["xp"] = merged["legacyXp"] + sum(
         amount for key, amount in merged["xpLedger"].items()
         if not key.startswith("task:") or key[5:] not in merged["legacyAwardedTasks"])
-    merged["streak"] = max(left["streak"], right["streak"])
-    merged["lastActiveDate"] = max(filter(None, (left["lastActiveDate"], right["lastActiveDate"])), default=None)
+    # A streak is associated with its last active day, not a forever-growing
+    # counter. A stale browser tab must not restore a streak after a break.
+    left_day, right_day = left["lastActiveDate"], right["lastActiveDate"]
+    merged["lastActiveDate"] = max(filter(None, (left_day, right_day)), default=None)
+    if left_day == right_day:
+        merged["streak"] = max(left["streak"], right["streak"])
+    else:
+        newest = left if merged["lastActiveDate"] == left_day else right
+        merged["streak"] = newest["streak"]
+        merged["milestones"] = newest["milestones"]
+    if not merged["lastActiveDate"] or date.fromisoformat(merged["lastActiveDate"]) < date.today() - timedelta(days=1):
+        merged["streak"] = 0
+        merged["milestones"] = []
     for field in ("bossScores", "attempts", "reviewRewards"):
         merged[field] = {**left[field]}
         for key, value in right[field].items():
@@ -211,20 +228,34 @@ def award_code_task(task_id: str, task: dict) -> dict:
         profile = _read()
         state = profile["state"]
         is_lab = task_id.startswith("lab-")
+        now = datetime.now().astimezone()
+        today = now.date().isoformat()
+        if not is_lab and state["lastActiveDate"] != today:
+            prior = date.fromisoformat(state["lastActiveDate"]) if state["lastActiveDate"] else None
+            consecutive = prior is not None and (now.date() - prior).days == 1
+            state["streak"] = state["streak"] + 1 if consecutive else 1
+            if not consecutive:
+                state["milestones"] = []
+            state["lastActiveDate"] = today
         if task_id not in state["awardedTasks"]:
             state["awardedTasks"].append(task_id)
             # Labs have no XP (just like in the web application); the 44
-            # original practice tasks retain their original 50 XP reward.
-            amount = 0 if is_lab else 90 if task.get("difficulty") == "hardcore" else 50
+            # original practice tasks keep their 50 XP base reward.
+            base = 0 if is_lab else 90 if task.get("difficulty") == "hardcore" else 50
+            amount = (base * 11 + 5) // 10 if state["streak"] >= 2 else base
             if amount:
                 state["xpLedger"]["task:" + task_id] = amount
-                state["xp"] = state["legacyXp"] + sum(
-                    value for key, value in state["xpLedger"].items()
-                    if not key.startswith("task:") or key[5:] not in state["legacyAwardedTasks"])
+        milestone = {7: 50, 30: 200}.get(state["streak"])
+        if not is_lab and milestone and state["streak"] not in state["milestones"]:
+            state["milestones"].append(state["streak"])
+            state["xpLedger"][f"milestone:{state['streak']}:{today}"] = milestone
+        state["xp"] = state["legacyXp"] + sum(
+            value for key, value in state["xpLedger"].items()
+            if not key.startswith("task:") or key[5:] not in state["legacyAwardedTasks"])
         if is_lab and task_id not in state["completedLabs"]:
             state["completedLabs"].append(task_id)
         state["attempts"][task_id] = {"correct": True, "type": "code",
-                                      "lastAttempt": datetime.now().astimezone().isoformat(),
+                                      "lastAttempt": now.isoformat(),
                                       "mistakes": state["attempts"].get(task_id, {}).get("mistakes", 0),
                                       "needsReview": False}
         if task.get("difficulty") == "hardcore" and task.get("lessonId"):

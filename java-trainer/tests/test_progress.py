@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+from datetime import datetime, timedelta
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -98,6 +99,11 @@ class SharedProgressTests(unittest.TestCase):
         self.assertEqual(catalog["version"], 8)
         self.assertNotIn("testCases", str(catalog))
         self.assertEqual(len({item["id"] for item in catalog["tasks"]}), 148)
+        # Completing a lab cannot accidentally trigger a streak milestone:
+        # in the browser labs carry no XP or daily streak reward either.
+        yesterday = (datetime.now().astimezone().date() - timedelta(days=1)).isoformat()
+        self.client.post("/api/progress/merge", json={"source": "browser", "state": {
+            "lastActiveDate": yesterday, "streak": 6, "xp": 0}})
         lab_id = "lab-array-report"
         cases = server.code_tasks()[lab_id]["testCases"]
         outputs = [server.CommandResult(0, case["expectedOutput"], "") for case in cases]
@@ -110,7 +116,33 @@ class SharedProgressTests(unittest.TestCase):
         state = response.json["progress"]["state"]
         self.assertIn(lab_id, state["completedLabs"])
         self.assertEqual(state["xp"], 0)
+        self.assertEqual(state["streak"], 6)
         self.assertNotIn("task:" + lab_id, state["xpLedger"])
+
+    def test_streak_reconnect_and_ide_award_match_browser_rules(self):
+        today = datetime.now().astimezone().date()
+        yesterday = (today - timedelta(days=1)).isoformat()
+        old = (today - timedelta(days=4)).isoformat()
+        self.client.post("/api/progress/merge", json={"source": "browser", "state": {
+            "lastActiveDate": yesterday, "streak": 6, "milestones": [], "xp": 0}})
+        awarded = self.compile("m01-l02-hardcore").json["progress"]["state"]
+        self.assertEqual(awarded["streak"], 7)
+        self.assertEqual(awarded["lastActiveDate"], today.isoformat())
+        self.assertEqual(awarded["xp"], 99 + 50)
+        self.assertEqual(awarded["milestones"], [7])
+        self.assertEqual(self.compile("m01-l02-hardcore").json["progress"]["state"]["xp"], 149)
+        # An older tab cannot roll the active streak back to day 6.
+        merged = self.client.post("/api/progress/merge", json={"source": "browser", "state": {
+            "lastActiveDate": yesterday, "streak": 6, "milestones": []}}).json["state"]
+        self.assertEqual((merged["streak"], merged["xp"]), (7, 149))
+        # Conversely, an expired streak may not be restored just by merging
+        # a stale browser that once held a larger counter and milestone.
+        expired = shared_progress.merge_states({"lastActiveDate": old, "streak": 15,
+                                                 "milestones": [7]},
+                                                {"lastActiveDate": old, "streak": 0,
+                                                 "milestones": []})
+        self.assertEqual(expired["streak"], 0)
+        self.assertEqual(expired["milestones"], [])
 
     def test_newer_drafts_win_and_cleared_drafts_do_not_resurrect(self):
         self.client.post("/api/progress/merge", json={"source": "browser", "state": {},

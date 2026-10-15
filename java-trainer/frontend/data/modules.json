@@ -1,0 +1,657 @@
+{
+  "version": 8,
+  "modules": [
+    {
+      "id": 1,
+      "title": "Типы данных, переменные и константы",
+      "subtitle": "Основа языка: от битов до первых переменных",
+      "lessons": [
+        {
+          "id": "m01-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m01-l02",
+          "title": "Устройство компьютера"
+        },
+        {
+          "id": "m01-l03",
+          "title": "Типы данных и операции с ними"
+        },
+        {
+          "id": "m01-l04",
+          "title": "Переменные и операции с ними"
+        }
+      ],
+      "practiceId": "m01-practice",
+      "contentFile": "module-01.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 2,
+      "title": "Ветвления",
+      "subtitle": "Научитесь принимать решения в коде",
+      "lessons": [
+        {
+          "id": "m02-l01",
+          "title": "Алгоритмы и блок-схемы"
+        },
+        {
+          "id": "m02-l02",
+          "title": "Условный оператор if"
+        },
+        {
+          "id": "m02-l03",
+          "title": "Логические операции"
+        },
+        {
+          "id": "m02-l04",
+          "title": "Оператор switch case"
+        }
+      ],
+      "practiceId": "m02-practice",
+      "contentFile": "module-02.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 3,
+      "title": "Циклы",
+      "subtitle": "Повторяйте действия без повторения кода",
+      "lessons": [
+        {
+          "id": "m03-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m03-l02",
+          "title": "Массивы"
+        },
+        {
+          "id": "m03-l03",
+          "title": "Цикл со счётчиком: for"
+        },
+        {
+          "id": "m03-l04",
+          "title": "Цикл с предусловием и постусловием: while и do-while"
+        }
+      ],
+      "practiceId": "m03-practice",
+      "contentFile": "module-03.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 4,
+      "title": "Методы и введение в классы",
+      "subtitle": "Разделяйте задачи на понятные части",
+      "lessons": [
+        {
+          "id": "m04-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m04-l02",
+          "title": "Введение в методы и классы"
+        },
+        {
+          "id": "m04-l03",
+          "title": "Методы"
+        },
+        {
+          "id": "m04-l04",
+          "title": "Области видимости переменных"
+        }
+      ],
+      "practiceId": "m04-practice",
+      "contentFile": "module-04.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 5,
+      "title": "Объектно-ориентированный подход",
+      "subtitle": "Моделируйте мир с помощью объектов",
+      "lessons": [
+        {
+          "id": "m05-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m05-l02",
+          "title": "Объектно-ориентированный подход (парадигма)"
+        },
+        {
+          "id": "m05-l03",
+          "title": "Классы и объекты в Java"
+        },
+        {
+          "id": "m05-l04",
+          "title": "Статические поля и методы"
+        },
+        {
+          "id": "m05-l05",
+          "title": "Статические классы"
+        }
+      ],
+      "practiceId": "m05-practice",
+      "contentFile": "module-05.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 6,
+      "title": "Наследование",
+      "subtitle": "Повторно используйте поведение классов",
+      "lessons": [
+        {
+          "id": "m06-l01",
+          "title": "Наследование в Java. Введение"
+        },
+        {
+          "id": "m06-l02",
+          "title": "Реализация наследования в Java"
+        },
+        {
+          "id": "m06-l03",
+          "title": "Переопределение методов"
+        },
+        {
+          "id": "m06-l04",
+          "title": "Абстрактные классы"
+        },
+        {
+          "id": "m06-l05",
+          "title": "Интерфейсы и default-методы"
+        }
+      ],
+      "practiceId": "m06-practice",
+      "contentFile": "module-06.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 7,
+      "title": "Инкапсуляция",
+      "subtitle": "Контролируйте доступ к данным",
+      "lessons": [
+        {
+          "id": "m07-l01",
+          "title": "Введение в инкапсуляцию"
+        },
+        {
+          "id": "m07-l02",
+          "title": "Инкапсуляция в Java"
+        }
+      ],
+      "practiceId": "m07-practice",
+      "contentFile": "module-07.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 8,
+      "title": "Полиморфизм",
+      "subtitle": "Один интерфейс — разные реализации",
+      "lessons": [
+        {
+          "id": "m08-l01",
+          "title": "Введение в полиморфизм"
+        },
+        {
+          "id": "m08-l02",
+          "title": "Полиморфизм в Java"
+        },
+        {
+          "id": "m08-l03",
+          "title": "Generics — обобщённые типы данных"
+        }
+      ],
+      "practiceId": "m08-practice",
+      "contentFile": "module-08.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 9,
+      "title": "Java коллекции",
+      "subtitle": "Храните и обрабатывайте наборы данных",
+      "lessons": [
+        {
+          "id": "m09-l01",
+          "title": "Введение в Collections"
+        },
+        {
+          "id": "m09-l02",
+          "title": "List и его реализации"
+        },
+        {
+          "id": "m09-l03",
+          "title": "Множества Set"
+        },
+        {
+          "id": "m09-l04",
+          "title": "Методы toString, equals, hashCode"
+        },
+        {
+          "id": "m09-l05",
+          "title": "Ассоциативные массивы. Map"
+        }
+      ],
+      "practiceId": "m09-practice",
+      "contentFile": "module-09.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 10,
+      "title": "Работа с файлами",
+      "subtitle": "Читайте, записывайте и сохраняйте",
+      "lessons": [
+        {
+          "id": "m10-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m10-l02",
+          "title": "Чтение из файлов"
+        },
+        {
+          "id": "m10-l03",
+          "title": "Разбор строк"
+        },
+        {
+          "id": "m10-l04",
+          "title": "Запись в файл"
+        },
+        {
+          "id": "m10-l05",
+          "title": "Сериализация и десериализация объектов"
+        }
+      ],
+      "practiceId": "m10-practice",
+      "contentFile": "module-10.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 11,
+      "title": "Ошибки в Java",
+      "subtitle": "Превратите сбои в понятный сценарий",
+      "lessons": [
+        {
+          "id": "m11-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m11-l02",
+          "title": "Exceptions и Errors"
+        },
+        {
+          "id": "m11-l03",
+          "title": "Обработка исключений"
+        },
+        {
+          "id": "m11-l04",
+          "title": "Генерация исключений"
+        },
+        {
+          "id": "m11-l05",
+          "title": "Assert — утверждения"
+        }
+      ],
+      "practiceId": "m11-practice",
+      "contentFile": "module-11.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 12,
+      "title": "Многопоточность",
+      "subtitle": "Освойте параллельное выполнение",
+      "lessons": [
+        {
+          "id": "m12-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m12-l02",
+          "title": "Потоки и процессы. Создание и завершение потока в Java"
+        },
+        {
+          "id": "m12-l03",
+          "title": "Состояние потока и способы синхронизации"
+        },
+        {
+          "id": "m12-l04",
+          "title": "Методы isAlive и sleep"
+        },
+        {
+          "id": "m12-l05",
+          "title": "Ключевое слово synchronized"
+        },
+        {
+          "id": "m12-l06",
+          "title": "Метод yield()"
+        },
+        {
+          "id": "m12-l07",
+          "title": "Использование Callable и Executors"
+        }
+      ],
+      "practiceId": "m12-practice",
+      "contentFile": "module-12.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 13,
+      "title": "Алгоритмы",
+      "subtitle": "Думайте об эффективности решений",
+      "lessons": [
+        {
+          "id": "m13-l01",
+          "title": "Введение"
+        },
+        {
+          "id": "m13-l02",
+          "title": "Сложность алгоритмов"
+        },
+        {
+          "id": "m13-l03",
+          "title": "Динамические алгоритмы"
+        },
+        {
+          "id": "m13-l04",
+          "title": "Графы"
+        }
+      ],
+      "practiceId": "m13-practice",
+      "contentFile": "module-13.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 14,
+      "title": "Паттерны проектирования",
+      "subtitle": "Знакомые решения типовых проблем",
+      "lessons": [
+        {
+          "id": "m14-l01",
+          "title": "Что такое паттерны, и зачем их используют"
+        },
+        {
+          "id": "m14-l02",
+          "title": "Порождающие шаблоны"
+        },
+        {
+          "id": "m14-l03",
+          "title": "Паттерн Строитель (Builder)"
+        },
+        {
+          "id": "m14-l04",
+          "title": "Паттерн Одиночка (Singleton)"
+        },
+        {
+          "id": "m14-l05",
+          "title": "Структурные паттерны и Прокси (Proxy)"
+        },
+        {
+          "id": "m14-l06",
+          "title": "Поведенческие шаблоны и Итератор (Iterator)"
+        }
+      ],
+      "practiceId": "m14-practice",
+      "contentFile": "module-14.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 15,
+      "title": "Паттерн MVC и простое приложение",
+      "subtitle": "Отделяйте данные, интерфейс и логику",
+      "lessons": [
+        {
+          "id": "m15-l01",
+          "title": "Введение в архитектурный паттерн MVC"
+        },
+        {
+          "id": "m15-l02",
+          "title": "Представление View"
+        },
+        {
+          "id": "m15-l03",
+          "title": "Модель Model"
+        },
+        {
+          "id": "m15-l04",
+          "title": "Контроллер Controller"
+        }
+      ],
+      "practiceId": "m15-practice",
+      "contentFile": "module-15.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 16,
+      "title": "Базы данных. SQL",
+      "subtitle": "От таблиц и запросов к JDBC",
+      "lessons": [
+        {
+          "id": "m16-l01",
+          "title": "Введение в SQL"
+        },
+        {
+          "id": "m16-l02",
+          "title": "Нормализация БД"
+        },
+        {
+          "id": "m16-l03",
+          "title": "Использование JDBC"
+        },
+        {
+          "id": "m16-l04",
+          "title": "Работа с пользователями"
+        },
+        {
+          "id": "m16-l05",
+          "title": "Связи между таблицами"
+        },
+        {
+          "id": "m16-l06",
+          "title": "Усложнение запросов"
+        },
+        {
+          "id": "m16-l07",
+          "title": "Индексы в базах данных"
+        }
+      ],
+      "practiceId": "m16-practice",
+      "contentFile": "module-16.json",
+      "contentStatus": "ready"
+    },
+    {
+      "id": 17,
+      "title": "Введение в Spring и Spring Web",
+      "subtitle": "Соберите первое веб-приложение",
+      "lessons": [
+        {
+          "id": "m17-l01",
+          "title": "Maven"
+        },
+        {
+          "id": "m17-l02",
+          "title": "Введение в Spring"
+        },
+        {
+          "id": "m17-l03",
+          "title": "Контекст приложения и инверсия контроля. Введение в Spring Boot"
+        },
+        {
+          "id": "m17-l04",
+          "title": "Запросы GetMapping и PostMapping"
+        },
+        {
+          "id": "m17-l05",
+          "title": "Spring Devtools"
+        }
+      ],
+      "practiceId": "m17-practice",
+      "contentFile": "module-17.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m17-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    },
+    {
+      "id": 18,
+      "title": "Базы данных в Spring",
+      "subtitle": "Соедините приложение и данные",
+      "lessons": [
+        {
+          "id": "m18-l01",
+          "title": "JdbcTemplate"
+        },
+        {
+          "id": "m18-l02",
+          "title": "Введение в JPA"
+        },
+        {
+          "id": "m18-l03",
+          "title": "Hibernate"
+        },
+        {
+          "id": "m18-l04",
+          "title": "Типы переменных в сущностях"
+        },
+        {
+          "id": "m18-l05",
+          "title": "Связи OneToOne, OneToMany, ManyToMany"
+        },
+        {
+          "id": "m18-l06",
+          "title": "Наследование сущностей"
+        }
+      ],
+      "practiceId": "m18-practice",
+      "contentFile": "module-18.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m18-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    },
+    {
+      "id": 19,
+      "title": "Введение в Spring REST",
+      "subtitle": "Проектируйте понятный HTTP API",
+      "lessons": [
+        {
+          "id": "m19-l01",
+          "title": "Сетевые протоколы и клиент-серверные приложения"
+        },
+        {
+          "id": "m19-l02",
+          "title": "Введение в Spring REST"
+        },
+        {
+          "id": "m19-l03",
+          "title": "REST-контроллеры"
+        }
+      ],
+      "practiceId": "m19-practice",
+      "contentFile": "module-19.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m19-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    },
+    {
+      "id": 20,
+      "title": "Тестирование программ",
+      "subtitle": "Проверяйте поведение автоматически",
+      "lessons": [
+        {
+          "id": "m20-l01",
+          "title": "Тестирование программ и виды тестов"
+        },
+        {
+          "id": "m20-l02",
+          "title": "Библиотека JUnit"
+        },
+        {
+          "id": "m20-l03",
+          "title": "Библиотека Mockito"
+        }
+      ],
+      "practiceId": "m20-practice",
+      "contentFile": "module-20.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m20-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    },
+    {
+      "id": 21,
+      "title": "Процесс разработки ПО",
+      "subtitle": "Разберитесь, как работает команда",
+      "lessons": [
+        {
+          "id": "m21-l01",
+          "title": "Методологии разработки ПО"
+        },
+        {
+          "id": "m21-l02",
+          "title": "Waterfall и Agile"
+        },
+        {
+          "id": "m21-l03",
+          "title": "Scrum и Kanban"
+        },
+        {
+          "id": "m21-l04",
+          "title": "Командная работа. Роли"
+        }
+      ],
+      "practiceId": "m21-practice",
+      "contentFile": "module-21.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m21-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    },
+    {
+      "id": 22,
+      "title": "CI/CD",
+      "subtitle": "Путь к автоматической доставке кода",
+      "lessons": [
+        {
+          "id": "m22-l01",
+          "title": "Введение в CI/CD и Docker"
+        },
+        {
+          "id": "m22-l02",
+          "title": "Docker"
+        },
+        {
+          "id": "m22-l03",
+          "title": "Примеры CI/CD-систем"
+        },
+        {
+          "id": "m22-l04",
+          "title": "GitLab CI/CD"
+        }
+      ],
+      "practiceId": "m22-practice",
+      "contentFile": "module-22.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m22-boss",
+        "title": "Стоп-урок",
+        "questionCount": 5,
+        "passingScore": 0.8
+      }
+    }
+  ]
+}

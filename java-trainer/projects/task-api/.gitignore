@@ -1,0 +1,4 @@
+target/
+tasks-db*.db
+.idea/
+*.iml

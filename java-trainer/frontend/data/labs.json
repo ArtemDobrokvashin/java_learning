@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "labs": [
+    {
+      "id": "lab-array-report",
+      "type": "code",
+      "mode": "run",
+      "title": "Массив: минимум, максимум и сумма",
+      "goal": "Один проход по данным, граничные случаи и переполнение int.",
+      "description": "Прочитайте n целых чисел из стандартного ввода (n от 1 до 100). Выведите минимум, максимум и сумму через пробел. Сумму храните в long.",
+      "prerequisites": [
+        1,
+        2,
+        3
+      ],
+      "skills": [
+        "массивы и циклы",
+        "границы",
+        "long для суммы"
+      ],
+      "inputFormat": "Первая строка — n, затем n целых чисел через пробел или перенос строки.",
+      "outputFormat": "Одна строка: min max sum.",
+      "sampleInput": "5\n5 -2 9 9 0\n",
+      "sampleOutput": "-2 9 21",
+      "hint": "Прочитайте первый элемент как старт для min, max и sum; остальные обработайте циклом от 1 до n-1.",
+      "starterCode": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int first = in.nextInt();\n        int min = first, max = first;\n        long sum = first;\n        // TODO: обработайте остальные n - 1 чисел.\n        System.out.println(min + \" \" + max + \" \" + sum);\n    }\n}\n"
+    },
+    {
+      "id": "lab-user-lookup",
+      "type": "code",
+      "mode": "run",
+      "title": "Каталог пользователей",
+      "goal": "Данные в модели, индексирование Map и явная обработка отсутствующего ключа.",
+      "description": "Прочитайте n строк формата id;имя;true|false (ID уникальны и положительны), затем искомый ID. Если пользователь активен, выведите имя; если неактивен — INACTIVE; если отсутствует — NOT_FOUND.",
+      "prerequisites": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "skills": [
+        "классы или record",
+        "Map",
+        "ветвления"
+      ],
+      "inputFormat": "Первая строка — n (0..100), далее n строк id;имя;active, последняя строка — искомый ID. Имя непустое, не содержит точку с запятой.",
+      "outputFormat": "Имя, INACTIVE или NOT_FOUND (одна строка).",
+      "sampleInput": "3\n1;Анна;true\n2;Борис;false\n10;Лена;true\n10\n",
+      "sampleOutput": "Лена",
+      "hint": "Храните объекты User в Map<Integer, User>; split(\";\", -1) разделяет строку, затем сначала проверьте отсутствие, потом active.",
+      "starterCode": "import java.io.*;\nimport java.util.*;\n\nrecord User(int id, String name, boolean active) { }\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        Map<Integer, User> users = new HashMap<>();\n        // TODO: прочитайте n записей id;имя;true|false.\n        // TODO: прочитайте искомый ID и выведите один ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-import-report",
+      "type": "code",
+      "mode": "run",
+      "title": "Импорт: не теряемся при плохих данных",
+      "goal": "Разбор строк, проверка входа и обработка ошибок без падения всей программы.",
+      "description": "Прочитайте n строк формата имя,возраст. Считайте строку корректной, если имя после trim непустое, ровно одна запятая, возраст — целое от 0 до 120 включительно. Некорректные строки пропускайте. Выведите число корректных записей и сумму возрастов.",
+      "prerequisites": [
+        10,
+        11,
+        13
+      ],
+      "skills": [
+        "разбор CSV-подобных данных",
+        "NumberFormatException",
+        "проверка границ"
+      ],
+      "inputFormat": "Первая строка — n (0..100), далее n строк имя,возраст. Это упрощённый формат: кавычки и экранирование не нужны.",
+      "outputFormat": "Одна строка: количество_корректных сумма_возрастов.",
+      "sampleInput": "5\nАнна,25\nБорис,abc\n,20\nИгорь,17\nЗоя,30\n",
+      "sampleOutput": "3 72",
+      "hint": "Используйте split(\",\", -1), проверьте длину массива == 2 и непустое имя; ловите только NumberFormatException.",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        int count = 0;\n        long totalAge = 0;\n        for (int i = 0; i < n; i++) {\n            String row = in.readLine();\n            // TODO: разберите row, проверьте диапазон и обновите счётчики.\n        }\n        System.out.println(count + \" \" + totalAge);\n    }\n}\n"
+    },
+    {
+      "id": "lab-order-totals",
+      "type": "code",
+      "mode": "run",
+      "title": "Заказы: GROUP BY без базы данных",
+      "goal": "Агрегировать суммы по ID, фильтровать группы и выдавать предсказуемый порядок.",
+      "description": "Прочитайте n заказов вида userId amount и порог. ID положительный, сумма заказа и порог неотрицательные. Для каждого пользователя сложите суммы в long, оставьте тех, чей итог >= порога, отсортируйте по возрастанию ID и выведите id:сумма через запятую без пробелов. Если подходящих нет — выведите -.",
+      "prerequisites": [
+        9,
+        13,
+        16
+      ],
+      "skills": [
+        "Map и сортировка",
+        "агрегирование как GROUP BY",
+        "фильтрация как HAVING"
+      ],
+      "inputFormat": "Первая строка — n (0..100), далее n строк userId amount, последняя строка — порог.",
+      "outputFormat": "Одна строка: id:total,id:total или -.",
+      "sampleInput": "4\n1 30\n2 70\n1 80\n3 100\n100\n",
+      "sampleOutput": "1:110,3:100",
+      "hint": "Map<Integer, Long> считает суммы; сортируйте ключи, затем собирайте строки через String.join(\",\", parts).",
+      "starterCode": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        Map<Integer, Long> totals = new HashMap<>();\n        // TODO: прочитайте n пар ID / сумма.\n        long threshold = in.nextLong();\n        // TODO: отсортируйте ID, оставьте подходящие группы и выведите ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-rest-router",
+      "type": "code",
+      "mode": "run",
+      "title": "Маршрутизатор HTTP-запросов",
+      "goal": "Разобрать метод и путь, вернуть корректный статус и обработать незнакомые маршруты.",
+      "description": "Для каждого запроса поддержите GET /health → 200 OK, POST /users → 201 CREATED, GET /users/{id} при положительном id из десятичных цифр ASCII без знака → 200 USER id (ведущие нули во входе допустимы, в ответе выведите число без них). Любой другой запрос (включая неверный ID) → 404 NOT_FOUND. Порядок ответов совпадает с порядком запросов. Это модель маршрутизатора на JDK, а не Spring-сервер.",
+      "prerequisites": [
+        16,
+        17,
+        19
+      ],
+      "skills": [
+        "HTTP-методы и маршруты",
+        "разбор пути",
+        "валидация ID"
+      ],
+      "inputFormat": "Первая строка — n (1..30), далее n строк МЕТОД ПУТЬ, разделённые одним пробелом. ID записывается только цифрами ASCII без знака (01 допустим); некорректный или слишком большой ID возвращает 404.",
+      "outputFormat": "По одной строке на запрос: статус и данные.",
+      "sampleInput": "4\nGET /health\nGET /users/42\nPOST /users\nDELETE /users/42\n",
+      "sampleOutput": "200 OK\n200 USER 42\n201 CREATED\n404 NOT_FOUND",
+      "hint": "Проверяйте точные маршруты до шаблона; для /users/{id} проверьте цифры ASCII [0-9]+, затем Long.parseLong с перехватом NumberFormatException.",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        for (int i = 0; i < n; i++) {\n            String request = in.readLine();\n            String[] parts = request.split(\" \", 2);\n            // TODO: выберите ответ по методу и пути.\n            System.out.println(\"404 NOT_FOUND\");\n        }\n    }\n}\n"
+    }
+  ]
+}

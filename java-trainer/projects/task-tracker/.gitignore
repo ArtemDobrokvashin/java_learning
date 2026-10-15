@@ -1,0 +1,5 @@
+out/
+*.class
+tasks.tsv
+*.tmp
+__pycache__/

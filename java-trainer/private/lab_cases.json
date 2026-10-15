@@ -1,0 +1,92 @@
+{
+  "lab-array-report": [
+    {
+      "input": "5\n5 -2 9 9 0\n",
+      "expectedOutput": "-2 9 21"
+    },
+    {
+      "input": "1\n-7\n",
+      "expectedOutput": "-7 -7 -7"
+    },
+    {
+      "input": "4\n0 0 0 0\n",
+      "expectedOutput": "0 0 0"
+    },
+    {
+      "input": "3\n2000000000 2000000000 2000000000\n",
+      "expectedOutput": "2000000000 2000000000 6000000000"
+    }
+  ],
+  "lab-user-lookup": [
+    {
+      "input": "3\n1;Анна;true\n2;Борис;false\n10;Лена;true\n10\n",
+      "expectedOutput": "Лена"
+    },
+    {
+      "input": "1\n2;Борис;false\n2\n",
+      "expectedOutput": "INACTIVE"
+    },
+    {
+      "input": "2\n7;Саша;true\n8;Женя;true\n99\n",
+      "expectedOutput": "NOT_FOUND"
+    },
+    {
+      "input": "0\n1\n",
+      "expectedOutput": "NOT_FOUND"
+    }
+  ],
+  "lab-import-report": [
+    {
+      "input": "5\nАнна,25\nБорис,abc\n,20\nИгорь,17\nЗоя,30\n",
+      "expectedOutput": "3 72"
+    },
+    {
+      "input": "4\nКоля,0\nЛена,120\nВася,121\nМаша,-1\n",
+      "expectedOutput": "2 120"
+    },
+    {
+      "input": "3\nПетя,\nбез запятой\nПетя,10,11\n",
+      "expectedOutput": "0 0"
+    },
+    {
+      "input": "3\n Аня , 12 \nИван,34\nЕва,7\n",
+      "expectedOutput": "3 53"
+    }
+  ],
+  "lab-order-totals": [
+    {
+      "input": "4\n1 30\n2 70\n1 80\n3 100\n100\n",
+      "expectedOutput": "1:110,3:100"
+    },
+    {
+      "input": "3\n9 5\n2 12\n9 3\n8\n",
+      "expectedOutput": "2:12,9:8"
+    },
+    {
+      "input": "2\n1 10\n2 20\n21\n",
+      "expectedOutput": "-"
+    },
+    {
+      "input": "3\n7 2000000000\n7 2000000000\n1 0\n3000000000\n",
+      "expectedOutput": "7:4000000000"
+    }
+  ],
+  "lab-rest-router": [
+    {
+      "input": "4\nGET /health\nGET /users/42\nPOST /users\nDELETE /users/42\n",
+      "expectedOutput": "200 OK\n200 USER 42\n201 CREATED\n404 NOT_FOUND"
+    },
+    {
+      "input": "6\nGET /users/0\nGET /users/abc\nGET /users/-1\nGET /users/+1\nGET /users/01\nGET /users/1\n",
+      "expectedOutput": "404 NOT_FOUND\n404 NOT_FOUND\n404 NOT_FOUND\n404 NOT_FOUND\n200 USER 1\n200 USER 1"
+    },
+    {
+      "input": "3\nPOST /health\nGET /users\nGET /missing\n",
+      "expectedOutput": "404 NOT_FOUND\n404 NOT_FOUND\n404 NOT_FOUND"
+    },
+    {
+      "input": "3\nGET /users/9223372036854775807\nGET /users/9223372036854775808\nGET /health\n",
+      "expectedOutput": "200 USER 9223372036854775807\n404 NOT_FOUND\n200 OK"
+    }
+  ]
+}

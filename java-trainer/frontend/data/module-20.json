@@ -1,0 +1,800 @@
+{
+  "id": 20,
+  "title": "Тестирование программ",
+  "lessons": [
+    {
+      "id": "m20-l01",
+      "title": "Тестирование программ и виды тестов",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "Тесты проверяют наблюдаемое поведение программы. Модульный тест изолирует небольшую часть, интеграционный проверяет взаимодействие компонентов, end-to-end проходит пользовательский сценарий целиком.",
+          "Хороший тест имеет понятные Arrange, Act, Assert: подготовить данные, выполнить действие, проверить результат. Проверяйте крайние случаи и ошибки, а не только счастливый путь; тесты должны быть воспроизводимы."
+        ],
+        "code": "int actual = Math.max(2, 5);\nif (actual != 5) throw new AssertionError(\"max\");",
+        "caption": "Тест проверяет поведение, а не внутреннюю форму кода.",
+        "language": "java",
+        "objective": "Организовать тест по схеме подготовка — действие — проверка.",
+        "walkthrough": "Math.max(2, 5) возвращает 5; условие actual != 5 ложно, поэтому AssertionError не бросается. Смена ожидаемого результата выявит ошибку.",
+        "pitfall": "Тестируйте не только один удачный случай: для max полезны равные и отрицательные аргументы, а также нулевое значение.",
+        "deepDive": "Тест проверяет наблюдаемый контракт при заданном входе; разные уровни тестов находят разные сбои. Модульный тест быстрый и точный, интеграционный выявляет ошибки совместной работы, а сквозной ближе к реальному пользователю.",
+        "useCase": "Для расчёта скидки проверьте обычную цену, ноль и недопустимый процент отдельно. Сформулируйте ожидаемый результат до вызова метода: тест, повторяющий тот же алгоритм, может повторить и ту же ошибку.",
+        "guide": {
+          "why": "Тест — проверка конкретного ожидаемого поведения, а не доказательство, что ошибок нет. Осмысленные сценарии покрывают нормальный путь, границы и некорректный ввод.",
+          "steps": [
+            "Сначала вычислите actual обычной функцией. Затем сравните с ожидаемым значением, заданным независимо от реализации.",
+            "При несовпадении бросьте AssertionError, чтобы прогон упал, а не только напечатал неверное число. При успехе можно вывести PASS."
+          ],
+          "example": {
+            "code": "int actual = Math.min(8, 3);\nif (actual != 3) throw new AssertionError(\"ожидали 3\");\nSystem.out.println(\"PASS\");",
+            "language": "java",
+            "runnable": false,
+            "label": "Самостоятельная проверка внутри main"
+          },
+          "result": "При правильной функции выведется PASS. Если заменить ожидаемое число на 8, программа завершится с AssertionError.",
+          "bridge": "В практической проверке своего метода add не подставляйте заведомый правильный ответ вместо вызова тестируемого метода."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m20-l01-copy",
+          "type": "copy",
+          "prompt": "Перепишите вручную показанный ниже пример из пошагового разбора. Сохраните порядок команд, имена, строковые литералы и важные отступы; после этого разберите, что делает каждая строка.",
+          "sourceCode": "int actual = Math.min(8, 3);\nif (actual != 3) throw new AssertionError(\"ожидали 3\");\nSystem.out.println(\"PASS\");",
+          "language": "java",
+          "hint": "Сверьте команды, регистр букв, кавычки и закрывающие скобки с образцом. Можно менять только форматирование Java-кода.",
+          "explanation": "Это тот же фрагмент, что разобран в теории. При правильной функции выведется PASS. Если заменить ожидаемое число на 8, программа завершится с AssertionError."
+        },
+        {
+          "type": "choice",
+          "prompt": "Что делает этап Assert в тесте?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Готовит данные"
+            },
+            {
+              "id": "b",
+              "label": "Проверяет наблюдаемый результат"
+            },
+            {
+              "id": "c",
+              "label": "Собирает jar"
+            },
+            {
+              "id": "d",
+              "label": "Создаёт поток"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "После действия нужно сравнить ожидание и факт.",
+          "explanation": "Assert сообщает, прошло ли ожидание.",
+          "id": "m20-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Допишите структуру теста AAA.",
+          "template": [
+            "Arrange → Act → ",
+            ""
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Assert",
+              "options": [
+                "Assert",
+                "Abort",
+                "Access"
+              ]
+            }
+          ],
+          "hint": "Последний шаг проверяет результат.",
+          "explanation": "Arrange, Act, Assert — стандартная схема теста.",
+          "id": "m20-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m20-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "Какая пара входов лучше проверит add(int,int): только 2 и 3 или ещё -1 и 1?",
+          "options": [
+            {
+              "id": "a",
+              "label": "только 2+3: второй случай бесполезен"
+            },
+            {
+              "id": "b",
+              "label": "оба случая: обычный и результат ноль"
+            },
+            {
+              "id": "c",
+              "label": "ни один: тесты невозможны"
+            },
+            {
+              "id": "d",
+              "label": "только отрицательные числа"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "Разные входы проверяют не только счастливый путь, но и границу.",
+          "explanation": "Верно: оба случая: обычный и результат ноль. Разные входы проверяют не только счастливый путь, но и границу."
+        },
+        {
+          "id": "m20-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m20-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Без JUnit напишите метод static int add(int a,int b). В main проверьте add(2,3)==5 и add(-1,1)==0 через два boolean и выведите их через двоеточие.",
+          "expectedOutput": "true:true",
+          "hint": "Два тестовых случая проверяют обычный и граничный ввод; сам метод вычисляет сумму.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'true:true'. Два тестовых случая проверяют обычный и граничный ввод; сам метод вычисляет сумму."
+        }
+      ]
+    },
+    {
+      "id": "m20-l02",
+      "title": "Библиотека JUnit",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "JUnit — популярная библиотека модульного тестирования Java. @Test отмечает тестовый метод, Assertions.assertEquals(expected, actual) сравнивает ожидаемое и фактическое значения.",
+          "JUnit не входит в стандартный JDK: настоящий запуск тестов требует Maven/Gradle и зависимости. Для учебных кодовых задач этого модуля используется проверка через обычный Java AssertionError, а синтаксис JUnit отрабатывается в тестах интерфейса."
+        ],
+        "code": "@Test\nvoid sumIsCorrect() {\n    assertEquals(5, calculator.add(2, 3));\n}",
+        "caption": "JUnit требует отдельной зависимости, которой нет в JDK.",
+        "language": "java",
+        "objective": "Использовать @Test и assertEquals в проекте с подключённым JUnit.",
+        "walkthrough": "При add(2, 3) равном 5 assertEquals(5, actual) проходит; первый аргумент — ожидание, второй — факт. @Test отмечает метод для движка.",
+        "pitfall": "Этот фрагмент требует зависимость и импорты JUnit, которых нет в стандартном JDK. Не путайте его с ключевым словом Java assert.",
+        "deepDive": "JUnit запускает методы с @Test и показывает разницу между expected и actual в assertEquals. assertThrows проверяет ожидаемый путь с исключением; сами тесты требуют внешнюю библиотеку и конфигурацию сборки.",
+        "useCase": "Для функции деления напишите успешный тест и отдельный тест деления на ноль. Запустите mvn test в самостоятельном проекте и убедитесь, что сломанный тест действительно делает сборку красной.",
+        "guide": {
+          "why": "JUnit управляет запуском тестов и даёт понятные утверждения. @Test помечает метод, а assertEquals сравнивает ожидаемый и реальный результат.",
+          "steps": [
+            "Создайте тестовый класс с методом, помеченным @Test. Имя метода должно описывать сценарий, а не повторять имя реализации.",
+            "В assertEquals(ожидание, фактический_результат) сначала идёт ожидаемое значение. Нужна JUnit-зависимость и тестовый запуск, обычный Main не исполнит @Test автоматически."
+          ],
+          "example": {
+            "code": "@Test\nvoid multiplicationOfTwoPositiveNumbers() {\n    Calculator calculator = new Calculator();\n    assertEquals(12, calculator.multiply(3, 4));\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Метод тестового класса с зависимостью JUnit"
+          },
+          "result": "Тест проходит, если multiply возвращает 12; иначе JUnit покажет различие. Требуются JUnit и определение Calculator.",
+          "bridge": "В практике имитируйте это сравнение без JUnit: при несовпадении бросьте AssertionError, при совпадении напечатайте подтверждение."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m20-l02-copy",
+          "type": "copy",
+          "prompt": "Перепишите вручную показанный ниже пример из пошагового разбора. Сохраните порядок команд, имена, строковые литералы и важные отступы; после этого разберите, что делает каждая строка.",
+          "sourceCode": "@Test\nvoid multiplicationOfTwoPositiveNumbers() {\n    Calculator calculator = new Calculator();\n    assertEquals(12, calculator.multiply(3, 4));\n}",
+          "language": "java",
+          "hint": "Сверьте команды, регистр букв, кавычки и закрывающие скобки с образцом. Можно менять только форматирование Java-кода.",
+          "explanation": "Это тот же фрагмент, что разобран в теории. Тест проходит, если multiply возвращает 12; иначе JUnit покажет различие. Требуются JUnit и определение Calculator."
+        },
+        {
+          "type": "choice",
+          "prompt": "Какой аргумент у assertEquals(expected, actual) идёт первым?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Фактическое значение"
+            },
+            {
+              "id": "b",
+              "label": "Ожидаемое значение"
+            },
+            {
+              "id": "c",
+              "label": "Название класса"
+            },
+            {
+              "id": "d",
+              "label": "Метод main"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "Сигнатура явно называет expected перед actual.",
+          "explanation": "Первым передаётся ожидаемый результат.",
+          "id": "m20-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Пометьте JUnit-метод как тест.",
+          "template": [
+            "",
+            "\nvoid sumIsCorrect() { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@Test",
+              "options": [
+                "@Test",
+                "@Entity",
+                "@Override"
+              ]
+            }
+          ],
+          "hint": "Аннотация библиотеки JUnit.",
+          "explanation": "@Test сообщает тестовому движку о методе.",
+          "id": "m20-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m20-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "Что произойдёт при проверке if(square(4) != 16) throw new AssertionError(), если square реализован правильно?",
+          "options": [
+            {
+              "id": "a",
+              "label": "исключение будет всегда"
+            },
+            {
+              "id": "b",
+              "label": "ветка не выполнится"
+            },
+            {
+              "id": "c",
+              "label": "запуск станет бесконечным"
+            },
+            {
+              "id": "d",
+              "label": "метод square вернёт null"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "Ожидаемое и фактическое значения совпадают; условие ложно.",
+          "explanation": "Верно: ветка не выполнится. Ожидаемое и фактическое значения совпадают; условие ложно."
+        },
+        {
+          "id": "m20-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m20-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Напишите static int square(int n), возвращающий n*n. Для 4 проверьте ожидаемое 16 через if и throw new AssertionError при несовпадении, затем выведите «PASS».",
+          "expectedOutput": "PASS",
+          "hint": "JDK-эквивалент проверки JUnit: ожидаемое значение сравнивается с фактическим, не печатается без проверки.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'PASS'. JDK-эквивалент проверки JUnit: ожидаемое значение сравнивается с фактическим, не печатается без проверки."
+        }
+      ]
+    },
+    {
+      "id": "m20-l03",
+      "title": "Библиотека Mockito",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "Mockito помогает заменить зависимость подставным объектом (mock), чтобы тестировать класс отдельно от БД или сети. when(...).thenReturn(...) задаёт поведение, verify(...) проверяет вызовы.",
+          "Не мокайте собственные простые значения без причины: настоящий маленький объект часто понятнее. Проверяйте результат и важные взаимодействия, не привязывая тест к каждому внутреннему вызову."
+        ],
+        "code": "Repository repo = mock(Repository.class);\nwhen(repo.find(1)).thenReturn(\"Alice\");\nnew UserService(repo).load(1);\nverify(repo).find(1);",
+        "caption": "Mockito — библиотека, не часть стандартного JDK.",
+        "language": "java",
+        "objective": "Настроить mock и проверить взаимодействие после вызова тестируемого сервиса.",
+        "walkthrough": "when(repo.find(1)).thenReturn(\"Alice\") задаёт ответ; после service.load(1) вызов verify(repo).find(1) проверяет, что сервис обратился к repo.",
+        "pitfall": "verify до вызова сервиса упадёт: настроенный mock сам себя не вызывает. Не подменяйте mock-ом простые значения без пользы для теста.",
+        "deepDive": "Mockito подменяет внешнюю зависимость, чтобы исследовать поведение сервиса без реальной БД. Настройка when определяет ответ, verify проверяет взаимодействие после действия; само наличие mock не доказывает правильность итогового результата.",
+        "useCase": "Для сервиса загрузки пользователя проверьте возвращаемое имя и вызов repo.find(1). Оставьте интеграционный тест с настоящим хранилищем: mock не найдёт неверный SQL или ошибку сопоставления столбцов.",
+        "guide": {
+          "why": "Mockito заменяет внешнюю зависимость управляемым двойником. Проверяйте не только возвращённый результат, но и значимое взаимодействие с репозиторием.",
+          "steps": [
+            "mock(Repository.class) создаёт замену, when(...).thenReturn(...) настраивает её ответ на заданный аргумент.",
+            "Вызовите тестируемый UserService и проверьте verify(repo).find(7). Это показывает, что зависимость использована ожидаемо; не стоит мокировать сам тестируемый сервис."
+          ],
+          "example": {
+            "code": "Repository repo = mock(Repository.class);\nwhen(repo.find(7)).thenReturn(\"Мира\");\nUserService service = new UserService(repo);\nString name = service.load(7);\nverify(repo).find(7);",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент теста с Mockito и тестовыми классами"
+          },
+          "result": "При правильно настроенном сервисе name равно «Мира», а verify подтвердит вызов find(7). Нужны Mockito и определения классов.",
+          "bridge": "В практике без Mockito сделайте FakeRepository со счётчиком вызовов: это ручная замена того же принципа наблюдения."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m20-l03-copy",
+          "type": "copy",
+          "prompt": "Перепишите вручную показанный ниже пример из пошагового разбора. Сохраните порядок команд, имена, строковые литералы и важные отступы; после этого разберите, что делает каждая строка.",
+          "sourceCode": "Repository repo = mock(Repository.class);\nwhen(repo.find(7)).thenReturn(\"Мира\");\nUserService service = new UserService(repo);\nString name = service.load(7);\nverify(repo).find(7);",
+          "language": "java",
+          "hint": "Сверьте команды, регистр букв, кавычки и закрывающие скобки с образцом. Можно менять только форматирование Java-кода.",
+          "explanation": "Это тот же фрагмент, что разобран в теории. При правильно настроенном сервисе name равно «Мира», а verify подтвердит вызов find(7). Нужны Mockito и определения классов."
+        },
+        {
+          "type": "choice",
+          "prompt": "Для чего используют mock репозитория в модульном тесте?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Чтобы не обращаться к настоящей БД"
+            },
+            {
+              "id": "b",
+              "label": "Чтобы заменить javac"
+            },
+            {
+              "id": "c",
+              "label": "Чтобы добавить новый SQL-сервер"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы выполнить Docker"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "Тестируемому сервису нужна контролируемая зависимость.",
+          "explanation": "Mock изолирует сервис от реального репозитория.",
+          "id": "m20-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Задайте результат вызова Mockito.",
+          "template": [
+            "when(repo.find(1)).",
+            "(\"Alice\");"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "thenReturn",
+              "options": [
+                "thenReturn",
+                "assertEquals",
+                "build"
+              ]
+            }
+          ],
+          "hint": "После when задают возвращаемое значение.",
+          "explanation": "thenReturn сообщает mock, что вернуть при данном вызове.",
+          "id": "m20-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m20-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "Зачем передать сервису фейковую реализацию Gateway вместо реальной сетевой зависимости при тестировании?",
+          "options": [
+            {
+              "id": "a",
+              "label": "для детерминированного ответа без сети"
+            },
+            {
+              "id": "b",
+              "label": "чтобы компилятор пропустил все ошибки"
+            },
+            {
+              "id": "c",
+              "label": "чтобы тест выполнялся только в интернете"
+            },
+            {
+              "id": "d",
+              "label": "для изменения сигнатуры сервиса"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "Заглушка сохраняет контракт интерфейса и контролирует результат в тесте.",
+          "explanation": "Верно: для детерминированного ответа без сети. Заглушка сохраняет контракт интерфейса и контролирует результат в тесте."
+        },
+        {
+          "id": "m20-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m20-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Без Mockito создайте интерфейс Gateway с load() и fake-реализацию, возвращающую «stub». Сервис получает Gateway в конструкторе и возвращает load(). Выведите ответ сервиса.",
+          "expectedOutput": "stub",
+          "hint": "Тестовая заглушка реализует тот же интерфейс; сервису не важно, откуда получены данные.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'stub'. Тестовая заглушка реализует тот же интерфейс; сервису не важно, откуда получены данные."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Практика: проверяем поведение",
+    "description": "Примените AAA и подставную зависимость на чистом JDK.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "Какой тест лучше проверяет ошибку для деления на ноль?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Только проверка 4 / 2"
+          },
+          {
+            "id": "b",
+            "label": "Проверка ожидаемого исключения при делителе 0"
+          },
+          {
+            "id": "c",
+            "label": "Удаление всех тестов"
+          },
+          {
+            "id": "d",
+            "label": "Сравнение имён классов"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "Проверьте отдельный крайний случай.",
+        "explanation": "Тест ошибки фиксирует ожидаемое поведение при нулевом делителе.",
+        "id": "m20-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "Сравните ожидаемое и фактическое значение JUnit.",
+        "template": [
+          "assert",
+          "(5, actual);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Equals",
+            "options": [
+              "Equals",
+              "SameOnly",
+              "ThrowsAlways"
+            ]
+          }
+        ],
+        "hint": "Название метода складывается из assert и проверки равенства.",
+        "explanation": "assertEquals(expected, actual) сравнивает значения.",
+        "id": "m20-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте инструмент тестирования.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "@Test",
+            "right": "Отметить тест JUnit"
+          },
+          {
+            "id": "2",
+            "left": "assertEquals",
+            "right": "Сравнить ожидаемое и фактическое"
+          },
+          {
+            "id": "3",
+            "left": "when(...).thenReturn",
+            "right": "Настроить ответ mock"
+          },
+          {
+            "id": "4",
+            "left": "verify",
+            "right": "Проверить взаимодействие с mock"
+          }
+        ],
+        "hint": "Отделите проверку результата от настройки и проверки вызова.",
+        "explanation": "JUnit и Mockito отвечают за разные части теста.",
+        "id": "m20-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите тест по схеме Arrange–Act–Assert.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int left = 2, right = 3;"
+          },
+          {
+            "id": "b",
+            "text": "int actual = add(left, right);"
+          },
+          {
+            "id": "c",
+            "text": "if (actual != 5) {"
+          },
+          {
+            "id": "d",
+            "text": "throw new AssertionError(\"sum\");"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "Подготовьте значения, выполните add, затем проверьте.",
+        "explanation": "Тест сигнализирует об ошибке при неверной сумме.",
+        "id": "m20-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "JUnit входит в JDK без зависимостей"
+          },
+          {
+            "id": "b",
+            "label": "Mock может изолировать тест от БД"
+          },
+          {
+            "id": "c",
+            "label": "Тесты должны быть воспроизводимыми"
+          },
+          {
+            "id": "d",
+            "label": "AAA означает Arrange, Act, Assert"
+          }
+        ],
+        "correct": [
+          "b",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "Для настоящего JUnit добавьте зависимость в проект.",
+        "explanation": "Изоляция и воспроизводимость помогают доверять тестам.",
+        "id": "m20-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Без JUnit напишите проверку add(2,3): при неверном результате бросьте AssertionError, при верном выведите \"PASS\".",
+        "starterCode": "public class Main {\n    static int add(int a, int b) { return 0; }\n    public static void main(String[] args) {\n        int actual = add(2, 3);\n        // Если actual != 5, бросьте AssertionError; иначе выведите PASS\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "PASS",
+        "hint": "Напишите static int add(int a,int b), сравните результат с 5 в if и выведите PASS.",
+        "explanation": "Проверка успешно прошла на стандартном JDK.",
+        "id": "m20-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Без Mockito создайте FakeRepository с методом find(int), увеличивающим счётчик calls. Service должен один раз вызвать find(1). Выведите true, если calls == 1.",
+        "starterCode": "class FakeRepository {\n    int calls = 0;\n    String find(int id) { calls++; return \"Alice\"; }\n}\nclass Service {\n    private final FakeRepository repo;\n    Service(FakeRepository repo) { this.repo = repo; }\n    String load(int id) { /* вызовите repo.find(id) */ return \"\"; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Создайте repo и Service, вызовите load(1), выведите repo.calls == 1\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "true",
+        "hint": "Передайте FakeRepository через конструктор Service; после service.load(1) проверьте repo.calls.",
+        "explanation": "Подставная зависимость зафиксировала один вызов.",
+        "id": "m20-p07"
+      }
+    ],
+    "id": "m20-practice",
+    "primer": {
+      "why": "Тест проверяет поведение, а фейк позволяет наблюдать вызовы зависимости. Тут не нужны JUnit и Mockito: напишите проверку AssertionError и простой репозиторий со счётчиком.",
+      "steps": [
+        "Вычислите actual через реальный метод, сравните с ожидаемым. Если значения расходятся — throw new AssertionError(...); после успешной проверки сообщите о результате.",
+        "FakeRepository.find увеличивает calls и возвращает ответ. Service получает репозиторий через конструктор; после вызова проверьте, сколько раз был вызван find."
+      ],
+      "example": {
+        "code": "class FakeRepository {\n    int calls;\n    String find(int id) { calls++; return \"Готово\"; }\n}\nclass Service {\n    private final FakeRepository repository;\n    Service(FakeRepository repository) { this.repository = repository; }\n    String load(int id) { return repository.find(id); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        FakeRepository fake = new FakeRepository();\n        String actual = new Service(fake).load(4);\n        if (!actual.equals(\"Готово\")) throw new AssertionError(\"ответ\");\n        System.out.println(fake.calls);\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полный ручной тест без JUnit и Mockito",
+        "stdout": "1"
+      },
+      "result": "Вывод 1 подтверждает один вызов фейка. Проверка на реальный результат отдельно гарантирует, что Service вернул ожидаемый текст.",
+      "hints": [
+        {
+          "taskId": "m20-p06",
+          "text": "Для задачи add сравните реальный вызов с ожидаемой суммой и бросьте AssertionError при неравенстве, а подтверждение печатайте только после проверки."
+        },
+        {
+          "taskId": "m20-p07",
+          "text": "Для FakeRepository используйте увеличиваемое поле calls в find; вызовите сервис и сравните счётчик с ожидаемым количеством."
+        }
+      ]
+    }
+  },
+  "boss": {
+    "id": "m20-boss",
+    "title": "Стоп-урок",
+    "description": "Мини-экзамен: четыре верных ответа из пяти для зачёта.",
+    "passingScore": 0.8,
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "Что проверяет модульный тест?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Небольшую единицу поведения"
+          },
+          {
+            "id": "b",
+            "label": "Только всю систему через браузер"
+          },
+          {
+            "id": "c",
+            "label": "Лишь Docker-контейнер"
+          },
+          {
+            "id": "d",
+            "label": "Количество файлов в Git"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Unit означает отдельную единицу.",
+        "explanation": "Unit-тест локализует проверку небольшого компонента.",
+        "id": "m20-b01"
+      },
+      {
+        "type": "choice",
+        "prompt": "Какой порядок соответствует AAA?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Act, Assert, Arrange"
+          },
+          {
+            "id": "b",
+            "label": "Arrange, Act, Assert"
+          },
+          {
+            "id": "c",
+            "label": "Assert, Act, Arrange"
+          },
+          {
+            "id": "d",
+            "label": "Act, Arrange, Assert"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "Сначала данные, затем действие, затем проверка.",
+        "explanation": "AAA = Arrange → Act → Assert.",
+        "id": "m20-b02"
+      },
+      {
+        "type": "choice",
+        "prompt": "Какая аннотация помечает метод JUnit-теста?",
+        "options": [
+          {
+            "id": "a",
+            "label": "@Entity"
+          },
+          {
+            "id": "b",
+            "label": "@GetMapping"
+          },
+          {
+            "id": "c",
+            "label": "@Test"
+          },
+          {
+            "id": "d",
+            "label": "@Override"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "Нужна аннотация тестовой библиотеки.",
+        "explanation": "@Test отмечает тест.",
+        "id": "m20-b03"
+      },
+      {
+        "type": "choice",
+        "prompt": "Что делает Mockito when(...).thenReturn(...)?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Настраивает ответ mock"
+          },
+          {
+            "id": "b",
+            "label": "Компилирует JDK"
+          },
+          {
+            "id": "c",
+            "label": "Создаёт таблицу"
+          },
+          {
+            "id": "d",
+            "label": "Запускает браузер"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Mock — подставная зависимость.",
+        "explanation": "thenReturn задаёт возвращаемое значение.",
+        "id": "m20-b04"
+      },
+      {
+        "type": "choice",
+        "prompt": "Входит ли JUnit в стандартный JDK?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Да, всегда"
+          },
+          {
+            "id": "b",
+            "label": "Нет, нужна отдельная зависимость"
+          },
+          {
+            "id": "c",
+            "label": "Только в Java 8"
+          },
+          {
+            "id": "d",
+            "label": "Только если есть Docker"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "Тренажёр выполняет упражнения на стандартном JDK.",
+        "explanation": "JUnit подключают отдельно через сборщик.",
+        "id": "m20-b05"
+      }
+    ]
+  }
+}

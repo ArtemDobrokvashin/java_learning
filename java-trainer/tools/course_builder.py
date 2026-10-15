@@ -157,6 +157,8 @@ def build_module(number, spec, index):
     assert all(task.get('prompt') and task.get('hint') and task.get('explanation')
                for part in result['lessons'] + [result['practice']] +
                ([result['boss']] if 'boss' in result else []) for task in part['tasks'])
+    from module_exams import build_exam
+    result['exam'] = build_exam(number, result)
     return result
 
 

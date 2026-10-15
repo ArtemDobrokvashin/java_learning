@@ -6,7 +6,7 @@ export function parseRoute(hash = '#/') {
   if (name === 'settings' || name === 'review' || name === 'result' || name === 'career') return { name };
   if (name === 'lab') return /^lab-[a-z0-9-]+$/.test(number || '') && !id
     ? { name, labId: number } : { name: 'not-found' };
-  if (['module', 'lesson', 'mastery', 'practice', 'boss'].includes(name) && /^[1-9]\d*$/.test(number || '')) {
+  if (['module', 'lesson', 'mastery', 'practice', 'boss', 'exam'].includes(name) && /^[1-9]\d*$/.test(number || '')) {
     if (['lesson', 'mastery'].includes(name) && !/^m\d{2}-l\d{2}$/.test(id || '')) return { name: 'not-found' };
     return { name, moduleId: Number(number), lessonId: ['lesson', 'mastery'].includes(name) ? id : null };
   }

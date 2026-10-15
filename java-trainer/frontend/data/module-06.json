@@ -935,5 +935,181 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m06-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 360,
+    "tasks": [
+      {
+        "id": "m-exam-06-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Когда класс Member implements Labeled обязан написать метод label(), если он объявлен default?",
+        "options": [
+          {
+            "id": "a",
+            "label": "всегда"
+          },
+          {
+            "id": "b",
+            "label": "никогда, но может переопределить"
+          },
+          {
+            "id": "c",
+            "label": "только после new Member()"
+          },
+          {
+            "id": "d",
+            "label": "только внутри main"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "default-реализация уже находится в интерфейсе.",
+        "explanation": "Верно: никогда, но может переопределить. default-реализация уже находится в интерфейсе."
+      },
+      {
+        "type": "fill",
+        "prompt": "Укажите базовый класс для Dog.",
+        "template": [
+          "class Dog ",
+          " Animal { }"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "extends",
+            "options": [
+              "implements",
+              "extends",
+              "new"
+            ]
+          }
+        ],
+        "hint": "От класса наследуются через ключевое слово.",
+        "explanation": "extends устанавливает наследование классов.",
+        "id": "m-exam-06-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте понятие наследования.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "extends",
+            "right": "Наследование от класса"
+          },
+          {
+            "id": "2",
+            "left": "implements",
+            "right": "Реализация интерфейса"
+          },
+          {
+            "id": "3",
+            "left": "super(...)",
+            "right": "Конструктор родителя"
+          },
+          {
+            "id": "4",
+            "left": "@Override",
+            "right": "Проверка переопределения"
+          }
+        ],
+        "hint": "Вспомните различие класса и интерфейса.",
+        "explanation": "Каждое ключевое слово управляет отдельной связью.",
+        "id": "m-exam-06-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите переопределённый метод sound.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Dog extends Animal {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "String sound() {"
+          },
+          {
+            "id": "d",
+            "text": "return \"Гав\";"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "Аннотация располагается перед методом, а return внутри тела.",
+        "explanation": "Метод подкласса возвращает «Гав». ",
+        "id": "m-exam-06-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Создайте абстрактный класс Employee с полем base, конструктором и абстрактным pay().\nDeveloper наследует Employee, возвращает base + 200, Designer — base + 100.\nИнтерфейс Named имеет default label(), возвращающий «Сотрудник»; Employee реализует Named.\nВ массиве Employee[] сохраните Developer(1 * 100) и Designer(300).\nЧерез ссылки Employee выведите label() и pay() каждого сотрудника (четыре строки).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Сотрудник\n300\nСотрудник\n400",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nСотрудник\n300\nСотрудник\n400",
+        "id": "m-exam-06-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nСоздайте абстрактный класс Employee с полем base, конструктором и абстрактным pay().\nDeveloper наследует Employee, возвращает base + 200, Designer — base + 100.\nИнтерфейс Named имеет default label(), возвращающий «Сотрудник»; Employee реализует Named.\nВ массиве Employee[] сохраните Developer(2 * 100) и Designer(300).\nЧерез ссылки Employee выведите label() и pay() каждого сотрудника (четыре строки).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Сотрудник\n400\nСотрудник\n400",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nСотрудник\n400\nСотрудник\n400",
+        "id": "m-exam-06-06"
+      }
+    ]
   }
 }

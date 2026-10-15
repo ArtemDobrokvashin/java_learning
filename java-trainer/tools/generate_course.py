@@ -36,7 +36,10 @@ if __name__ == '__main__':
     assert set(NOTES) == set(PRIMERS) == set(range(1, 23))
     index_path = DATA / 'modules.json'
     index = json.loads(index_path.read_text(encoding='utf-8'))
-    index['version'] = 8
+    index['version'] = 9
     index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     refresh_foundations()
     save_group({**first, **second, **third, **fourth})
+
+    from module_exams import refresh_exams
+    refresh_exams(DATA)

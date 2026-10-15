@@ -96,6 +96,13 @@ export function renderMatching(host, task) {
   update();
   return {
     getValue: () => Object.fromEntries(links),
+    setValue: (value) => {
+      links.clear();
+      for (const [left, right] of Object.entries(value || {})) {
+        if (task.pairs.some((p) => p.id === left) && task.pairs.some((p) => p.id === right)) links.set(left, right);
+      }
+      update();
+    },
     focus: () => host.querySelector('.match-left')?.focus(),
     destroy: () => { host.removeEventListener('click', onClick); window.removeEventListener('resize', drawLines); observer?.disconnect(); },
   };
@@ -195,6 +202,13 @@ export function renderParsons(host, task) {
   list.addEventListener('dragend', onDragEnd);
   draw();
   return {
+    setValue: (value) => {
+      if (!Array.isArray(value) || value.length !== order.length || new Set(value.map((row) => row?.id)).size !== order.length
+          || value.some((row) => !row || !lines.has(row.id) || !Number.isInteger(row.indent) || row.indent < 0 || row.indent > 3)) return;
+      order.splice(0, order.length, ...value.map((row) => row.id));
+      for (const row of value) indents.set(row.id, row.indent);
+      draw();
+    },
     getValue: () => order.map((id) => ({ id, indent: indents.get(id) })),
     focus: () => list.querySelector('[data-action="down"]')?.focus(),
     markIndentRows: (ids) => {

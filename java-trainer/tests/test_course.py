@@ -79,7 +79,7 @@ class CourseSourceTests(unittest.TestCase):
         index = json.loads((data_dir / "modules.json").read_text(encoding="utf-8"))
         specs = {**FIRST, **SECOND, **THIRD, **FOURTH}
         self.assertEqual(set(specs), set(range(4, 23)))
-        self.assertEqual(index["version"], 8)
+        self.assertEqual(index["version"], 9)
         for number, spec in specs.items():
             with self.subTest(module=number):
                 shipped = json.loads((data_dir / f"module-{number:02d}.json").read_text(encoding="utf-8"))

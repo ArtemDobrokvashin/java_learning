@@ -501,5 +501,173 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m07-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 370,
+    "tasks": [
+      {
+        "id": "m-exam-07-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Как обеспечить, чтобы после конструктора у User нельзя было заменить значение name извне?",
+        "options": [
+          {
+            "id": "a",
+            "label": "public String name"
+          },
+          {
+            "id": "b",
+            "label": "private final String name и геттер"
+          },
+          {
+            "id": "c",
+            "label": "static String name"
+          },
+          {
+            "id": "d",
+            "label": "protected String name без методов"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "private исключает внешний доступ к полю, final исключает повторное присваивание.",
+        "explanation": "Верно: private final String name и геттер. private исключает внешний доступ к полю, final исключает повторное присваивание."
+      },
+      {
+        "type": "fill",
+        "prompt": "Скройте поле от других классов.",
+        "template": [
+          "",
+          " int balance;"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "private",
+            "options": [
+              "public",
+              "private",
+              "static"
+            ]
+          }
+        ],
+        "hint": "Нужен самый закрытый модификатор доступа.",
+        "explanation": "private ограничивает доступ текущим классом.",
+        "id": "m-exam-07-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Сопоставьте модификатор и смысл.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "private",
+            "right": "Доступ только внутри класса"
+          },
+          {
+            "id": "2",
+            "left": "public",
+            "right": "Доступ отовсюду"
+          },
+          {
+            "id": "3",
+            "left": "protected",
+            "right": "Доступ из подклассов и пакета"
+          },
+          {
+            "id": "4",
+            "left": "final",
+            "right": "Запрет повторного присваивания поля"
+          }
+        ],
+        "hint": "Не путайте модификаторы доступа с модификатором неизменяемости.",
+        "explanation": "private, public и protected регулируют видимость; final — присваивание.",
+        "id": "m-exam-07-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите метод, который добавляет положительную сумму.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "void deposit(int amount) {"
+          },
+          {
+            "id": "b",
+            "text": "if (amount > 0) {"
+          },
+          {
+            "id": "c",
+            "text": "balance += amount;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 2
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "Проверка идёт до изменения баланса.",
+        "explanation": "Только положительное amount изменяет balance.",
+        "id": "m-exam-07-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Создайте Account с private int balance и неизменяемым private final String owner.\nКонструктор получает владельца и начальный баланс. deposit(int) принимает только положительные\nсуммы; withdraw(int) возвращает true и списывает деньги, только если сумма положительна\nи не превышает баланс. Геттеры не меняют состояние. Для Account(\"Ира\", 1 * 100)\nвыполните deposit(50), deposit(-10), withdraw(120), withdraw(1000).\nВыведите владельца, результаты двух снятий и конечный баланс — четыре строки.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Ира\ntrue\nfalse\n30",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nИра\ntrue\nfalse\n30",
+        "id": "m-exam-07-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nСоздайте Account с private int balance и неизменяемым private final String owner.\nКонструктор получает владельца и начальный баланс. deposit(int) принимает только положительные\nсуммы; withdraw(int) возвращает true и списывает деньги, только если сумма положительна\nи не превышает баланс. Геттеры не меняют состояние. Для Account(\"Ира\", 2 * 100)\nвыполните deposit(50), deposit(-10), withdraw(120), withdraw(1000).\nВыведите владельца, результаты двух снятий и конечный баланс — четыре строки.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Ира\ntrue\nfalse\n130",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nИра\ntrue\nfalse\n130",
+        "id": "m-exam-07-06"
+      }
+    ]
   }
 }

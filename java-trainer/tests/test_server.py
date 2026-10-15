@@ -46,9 +46,9 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(len(initial), 22)
         self.assertTrue(all(m["contentStatus"] == "ready" and m["contentFile"] for m in initial))
         self.assertEqual([m["status"] for m in initial[:4]], ["available", "locked", "locked", "locked"])
-        after_one = self.client.get("/api/modules?completed=1").json["modules"]
+        after_one = self.client.get("/api/modules?completed=1&examPassed=1").json["modules"]
         self.assertEqual([m["status"] for m in after_one[:3]], ["completed", "available", "locked"])
-        after_three = self.client.get("/api/modules?completed=1,2,3").json["modules"]
+        after_three = self.client.get("/api/modules?completed=1,2,3&examPassed=1,2,3").json["modules"]
         self.assertEqual(after_three[3]["status"], "available")
         self.assertEqual(after_three[4]["status"], "locked")
         for metadata in initial:
@@ -61,16 +61,16 @@ class ServerTests(unittest.TestCase):
             if metadata.get("boss"):
                 self.assertEqual(len(content["boss"]["tasks"]), 5)
             response.close()
-        self.assertEqual(len(server.code_tasks()), 148)
+        self.assertEqual(len(server.code_tasks()), 206)
         self.assertEqual(server.code_tasks()["m22-p07"]["expectedOutput"], "Остановлено: test")
         self.assertEqual(len(server.code_tasks()["lab-array-report"]["testCases"]), 4)
 
     def test_boss_blocks_following_module_even_after_practice(self):
         completed = set(range(1, 18))
-        states = server.modules_with_status(completed, set())
+        states = server.modules_with_status(completed, set(), completed)
         self.assertEqual(states[16]["status"], "available")
         self.assertEqual(states[17]["status"], "locked")
-        states = server.modules_with_status(completed, {17})
+        states = server.modules_with_status(completed, {17}, completed)
         self.assertEqual(states[16]["status"], "completed")
         self.assertEqual(states[17]["status"], "available")
 
@@ -137,7 +137,7 @@ class ServerTests(unittest.TestCase):
     @patch("server.shutil.which", side_effect=lambda tool: "/usr/bin/" + tool)
     def test_all_44_code_task_ids_route_to_server_owned_expected_output(self, _which, command):
         cases = {id: task for id, task in server.code_tasks().items() if "testCases" not in task}
-        self.assertEqual(len(cases), 143)
+        self.assertEqual(len(cases), 201)
         self.assertEqual(len([id for id in cases if '-p' in id]), 44)
         self.assertEqual(len([id for id in cases if id.endswith('-hardcore')]), 99)
         for id, task in cases.items():

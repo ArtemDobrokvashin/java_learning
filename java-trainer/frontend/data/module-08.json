@@ -651,5 +651,181 @@
         }
       ]
     }
+  },
+  "exam": {
+    "id": "m08-exam",
+    "title": "Мини-экзамен",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 380,
+    "tasks": [
+      {
+        "id": "m-exam-08-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "Что вернёт Box<String>.get(), если объект хранит строку «Java»?",
+        "options": [
+          {
+            "id": "a",
+            "label": "String без явного cast"
+          },
+          {
+            "id": "b",
+            "label": "Object, обязательно cast"
+          },
+          {
+            "id": "c",
+            "label": "Integer"
+          },
+          {
+            "id": "d",
+            "label": "ошибка параметра типа"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "Параметр типа фиксирует тип хранимого значения при компиляции.",
+        "explanation": "Верно: String без явного cast. Параметр типа фиксирует тип хранимого значения при компиляции."
+      },
+      {
+        "type": "fill",
+        "prompt": "Используйте общий тип для разных животных.",
+        "template": [
+          "",
+          " pet = new Dog();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Animal",
+            "options": [
+              "Animal",
+              "Dog[]",
+              "static"
+            ]
+          }
+        ],
+        "hint": "Dog является подтипом Animal.",
+        "explanation": "Ссылка базового типа может хранить подкласс.",
+        "id": "m-exam-08-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "Соедините термин и определение.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Полиморфизм",
+            "right": "Разное поведение через общий тип"
+          },
+          {
+            "id": "2",
+            "left": "Override",
+            "right": "Новая реализация унаследованного метода"
+          },
+          {
+            "id": "3",
+            "left": "Overload",
+            "right": "Одинаковое имя с разными параметрами"
+          },
+          {
+            "id": "4",
+            "left": "Generics",
+            "right": "Параметр типа с проверкой компилятором"
+          }
+        ],
+        "hint": "Различайте выбор метода во время компиляции и выполнения.",
+        "explanation": "Все четыре механизма помогают расширяемости по-разному.",
+        "id": "m-exam-08-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "Соберите реализацию интерфейса Shape.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Square implements Shape {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "public int area() {"
+          },
+          {
+            "id": "d",
+            "text": "return 4;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "Сигнатура интерфейса public, а return внутри метода.",
+        "explanation": "Square реализует метод area из Shape.",
+        "id": "m-exam-08-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Создайте интерфейс Metric с value(). Реализуйте Fixed(int), возвращающий сохранённое\nчисло, и DoubleMetric(int), возвращающий удвоенное число. Создайте Box<T> с конструктором\nи get(). Поместите в List<Metric> объекты Fixed(1), DoubleMetric(5), Fixed(3).\nМетод total(List<? extends Metric>) складывает value(). Оберните результат в Box<Integer>.\nВыведите сумму из Box и количество метрик — две строки. Без raw-типов и приведений.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "14\n3",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n14\n3",
+        "id": "m-exam-08-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nСоздайте интерфейс Metric с value(). Реализуйте Fixed(int), возвращающий сохранённое\nчисло, и DoubleMetric(int), возвращающий удвоенное число. Создайте Box<T> с конструктором\nи get(). Поместите в List<Metric> объекты Fixed(2), DoubleMetric(5), Fixed(3).\nМетод total(List<? extends Metric>) складывает value(). Оберните результат в Box<Integer>.\nВыведите сумму из Box и количество метрик — две строки. Без raw-типов и приведений.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "15\n3",
+        "hint": "Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Проверьте вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n15\n3",
+        "id": "m-exam-08-06"
+      }
+    ]
   }
 }

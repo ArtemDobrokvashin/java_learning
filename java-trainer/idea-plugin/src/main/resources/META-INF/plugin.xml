@@ -1,16 +1,41 @@
 <idea-plugin>
     <id>io.javada.trainer</id>
-    <name>JavaДа — тренажёр</name>
-    <version>1.0.0</version>
-    <vendor>Javada</vendor>
+    <name>JavaДа — Интерактивный тренажёр Java</name>
+    <version>2.0.0</version>
+    <vendor email="support@javada.io" url="https://github.com/ArtemDobrokvashin/java_learning">JavaДа</vendor>
+
     <description><![CDATA[
-        Решайте 44 существующие задачи JavaДа с кодом, 99 необязательных хардов
-        и пять лабораторий прямо в IntelliJ IDEA. Подключается к уже запущенному
-        локальному Flask-серверу; использует его компилятор и общее сохранение.
+        Полнофункциональный автономный тренажёр по Java внутри IntelliJ IDEA, полностью заменяющий браузер.<br/>
+        <ul>
+            <li><b>Полный курс</b>: 22 модуля, 99 уроков, 825 заданий (включая 146 экзаменационных), 22 мини-экзамена и 5 лабораторных работ.</li>
+            <li><b>Встроенная теория</b>: Split View с отображением теории урока, разборов и примеров в формате Markdown/HTML.</li>
+            <li><b>Нативная проверка (TaskChecker)</b>: компиляция и запуск через локальный JDK (<code>javac</code> / <code>java</code> со сверкой <code>stdout</code> и <code>expected.txt</code>) и запуск JUnit 5 тестов через JUnit Platform Console без необходимости запуска Flask-сервера.</li>
+            <li><b>Единый прогресс с браузером</b>: атомарная синхронизация XP, серий, достижений, результатов мини-экзаменов и черновиков через <code>.javada/progress.json</code> с отслеживанием внешних изменений в реальном времени.</li>
+        </ul>
     ]]></description>
+
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.java</depends>
+
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="JavaДа" anchor="right" factoryClass="io.javada.idea.TrainerToolWindowFactory"/>
+        <toolWindow
+                id="JavaДа"
+                anchor="right"
+                secondary="false"
+                icon="AllIcons.Actions.Execute"
+                factoryClass="io.javada.idea.JavadaToolWindowFactory"/>
     </extensions>
+
+    <actions>
+        <action
+                id="io.javada.idea.CheckTaskAction"
+                class="io.javada.idea.CheckTaskAction"
+                text="JavaДа: Проверить решение"
+                description="Скомпилировать и проверить текущую задачу тренажёра JavaДа"
+                icon="AllIcons.Actions.Execute">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>

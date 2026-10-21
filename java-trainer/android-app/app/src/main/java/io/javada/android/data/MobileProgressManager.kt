@@ -50,7 +50,7 @@ data class ProgressState(
     var awardedTasks: MutableList<String> = mutableListOf(),
     var reviewRewards: MutableMap<String, String> = mutableMapOf(),
     var achievements: MutableList<String> = mutableListOf(),
-    var theme: String = "dark",
+    var theme: String = "light",
     var remindersEnabled: Boolean = false,
     var reminderTime: String = "19:00",
     var lastReminderDay: String? = null
@@ -157,6 +157,38 @@ class MobileProgressManager(storageDir: File) {
         profile.state.theme = if (profile.state.theme == "dark") "light" else "dark"
     }
 
+    fun toggleCareerChecklist(itemId: String): ProgressProfile = mutateAndPersist { profile ->
+        if (profile.state.careerChecklist.contains(itemId)) {
+            profile.state.careerChecklist.remove(itemId)
+        } else {
+            profile.state.careerChecklist.add(itemId)
+        }
+    }
+
+    fun resetAll(): ProgressProfile = lock.write {
+        val fresh = ProgressProfile()
+        writeDiskAtomically(fresh)
+        cachedProfile = fresh
+        fresh.deepCopy()
+    }
+
+    fun dueReviewTasks(catalog: CourseCatalog): List<CourseTask> {
+        val state = getProfile().state
+        val now = OffsetDateTime.now()
+        val completedMods = state.completedPractices.toSet()
+        val allCandidates = catalog.modules
+            .filter { completedMods.contains(it.id) }
+            .flatMap { mod -> mod.lessons.flatMap { it.tasks } + mod.practiceTasks }
+            .filter { task -> task.type != "code" && task.type != "copy" && !task.optional }
+
+        return allCandidates.filter { task ->
+            val attempt = state.attempts[task.id] ?: return@filter false
+            if (!attempt.correct || attempt.needsReview) return@filter true
+            val parsed = try { OffsetDateTime.parse(attempt.lastAttempt) } catch (_: Exception) { null }
+            parsed == null || ChronoUnit.DAYS.between(parsed, now) >= 7L
+        }
+    }
+
     /**
      * Записывает попытку решения задания, начисляет XP по единым правилам курса
      * и автоматически отмечает завершение урока, стоп-урока или практики модуля.
@@ -164,7 +196,8 @@ class MobileProgressManager(storageDir: File) {
     fun recordTaskAttempt(
         task: CourseTask,
         module: CourseModule?,
-        correct: Boolean
+        correct: Boolean,
+        isReview: Boolean = false
     ): ProgressProfile = mutateAndPersist { profile ->
         val state = profile.state
         val now = OffsetDateTime.now()
@@ -178,7 +211,7 @@ class MobileProgressManager(storageDir: File) {
             type = task.type,
             lastAttempt = now.toString(),
             mistakes = (prevAttempt?.mistakes ?: 0) + (if (correct) 0 else 1),
-            needsReview = !correct
+            needsReview = if (isReview) !correct else (!correct || (prevAttempt?.needsReview == true))
         )
 
         if (!correct || isExam) return@mutateAndPersist
@@ -187,7 +220,13 @@ class MobileProgressManager(storageDir: File) {
             updateStreak(state, now.toLocalDate())
         }
 
-        if (!state.awardedTasks.contains(task.id)) {
+        if (isReview) {
+            if (state.reviewRewards[task.id] != today) {
+                state.reviewRewards[task.id] = today
+                val reviewXp = if (state.streak >= 2) 6 else 5
+                state.xpLedger["review:${task.id}:$today"] = reviewXp
+            }
+        } else if (!state.awardedTasks.contains(task.id)) {
             state.awardedTasks.add(task.id)
             val baseXp = when {
                 isLab -> 0

@@ -1,0 +1,833 @@
+{
+  "version": 9,
+  "modules": [
+    {
+      "id": 1,
+      "title": "数据类型、变量与常量",
+      "subtitle": "语言基础：从比特到你的第一个变量",
+      "lessons": [
+        {
+          "id": "m01-l01",
+          "title": "Java 简介"
+        },
+        {
+          "id": "m01-l02",
+          "title": "计算机工作原理"
+        },
+        {
+          "id": "m01-l03",
+          "title": "数据类型及其运算"
+        },
+        {
+          "id": "m01-l04",
+          "title": "变量及其操作"
+        }
+      ],
+      "practiceId": "m01-practice",
+      "contentFile": "module-01.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m01-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 310,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 2,
+      "title": "分支与条件语句",
+      "subtitle": "学会在代码中做出决策",
+      "lessons": [
+        {
+          "id": "m02-l01",
+          "title": "算法与流程图"
+        },
+        {
+          "id": "m02-l02",
+          "title": "条件语句 if"
+        },
+        {
+          "id": "m02-l03",
+          "title": "布尔逻辑运算"
+        },
+        {
+          "id": "m02-l04",
+          "title": "switch-case 分支语句"
+        }
+      ],
+      "practiceId": "m02-practice",
+      "contentFile": "module-02.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m02-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 320,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 3,
+      "title": "循环与数组",
+      "subtitle": "重复执行操作而无需重复编写代码",
+      "lessons": [
+        {
+          "id": "m03-l01",
+          "title": "循环简介"
+        },
+        {
+          "id": "m03-l02",
+          "title": "数组 (Arrays)"
+        },
+        {
+          "id": "m03-l03",
+          "title": "计数循环：for"
+        },
+        {
+          "id": "m03-l04",
+          "title": "条件循环：while 与 do-while"
+        }
+      ],
+      "practiceId": "m03-practice",
+      "contentFile": "module-03.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m03-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 330,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 4,
+      "title": "方法与类入门",
+      "subtitle": "将复杂问题拆分为清晰的模块",
+      "lessons": [
+        {
+          "id": "m04-l01",
+          "title": "代码分解简介"
+        },
+        {
+          "id": "m04-l02",
+          "title": "方法与类初探"
+        },
+        {
+          "id": "m04-l03",
+          "title": "方法定义、参数与返回值"
+        },
+        {
+          "id": "m04-l04",
+          "title": "变量作用域"
+        }
+      ],
+      "practiceId": "m04-practice",
+      "contentFile": "module-04.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m04-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 340,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 5,
+      "title": "面向对象编程思想",
+      "subtitle": "用对象为现实世界建模",
+      "lessons": [
+        {
+          "id": "m05-l01",
+          "title": "面向对象简介"
+        },
+        {
+          "id": "m05-l02",
+          "title": "面向对象范式"
+        },
+        {
+          "id": "m05-l03",
+          "title": "Java 中的类与对象"
+        },
+        {
+          "id": "m05-l04",
+          "title": "静态字段与静态方法"
+        },
+        {
+          "id": "m05-l05",
+          "title": "静态内部类"
+        }
+      ],
+      "practiceId": "m05-practice",
+      "contentFile": "module-05.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m05-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 350,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 6,
+      "title": "继承",
+      "subtitle": "复用并扩展类的行为",
+      "lessons": [
+        {
+          "id": "m06-l01",
+          "title": "Java 继承简介"
+        },
+        {
+          "id": "m06-l02",
+          "title": "在 Java 中实现继承"
+        },
+        {
+          "id": "m06-l03",
+          "title": "方法重写 (@Override)"
+        },
+        {
+          "id": "m06-l04",
+          "title": "抽象类 (abstract)"
+        },
+        {
+          "id": "m06-l05",
+          "title": "接口与默认方法"
+        }
+      ],
+      "practiceId": "m06-practice",
+      "contentFile": "module-06.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m06-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 360,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 7,
+      "title": "封装",
+      "subtitle": "控制对数据的访问权限",
+      "lessons": [
+        {
+          "id": "m07-l01",
+          "title": "封装简介"
+        },
+        {
+          "id": "m07-l02",
+          "title": "Java 中的访问控制与封装"
+        }
+      ],
+      "practiceId": "m07-practice",
+      "contentFile": "module-07.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m07-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 370,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 8,
+      "title": "多态与泛型",
+      "subtitle": "统一接口，多种实现",
+      "lessons": [
+        {
+          "id": "m08-l01",
+          "title": "多态简介"
+        },
+        {
+          "id": "m08-l02",
+          "title": "Java 中的多态实现"
+        },
+        {
+          "id": "m08-l03",
+          "title": "泛型 (Generics) 参数化类型"
+        }
+      ],
+      "practiceId": "m08-practice",
+      "contentFile": "module-08.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m08-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 380,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 9,
+      "title": "Java 集合框架",
+      "subtitle": "高效存储与处理数据集合",
+      "lessons": [
+        {
+          "id": "m09-l01",
+          "title": "集合框架简介"
+        },
+        {
+          "id": "m09-l02",
+          "title": "List 接口及其实现"
+        },
+        {
+          "id": "m09-l03",
+          "title": "Set 集合"
+        },
+        {
+          "id": "m09-l04",
+          "title": "toString、equals 与 hashCode 方法"
+        },
+        {
+          "id": "m09-l05",
+          "title": "映射表 Map"
+        }
+      ],
+      "practiceId": "m09-practice",
+      "contentFile": "module-09.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m09-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 390,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 10,
+      "title": "文件读写与序列化",
+      "subtitle": "读取、解析、写入并持久化数据",
+      "lessons": [
+        {
+          "id": "m10-l01",
+          "title": "文件操作简介"
+        },
+        {
+          "id": "m10-l02",
+          "title": "读取文件"
+        },
+        {
+          "id": "m10-l03",
+          "title": "字符串解析"
+        },
+        {
+          "id": "m10-l04",
+          "title": "写入文件"
+        },
+        {
+          "id": "m10-l05",
+          "title": "对象序列化与反序列化"
+        }
+      ],
+      "practiceId": "m10-practice",
+      "contentFile": "module-10.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m10-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 400,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 11,
+      "title": "Java 异常处理",
+      "subtitle": "将运行故障转化为可控流程",
+      "lessons": [
+        {
+          "id": "m11-l01",
+          "title": "错误处理简介"
+        },
+        {
+          "id": "m11-l02",
+          "title": "Exception 与 Error 体系"
+        },
+        {
+          "id": "m11-l03",
+          "title": "捕获与处理异常"
+        },
+        {
+          "id": "m11-l04",
+          "title": "抛出与自定义异常"
+        },
+        {
+          "id": "m11-l05",
+          "title": "断言 (assert)"
+        }
+      ],
+      "practiceId": "m11-practice",
+      "contentFile": "module-11.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m11-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 410,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 12,
+      "title": "多线程与并发编程",
+      "subtitle": "掌握并行执行与线程同步",
+      "lessons": [
+        {
+          "id": "m12-l01",
+          "title": "多线程简介"
+        },
+        {
+          "id": "m12-l02",
+          "title": "线程与进程：创建与终止"
+        },
+        {
+          "id": "m12-l03",
+          "title": "线程状态与同步方式"
+        },
+        {
+          "id": "m12-l04",
+          "title": "isAlive 与 sleep 方法"
+        },
+        {
+          "id": "m12-l05",
+          "title": "synchronized 关键字"
+        },
+        {
+          "id": "m12-l06",
+          "title": "yield() 让步方法"
+        },
+        {
+          "id": "m12-l07",
+          "title": "Callable 与 Executors 线程池"
+        }
+      ],
+      "practiceId": "m12-practice",
+      "contentFile": "module-12.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m12-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 420,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 13,
+      "title": "算法与复杂度",
+      "subtitle": "深入思考解决方案的效率",
+      "lessons": [
+        {
+          "id": "m13-l01",
+          "title": "算法导论"
+        },
+        {
+          "id": "m13-l02",
+          "title": "算法时间与空间复杂度"
+        },
+        {
+          "id": "m13-l03",
+          "title": "动态规划算法"
+        },
+        {
+          "id": "m13-l04",
+          "title": "图论基础与遍历"
+        }
+      ],
+      "practiceId": "m13-practice",
+      "contentFile": "module-13.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m13-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 430,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 14,
+      "title": "设计模式",
+      "subtitle": "常见软件设计问题的经典解决方案",
+      "lessons": [
+        {
+          "id": "m14-l01",
+          "title": "什么是设计模式及其意义"
+        },
+        {
+          "id": "m14-l02",
+          "title": "创建型模式"
+        },
+        {
+          "id": "m14-l03",
+          "title": "建造者模式 (Builder)"
+        },
+        {
+          "id": "m14-l04",
+          "title": "单例模式 (Singleton)"
+        },
+        {
+          "id": "m14-l05",
+          "title": "结构型模式与代理模式 (Proxy)"
+        },
+        {
+          "id": "m14-l06",
+          "title": "行为型模式与迭代器 (Iterator)"
+        }
+      ],
+      "practiceId": "m14-practice",
+      "contentFile": "module-14.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m14-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 440,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 15,
+      "title": "MVC 模式与小型应用",
+      "subtitle": "分离数据、视图与业务逻辑",
+      "lessons": [
+        {
+          "id": "m15-l01",
+          "title": "MVC 架构模式简介"
+        },
+        {
+          "id": "m15-l02",
+          "title": "视图层 (View)"
+        },
+        {
+          "id": "m15-l03",
+          "title": "模型层 (Model)"
+        },
+        {
+          "id": "m15-l04",
+          "title": "控制器层 (Controller)"
+        }
+      ],
+      "practiceId": "m15-practice",
+      "contentFile": "module-15.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m15-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 450,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 16,
+      "title": "关系型数据库与 SQL",
+      "subtitle": "从数据表、查询到 JDBC 连接",
+      "lessons": [
+        {
+          "id": "m16-l01",
+          "title": "SQL 语言简介"
+        },
+        {
+          "id": "m16-l02",
+          "title": "数据库范式与规范化"
+        },
+        {
+          "id": "m16-l03",
+          "title": "使用 JDBC 连接数据库"
+        },
+        {
+          "id": "m16-l04",
+          "title": "数据库用户与权限管理"
+        },
+        {
+          "id": "m16-l05",
+          "title": "表间关联关系"
+        },
+        {
+          "id": "m16-l06",
+          "title": "复杂 SQL 查询进阶"
+        },
+        {
+          "id": "m16-l07",
+          "title": "数据库索引优化"
+        }
+      ],
+      "practiceId": "m16-practice",
+      "contentFile": "module-16.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m16-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 460,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 17,
+      "title": "Spring 与 Spring Web 入门",
+      "subtitle": "构建你的第一个 Web 应用程序",
+      "lessons": [
+        {
+          "id": "m17-l01",
+          "title": "Maven 构建工具"
+        },
+        {
+          "id": "m17-l02",
+          "title": "Spring 框架简介"
+        },
+        {
+          "id": "m17-l03",
+          "title": "应用上下文、IoC 与 Spring Boot"
+        },
+        {
+          "id": "m17-l04",
+          "title": "GetMapping 与 PostMapping 请求"
+        },
+        {
+          "id": "m17-l05",
+          "title": "Spring DevTools 热重载工具"
+        }
+      ],
+      "practiceId": "m17-practice",
+      "contentFile": "module-17.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m17-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m17-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 470,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 18,
+      "title": "Spring 数据库开发",
+      "subtitle": "将应用程序与数据库无缝连接",
+      "lessons": [
+        {
+          "id": "m18-l01",
+          "title": "JdbcTemplate 模板操作"
+        },
+        {
+          "id": "m18-l02",
+          "title": "JPA 持久化规范简介"
+        },
+        {
+          "id": "m18-l03",
+          "title": "Hibernate 框架"
+        },
+        {
+          "id": "m18-l04",
+          "title": "实体类中的字段类型映射"
+        },
+        {
+          "id": "m18-l05",
+          "title": "OneToOne、OneToMany 与 ManyToMany 关联"
+        },
+        {
+          "id": "m18-l06",
+          "title": "实体继承映射策略"
+        }
+      ],
+      "practiceId": "m18-practice",
+      "contentFile": "module-18.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m18-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m18-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 480,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 19,
+      "title": "Spring REST 接口开发",
+      "subtitle": "设计清晰规范的 HTTP API",
+      "lessons": [
+        {
+          "id": "m19-l01",
+          "title": "网络协议与客户端-服务器架构"
+        },
+        {
+          "id": "m19-l02",
+          "title": "Spring REST 简介"
+        },
+        {
+          "id": "m19-l03",
+          "title": "REST 控制器开发"
+        }
+      ],
+      "practiceId": "m19-practice",
+      "contentFile": "module-19.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m19-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m19-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 490,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 20,
+      "title": "软件测试 (JUnit 与 Mockito)",
+      "subtitle": "自动化验证程序行为",
+      "lessons": [
+        {
+          "id": "m20-l01",
+          "title": "软件测试基础与测试分类"
+        },
+        {
+          "id": "m20-l02",
+          "title": "JUnit 单元测试框架"
+        },
+        {
+          "id": "m20-l03",
+          "title": "Mockito 模拟测试库"
+        }
+      ],
+      "practiceId": "m20-practice",
+      "contentFile": "module-20.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m20-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m20-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 500,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 21,
+      "title": "软件开发流程与敏捷协作",
+      "subtitle": "了解现代研发团队如何高效协作",
+      "lessons": [
+        {
+          "id": "m21-l01",
+          "title": "软件开发方法论"
+        },
+        {
+          "id": "m21-l02",
+          "title": "瀑布模型 (Waterfall) 与敏捷 (Agile)"
+        },
+        {
+          "id": "m21-l03",
+          "title": "Scrum 与 Kanban 看板"
+        },
+        {
+          "id": "m21-l04",
+          "title": "团队协作与角色分工"
+        }
+      ],
+      "practiceId": "m21-practice",
+      "contentFile": "module-21.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m21-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m21-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 510,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 22,
+      "title": "CI/CD 与 Docker 容器化",
+      "subtitle": "通往自动化代码交付之路",
+      "lessons": [
+        {
+          "id": "m22-l01",
+          "title": "CI/CD 与 Docker 简介"
+        },
+        {
+          "id": "m22-l02",
+          "title": "Docker 镜像与容器实战"
+        },
+        {
+          "id": "m22-l03",
+          "title": "主流 CI/CD 系统对比"
+        },
+        {
+          "id": "m22-l04",
+          "title": "GitLab CI/CD 流水线配置"
+        }
+      ],
+      "practiceId": "m22-practice",
+      "contentFile": "module-22.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m22-boss",
+        "title": "阶段关卡测验",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m22-exam",
+        "title": "模块小测验",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 520,
+        "questionCount": 8
+      }
+    }
+  ]
+}

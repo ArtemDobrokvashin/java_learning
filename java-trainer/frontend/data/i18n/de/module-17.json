@@ -1,0 +1,1310 @@
+{
+  "id": 17,
+  "title": "Einführung in Spring & Spring Web",
+  "lessons": [
+    {
+      "id": "m17-l01",
+      "title": "Maven Build-System",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Maven управляет сборкой и зависимостями Java-проекта. Файл pom.xml объявляет координаты группы, артефакта, версии и внешние библиотеки; Maven скачивает зависимости и запускает этапы жизненного цикла.",
+          "[Theorie] Команда mvn test выполняет тесты, а mvn package создаёт пакет после предшествующих этапов. Наш локальный тренажёр не запускает Maven: примеры Spring ниже изучаются как архитектура, а кодовые задачи используют только JDK."
+        ],
+        "code": "<project>\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>demo</groupId>\n  <artifactId>web</artifactId>\n  <version>1.0</version>\n</project>",
+        "caption": "Spring обычно подключают как зависимость Maven.",
+        "language": "xml",
+        "objective": "[Lernziel] Объяснить роль pom.xml и зависимости Maven в Spring-проекте.",
+        "walkthrough": "[Durchgang] groupId, artifactId и version задают координаты demo:web:1.0, modelVersion задаёт версию схемы POM. Для Spring-проекта добавьте зависимости и настройки сборки.",
+        "pitfall": "[Typischer Fehler] Сам JDK не подтянет Spring по надписи в Java-коде. Для запуска веб-приложения настройте Maven/Gradle и зависимости отдельно.",
+        "deepDive": "[Vertiefung] Maven читает pom.xml и собирает проект по жизненному циклу: compile, test, package. Координаты определяют артефакт, зависимости добавляют внешние классы; локальный javac сам не скачивает Spring или JUnit.",
+        "useCase": "[Praxisfall] В отдельном Spring-проекте добавьте starter-зависимость и запустите mvn test, затем mvn package. Если тестовый класс не находится, проверьте зависимости и каталог src/test/java, а не код обычного Main.java.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Maven описывает проект и зависимости в pom.xml, чтобы одинаково собирать его на разных машинах. Координаты groupId/artifactId/version идентифицируют артефакт.",
+          "steps": [
+            "В pom.xml укажите modelVersion 4.0.0 и координаты вашего модуля. Это не Java-код, поэтому вставлять его в Main.java нельзя.",
+            "Для сторонней библиотеки добавьте dependency с её координатами в dependencies. Maven скачает нужную версию при сборке, если есть доступ к репозиторию."
+          ],
+          "example": {
+            "code": "<dependencies>\n  <dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n    <version>3.3.0</version>\n  </dependency>\n</dependencies>",
+            "language": "xml",
+            "runnable": false,
+            "label": "Фрагмент pom.xml внутри тега project"
+          },
+          "result": "После сборки Maven увидит зависимость; этот фрагмент нужно помещать внутри <project> в pom.xml, сам по себе он не проект.",
+          "bridge": "В мини-задании сопоставьте поля pom.xml с назначением. Кодовые задания модуля намеренно обходятся без Maven и Spring."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m17-l01-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "<dependencies>\n  <dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-web</artifactId>\n    <version>3.3.0</version>\n  </dependency>\n</dependencies>",
+          "language": "xml",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. После сборки Maven увидит зависимость; этот фрагмент нужно помещать внутри <project> в pom.xml, сам по себе он не проект."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] В каком файле Maven хранит описание проекта и зависимостей?",
+          "options": [
+            {
+              "id": "a",
+              "label": "build.gradle"
+            },
+            {
+              "id": "b",
+              "label": "pom.xml"
+            },
+            {
+              "id": "c",
+              "label": "Main.java"
+            },
+            {
+              "id": "d",
+              "label": "application.yml"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Название начинается с project object model.",
+          "explanation": "[Erklärung] pom.xml описывает Maven-проект.",
+          "id": "m17-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Запустите тесты Maven-командой.",
+          "template": [
+            "mvn ",
+            ""
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "test",
+              "options": [
+                "test",
+                "run",
+                "start"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Нужна фаза тестирования.",
+          "explanation": "[Erklärung] mvn test запускает тестовую фазу.",
+          "id": "m17-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m17-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] В Maven координатах org.example:core:1.0 какую часть называют artifactId?",
+          "options": [
+            {
+              "id": "a",
+              "label": "org.example"
+            },
+            {
+              "id": "b",
+              "label": "core"
+            },
+            {
+              "id": "c",
+              "label": "1.0"
+            },
+            {
+              "id": "d",
+              "label": "всю строку"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Три компонента — groupId, artifactId и version в этом порядке.",
+          "explanation": "[Erklärung] Верно: core. Три компонента — groupId, artifactId и version в этом порядке."
+        },
+        {
+          "id": "m17-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m17-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Без Maven-зависимостей создайте record Dependency(String group,String artifact,String version) для (\"org.example\",\"core\",\"1.0\"). Geben Sie aus: Maven-координаты через двоеточие.",
+          "expectedOutput": "org.example:core:1.0",
+          "hint": "[Hinweis] Координаты состоят из groupId, artifactId и version; доступ к компонентам record — методами.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'org.example:core:1.0'. Координаты состоят из groupId, artifactId и version; доступ к компонентам record — методами."
+        }
+      ]
+    },
+    {
+      "id": "m17-l02",
+      "title": "Einführung in Spring",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Spring управляет объектами приложения как bean-компонентами в контейнере. Вместо ручного создания всех зависимостей через new контейнер связывает объекты и управляет их жизненным циклом.",
+          "[Theorie] Инверсия управления (IoC) означает, что создание и передача зависимостей контролируются инфраструктурой. Аннотация @Component обозначает кандидат в компонент; для точного контроля также используют @Bean в конфигурации."
+        ],
+        "code": "@Component\nclass GreetingService {\n    String greet() { return \"Привет\"; }\n}",
+        "caption": "IoC передаёт ответственность за сборку приложения контейнеру.",
+        "language": "java",
+        "objective": "[Lernziel] Показать, как Spring создаёт bean и в каких условиях @Component обнаруживается.",
+        "walkthrough": "[Durchgang] @Component сообщает сканированию классов о GreetingService; контейнер создаёт объект и может передать его в другой bean через конструктор.",
+        "pitfall": "[Typischer Fehler] @Component не работает вне запущенного контекста Spring или за пределами пакетов сканирования. new GreetingService() — обычное создание, не DI.",
+        "deepDive": "[Vertiefung] Контейнер Spring создаёт bean только для обнаруженных компонентов и управляет их связями. Внедрение через конструктор показывает обязательную зависимость явно; вызов new обходит этот механизм и не даёт объекту автоматически настроенного окружения.",
+        "useCase": "Erstellen Sie GreetingService и контроллер, который принимает его в конструкторе. Если bean не находится, проверьте пакет сканирования, а не добавляйте глобальное статическое поле ради доступа к сервису.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Внедрение зависимости даёт классу нужный сервис извне: контроллер зависит от интерфейса, а не создаёт конкретный FriendlyService внутри себя.",
+          "steps": [
+            "Erstellen Sie интерфейс GreetingService с методом greet(). Реализация FriendlyService может вернуть требуемый текст.",
+            "Контроллер принимает GreetingService в конструкторе и сохраняет поле. Без Spring ту же зависимость можно передать вручную через new Controller(new FriendlyService())."
+          ],
+          "example": {
+            "code": "interface GreetingService { String greet(); }\nclass FriendlyService implements GreetingService {\n    public String greet() { return \"Привет\"; }\n}\nclass Controller {\n    private final GreetingService service;\n    Controller(GreetingService service) { this.service = service; }\n    String message() { return service.greet(); }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Обычные Java-классы: инъекция без Spring"
+          },
+          "result": "Вызов new Controller(new FriendlyService()).message() вернёт «Привет». В Spring такие объекты и связи может создать контейнер.",
+          "bridge": "В практике примените конструкторную передачу сервиса без библиотек, затем доработайте сообщение самостоятельно под условие."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m17-l02-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "interface GreetingService { String greet(); }\nclass FriendlyService implements GreetingService {\n    public String greet() { return \"Привет\"; }\n}\nclass Controller {\n    private final GreetingService service;\n    Controller(GreetingService service) { this.service = service; }\n    String message() { return service.greet(); }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Вызов new Controller(new FriendlyService()).message() вернёт «Привет». В Spring такие объекты и связи может создать контейнер."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Кто обычно создаёт и связывает Spring beans?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Контейнер Spring"
+            },
+            {
+              "id": "b",
+              "label": "HTML-браузер"
+            },
+            {
+              "id": "c",
+              "label": "javac напрямую"
+            },
+            {
+              "id": "d",
+              "label": "Класс String"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Это проявление инверсии управления.",
+          "explanation": "[Erklärung] Контейнер управляет компонентами и их зависимостями.",
+          "id": "m17-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Пометьте класс как Spring-компонент.",
+          "template": [
+            "",
+            "\nclass GreetingService { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@Component",
+              "options": [
+                "@Component",
+                "@Override",
+                "@Test"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Нужна аннотация регистрации кандидата в bean.",
+          "explanation": "[Erklärung] @Component используется при сканировании компонентов.",
+          "id": "m17-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m17-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Как создать Controller, зависящий от GreetingService, по принципу внедрения через конструктор?",
+          "options": [
+            {
+              "id": "a",
+              "label": "new Controller(new GreetingService())"
+            },
+            {
+              "id": "b",
+              "label": "new Controller(), который тайно ищет сервис"
+            },
+            {
+              "id": "c",
+              "label": "Controller без поля сервиса"
+            },
+            {
+              "id": "d",
+              "label": "создать сервис только при каждом println"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Зависимость создают снаружи и передают при создании контроллера.",
+          "explanation": "[Erklärung] Верно: new Controller(new GreetingService()). Зависимость создают снаружи и передают при создании контроллера."
+        },
+        {
+          "id": "m17-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m17-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте внедрение зависимостей без Spring: GreetingService возвращает «Привет», Controller получает его в конструкторе и возвращает приветствие + «, Мира». Geben Sie aus: ответ.",
+          "expectedOutput": "Привет, Мира",
+          "hint": "Erstellen Sie сервис отдельно и передайте его в конструктор; контроллер не должен сам создавать зависимость.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'Привет, Мира'. Erstellen Sie сервис отдельно и передайте его в конструктор; контроллер не должен сам создавать зависимость."
+        }
+      ]
+    },
+    {
+      "id": "m17-l03",
+      "title": "ApplicationContext, IoC und Spring Boot",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Контекст Spring хранит bean-объекты, их связи и настройки. Внедрение через конструктор делает зависимости явными и позволяет создавать класс в тестах без контейнера.",
+          "[Theorie] Spring Boot упрощает настройку и запуск приложения; @SpringBootApplication включает типичную конфигурацию и сканирование компонентов. Не смешивайте эту аннотацию с самим методом main: приложение стартует через SpringApplication.run(...)."
+        ],
+        "code": "@SpringBootApplication\nclass App {\n    public static void main(String[] args) {\n        SpringApplication.run(App.class, args);\n    }\n}",
+        "caption": "Зависимости лучше передавать явно.",
+        "language": "java",
+        "objective": "[Lernziel] Запустить контекст Spring Boot и объяснить инверсию управления.",
+        "walkthrough": "[Durchgang] SpringApplication.run(App.class, args) запускает контекст; @SpringBootApplication включает автоконфигурацию и сканирование компонентов от пакета App.",
+        "pitfall": "[Typischer Fehler] Размещайте App в корневом пакете проекта либо настройте сканирование явно; иначе bean из другого пакета не обнаружится.",
+        "deepDive": "[Vertiefung] Инверсия управления означает, что создание и связывание компонентов передано контейнеру, а класс описывает лишь свои требования. Spring Boot подбирает типовые настройки, но созданный контекст всё равно нужно запустить и корректно сконфигурировать.",
+        "useCase": "[Praxisfall] Для смены реализации сервиса в тесте передайте подставной объект через конструктор без запуска всего приложения. При проблеме запуска Boot читайте причину создания bean, путь сканирования и конфликт зависимостей.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] IoC меняет владельца создания объектов: Spring собирает компоненты и передаёт их друг другу. Spring Boot задаёт стартовую конфигурацию и запускает контекст.",
+          "steps": [
+            "Пометьте сервис @Service, а приложение @SpringBootApplication. При старте Spring просканирует доступные компоненты.",
+            "Конструктор другого компонента может запросить GreetingService; контейнер передаст подходящую реализацию. Для запуска требуются зависимости Boot и сборка проекта."
+          ],
+          "example": {
+            "code": "@SpringBootApplication\npublic class App {\n    public static void main(String[] args) {\n        SpringApplication.run(App.class, args);\n    }\n}\n@Service\nclass GreetingService { String greet() { return \"Привет\"; } }",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент проекта с зависимостями Spring Boot"
+          },
+          "result": "В Boot-проекте контекст создаст GreetingService. В обычном javac без библиотек эти аннотации и SpringApplication неизвестны.",
+          "bridge": "В практическом модуле без Spring соберите те же роли вручную через интерфейс и конструктор, чтобы почувствовать, что автоматизирует IoC."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m17-l03-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "@SpringBootApplication\npublic class App {\n    public static void main(String[] args) {\n        SpringApplication.run(App.class, args);\n    }\n}\n@Service\nclass GreetingService { String greet() { return \"Привет\"; } }",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. В Boot-проекте контекст создаст GreetingService. В обычном javac без библиотек эти аннотации и SpringApplication неизвестны."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Почему внедрение зависимостей через конструктор удобно для тестов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Зависимость можно передать явно"
+            },
+            {
+              "id": "b",
+              "label": "Конструктор скрывает все поля"
+            },
+            {
+              "id": "c",
+              "label": "Нужен только static"
+            },
+            {
+              "id": "d",
+              "label": "Тесты перестают компилироваться"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Объект можно создать с подставной реализацией.",
+          "explanation": "[Erklärung] Явный параметр конструктора облегчает замену зависимости.",
+          "id": "m17-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Укажите аннотацию для главного класса Spring Boot.",
+          "template": [
+            "",
+            "\nclass App { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@SpringBootApplication",
+              "options": [
+                "@SpringBootApplication",
+                "@RestController",
+                "@Override"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Нужна составная аннотация конфигурации Boot.",
+          "explanation": "[Erklärung] @SpringBootApplication отмечает класс конфигурации и запуска.",
+          "id": "m17-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m17-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Контекст хранит один экземпляр Service. Что покажет сравнение ссылок от двух вызовов getService()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "false"
+            },
+            {
+              "id": "b",
+              "label": "true"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "не определено из-за имени класса"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Область singleton в одном контексте повторно возвращает тот же объект.",
+          "explanation": "[Erklärung] Верно: true. Область singleton в одном контексте повторно возвращает тот же объект."
+        },
+        {
+          "id": "m17-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m17-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте контейнер без Spring: AppContext создаёт единственный Service в поле и возвращает его из getService(). Geben Sie aus: true для двух ссылок, полученных из одного контекста.",
+          "expectedOutput": "true",
+          "hint": "[Hinweis] Один контекст владеет экземпляром; несколько вызовов геттера возвращают ту же ссылку.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'true'. Один контекст владеет экземпляром; несколько вызовов геттера возвращают ту же ссылку."
+        }
+      ]
+    },
+    {
+      "id": "m17-l04",
+      "title": "GetMapping- und PostMapping-Anfragen",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] В Spring Web @GetMapping связывает HTTP GET с методом контроллера, @PostMapping — HTTP POST. GET читающий и должен не менять состояние; POST обычно создаёт или запускает изменение.",
+          "[Theorie] Параметры маршрута и тело запроса передаются через аннотации вроде @PathVariable и @RequestBody. Само имя метода Java не определяет маршрут: важны аннотация и путь."
+        ],
+        "code": "@GetMapping(\"/users/{id}\")\nUser find(@PathVariable long id) { return service.find(id); }\n@PostMapping(\"/users\")\nUser create(@RequestBody User user) { return service.save(user); }",
+        "caption": "GET читает, POST обычно создаёт или меняет.",
+        "language": "java",
+        "objective": "[Lernziel] Разделить HTTP GET с параметром пути и POST с телом запроса.",
+        "walkthrough": "[Durchgang] GET /users/42 передаёт 42 в @PathVariable, сервис находит пользователя. POST /users получает @RequestBody и создаёт запись через сервис.",
+        "pitfall": "[Typischer Fehler] GET не должен сохранять данные. Для POST проверяйте входные данные и возвращайте подходящий HTTP-статус вместо простого возврата объекта на все случаи.",
+        "deepDive": "[Vertiefung] HTTP-маршрут складывается из метода и пути: GET /users/42 и POST /users — разные действия. @PathVariable читает часть адреса, @RequestBody — тело; контроллер должен отделять валидацию внешних данных от работы сервиса.",
+        "useCase": "Для создания пользователя верните осмысленный статус и адрес созданного ресурса, а для неизвестного ID — 404. Prüfen Sie пустое тело POST и повторный GET: читающий маршрут не должен менять базу.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Аннотации маршрутов сопоставляют HTTP-метод и URL с обработчиком. GET читает ресурс, POST обычно создаёт новый; данные приходят из разных частей запроса.",
+          "steps": [
+            "@GetMapping(\"/books/{id}\") привязывает вызов к GET и передаёт часть пути в @PathVariable long id.",
+            "@PostMapping(\"/books\") принимает тело через @RequestBody. В настоящем приложении сервис должен проверять данные и выбирать статус ответа."
+          ],
+          "example": {
+            "code": "@RestController\nclass BookController {\n    @GetMapping(\"/books/{id}\")\n    Book find(@PathVariable long id) { return service.find(id); }\n    @PostMapping(\"/books\")\n    Book create(@RequestBody Book book) { return service.save(book); }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент Spring-контроллера; сервис и зависимости нужны отдельно"
+          },
+          "result": "GET /books/7 вызывает find(7), POST /books отправляет тело в create. Здесь нужны Book, service и зависимости Spring.",
+          "bridge": "Для практической модели без сервера свяжите строку вроде «GET /health» с ответом в Map и прочитайте его по точному ключу."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m17-l04-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "@RestController\nclass BookController {\n    @GetMapping(\"/books/{id}\")\n    Book find(@PathVariable long id) { return service.find(id); }\n    @PostMapping(\"/books\")\n    Book create(@RequestBody Book book) { return service.save(book); }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. GET /books/7 вызывает find(7), POST /books отправляет тело в create. Здесь нужны Book, service и зависимости Spring."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Какой HTTP-метод обычно используют для чтения ресурса?",
+          "options": [
+            {
+              "id": "a",
+              "label": "POST"
+            },
+            {
+              "id": "b",
+              "label": "DELETE"
+            },
+            {
+              "id": "c",
+              "label": "GET"
+            },
+            {
+              "id": "d",
+              "label": "PATCH"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Чтение не должно менять состояние.",
+          "explanation": "[Erklärung] GET запрашивает ресурс без изменения.",
+          "id": "m17-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Аннотируйте маршрут чтения пользователя.",
+          "template": [
+            "",
+            "(\"/users/{id}\")"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@GetMapping",
+              "options": [
+                "@GetMapping",
+                "@PostMapping",
+                "@Component"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Маршрут обслуживает GET-запрос.",
+          "explanation": "[Erklärung] @GetMapping связывает метод контроллера с GET.",
+          "id": "m17-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m17-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Какой метод HTTP обычно используют для получения списка, не создавая новый ресурс?",
+          "options": [
+            {
+              "id": "a",
+              "label": "GET"
+            },
+            {
+              "id": "b",
+              "label": "POST"
+            },
+            {
+              "id": "c",
+              "label": "PATCH"
+            },
+            {
+              "id": "d",
+              "label": "CONNECT"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] GET запрашивает представление ресурса; POST обычно отправляет данные для создания/обработки.",
+          "explanation": "[Erklärung] Верно: GET. GET запрашивает представление ресурса; POST обычно отправляет данные для создания/обработки."
+        },
+        {
+          "id": "m17-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m17-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте GET и POST без Spring: метод handle(String method) возвращает «список» для GET, «создано» для POST, иначе «ошибка». Geben Sie aus: ответы для GET и POST по строке.",
+          "expectedOutput": "список\nсоздано",
+          "hint": "[Hinweis] HTTP-метод определяет действие; реальную сеть или Spring Boot в этом упражнении запускать не нужно.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'список\\nсоздано'. HTTP-метод определяет действие; реальную сеть или Spring Boot в этом упражнении запускать не нужно."
+        }
+      ]
+    },
+    {
+      "id": "m17-l05",
+      "title": "Spring DevTools",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Spring Boot DevTools облегчает разработку: может автоматически перезапускать приложение при изменении классов и обновлять ресурсы. Это инструмент разработки, а не механизм публикации сервиса.",
+          "[Theorie] В production DevTools обычно не включают: для выпуска используют собранный артефакт и контролируемый процесс развёртывания. Перезапуск не заменяет написание тестов и проверку конфигурации."
+        ],
+        "code": "<dependency>\n  <groupId>org.springframework.boot</groupId>\n  <artifactId>spring-boot-devtools</artifactId>\n  <scope>runtime</scope>\n</dependency>",
+        "caption": "Ускоряет цикл разработки, но не заменяет тесты.",
+        "language": "xml",
+        "objective": "[Lernziel] Подключить devtools как зависимость для разработки и объяснить его ограничения.",
+        "walkthrough": "[Durchgang] runtime-зависимость spring-boot-devtools помогает автоматически перезапускать приложение после изменения классов. Это ускоряет цикл «изменил — проверил».",
+        "pitfall": "[Typischer Fehler] Не воспринимайте перезапуск как тест: проверяйте поведение отдельно и не включайте devtools в продакшен-среде.",
+        "deepDive": "[Vertiefung] DevTools ускоряет цикл разработки перезапуском после изменений классов, но не меняет контракт приложения и не делает сборку готовой к выпуску. За работающим перезапуском всё ещё нужны тесты и проверка настройки среды.",
+        "useCase": "[Praxisfall] После изменения метода контроллера сравните ручную проверку с автоматическим тестом: перезапуск лишь применил код, но не подтвердил правильный HTTP-ответ. В production развёртывайте собранный артефакт без devtools.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Devtools облегчает локальную разработку, но не реализует маршруты и не создаёт сервисы. Зависимость подключают только для разработки.",
+          "steps": [
+            "Добавьте spring-boot-devtools в pom.xml с областью runtime и обновите зависимости проекта.",
+            "При некоторых локальных настройках изменения классов вызовут перезапуск приложения. Это не обещание мгновенного обновления любого файла без сборки."
+          ],
+          "example": {
+            "code": "<dependency>\n  <groupId>org.springframework.boot</groupId>\n  <artifactId>spring-boot-devtools</artifactId>\n  <scope>runtime</scope>\n  <optional>true</optional>\n</dependency>",
+            "language": "xml",
+            "runnable": false,
+            "label": "Фрагмент pom.xml внутри dependencies"
+          },
+          "result": "Зависимость доступна для локального запуска при соответствующей настройке Maven, но её не следует считать заменой тестам или полноценной сборке.",
+          "bridge": "В мини-задании определите назначение devtools; в практике программируйте маршрутизацию без библиотек, чтобы освоить принцип."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m17-l05-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "<dependency>\n  <groupId>org.springframework.boot</groupId>\n  <artifactId>spring-boot-devtools</artifactId>\n  <scope>runtime</scope>\n  <optional>true</optional>\n</dependency>",
+          "language": "xml",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Зависимость доступна для локального запуска при соответствующей настройке Maven, но её не следует считать заменой тестам или полноценной сборке."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Для чего в основном служит Spring Boot DevTools?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Для автоматического перезапуска при разработке"
+            },
+            {
+              "id": "b",
+              "label": "Для замены SQL"
+            },
+            {
+              "id": "c",
+              "label": "Для компиляции Java без JDK"
+            },
+            {
+              "id": "d",
+              "label": "Для шифрования паролей"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Это инструмент ускорения локальной обратной связи.",
+          "explanation": "[Erklärung] DevTools помогает быстро увидеть изменения во время разработки.",
+          "id": "m17-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Допишите название инструмента Spring Boot.",
+          "template": [
+            "spring-boot-",
+            ""
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "devtools",
+              "options": [
+                "devtools",
+                "jdbc",
+                "mockito"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Имя содержит dev — development.",
+          "explanation": "[Erklärung] spring-boot-devtools предназначен для разработки.",
+          "id": "m17-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m17-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] При изменении кода Devtools пересоздаёт контекст. Какой риск у значения, хранившегося только в памяти старого экземпляра?",
+          "options": [
+            {
+              "id": "a",
+              "label": "ничего не произойдёт никогда"
+            },
+            {
+              "id": "b",
+              "label": "оно может быть потеряно при перезапуске"
+            },
+            {
+              "id": "c",
+              "label": "оно станет частью pom.xml"
+            },
+            {
+              "id": "d",
+              "label": "оно автоматически запишется в БД"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Внутрипроцессное состояние не следует путать с постоянным хранением.",
+          "explanation": "[Erklärung] Верно: оно может быть потеряно при перезапуске. Внутрипроцессное состояние не следует путать с постоянным хранением."
+        },
+        {
+          "id": "m17-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m17-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Смоделируйте перезапуск разработки: Config со значением версии 1, создайте новый Config со значением 2 и выведите значения старого и нового объекта через двоеточие.",
+          "expectedOutput": "1:2",
+          "hint": "[Hinweis] Devtools пересоздаёт контекст при изменениях; в JDK-упражнении сравните независимые экземпляры настроек.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '1:2'. Devtools пересоздаёт контекст при изменениях; в JDK-упражнении сравните независимые экземпляры настроек."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Abschlusspraxis Modul 17",
+    "description": "Разберитесь в IoC и маршрутах; кодовые задачи моделируют идеи на чистой Java без Spring-библиотек.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой подход делает зависимость класса явной?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Скрытый глобальный Singleton"
+          },
+          {
+            "id": "b",
+            "label": "Параметр конструктора"
+          },
+          {
+            "id": "c",
+            "label": "Значение из случайного static-поля"
+          },
+          {
+            "id": "d",
+            "label": "Пустой catch"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Зависимость должна быть видна при создании объекта.",
+        "explanation": "[Erklärung] Constructor injection позволяет подменить реализацию в тесте.",
+        "id": "m17-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Aufgabe] Добавьте аннотацию для POST-маршрута.",
+        "template": [
+          "",
+          "(\"/users\")"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "@PostMapping",
+            "options": [
+              "@GetMapping",
+              "@PostMapping",
+              "@Override"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Этот маршрут создаёт ресурс.",
+        "explanation": "[Erklärung] @PostMapping связывает метод с HTTP POST.",
+        "id": "m17-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините элемент Spring и его роль.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "pom.xml",
+            "right": "Описание Maven-зависимостей"
+          },
+          {
+            "id": "2",
+            "left": "@Component",
+            "right": "Регистрация кандидата в bean"
+          },
+          {
+            "id": "3",
+            "left": "@GetMapping",
+            "right": "Маршрут чтения"
+          },
+          {
+            "id": "4",
+            "left": "DevTools",
+            "right": "Перезапуск при локальной разработке"
+          }
+        ],
+        "hint": "[Hinweis] Отделите сборку, контейнер, HTTP и инструмент разработки.",
+        "explanation": "[Erklärung] Каждый элемент решает свою задачу.",
+        "id": "m17-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите класс с конструкторным внедрением сервиса.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Controller {"
+          },
+          {
+            "id": "b",
+            "text": "private final Service service;"
+          },
+          {
+            "id": "c",
+            "text": "Controller(Service service) {"
+          },
+          {
+            "id": "d",
+            "text": "this.service = service;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Поле и конструктор должны быть в классе, присваивание — в конструкторе.",
+        "explanation": "[Erklärung] Поле может стоять и после конструктора: оба порядка допустимы в Java.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m17-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "GET не должен менять состояние"
+          },
+          {
+            "id": "b",
+            "label": "Spring Boot не использует Java-код"
+          },
+          {
+            "id": "c",
+            "label": "Контейнер создаёт beans"
+          },
+          {
+            "id": "d",
+            "label": "mvn test запускает фазу тестирования"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hinweis] Spring Boot — фреймворк на Java.",
+        "explanation": "[Erklärung] Контейнер управляет компонентами, GET читает, Maven запускает тесты.",
+        "id": "m17-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Aufgabe] Без Spring-библиотек смоделируйте внедрение зависимости: GreetingService — интерфейс, FriendlyService возвращает \"Привет, Анна\", Controller принимает сервис в конструкторе и печатает приветствие.",
+        "starterCode": "interface GreetingService { String greet(String name); }\nclass FriendlyService implements GreetingService {\n    public String greet(String name) { return \"\"; }\n}\nclass Controller {\n    private final GreetingService service;\n    Controller(GreetingService service) { this.service = service; }\n    void handle(String name) { /* выведите service.greet(name) */ }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Создайте Controller и вызовите handle(\"Анна\")\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Привет, Анна",
+        "hint": "Erstellen Sie FriendlyService implements GreetingService и передайте его в Controller(new FriendlyService()).",
+        "explanation": "[Erklärung] Явная зависимость передана через конструктор.",
+        "id": "m17-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "[Aufgabe] Без Spring смоделируйте маршрутизацию: Map<String,String> сопоставляет \"GET /health\" с \"200 OK\". Получите значение по этому ключу и выведите его.",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, String> routes = new HashMap<>();\n        // Зарегистрируйте \"GET /health\" и выведите ответ\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "200 OK",
+        "hint": "[Hinweis] Положите маршрут в Map через put, затем вызовите get(\"GET /health\").",
+        "explanation": "[Erklärung] Простой словарь воспроизвёл идею маршрута без веб-сервера.",
+        "id": "m17-p07"
+      }
+    ],
+    "id": "m17-practice",
+    "primer": {
+      "why": "Spring-аннотации в уроках объясняют устройство веб-приложения, но здесь писать Spring нельзя. Реализуйте оба принципа обычной Java: конструкторную зависимость и таблицу маршрутов.",
+      "steps": [
+        "Интерфейс задаёт метод, реализация возвращает конкретный текст, а Controller сохраняет ссылку на интерфейс, полученную из конструктора. Это ручная инъекция.",
+        "Для маршрута используйте Map<String,String>: метод и путь составляют единый ключ, а get(key) читает ответ. Не нужен сервер или сетевой запрос."
+      ],
+      "example": {
+        "code": "interface Greeting { String text(); }\nclass CasualGreeting implements Greeting {\n    public String text() { return \"Добрый день\"; }\n}\nclass Controller {\n    private final Greeting greeting;\n    Controller(Greeting greeting) { this.greeting = greeting; }\n    String message() { return greeting.text(); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(new Controller(new CasualGreeting()).message());\n        java.util.Map<String, String> routes = java.util.Map.of(\"GET /ping\", \"pong\");\n        System.out.println(routes.get(\"GET /ping\"));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная Java-программа без Spring",
+        "stdout": "Добрый день\npong"
+      },
+      "result": "Две строки — «Добрый день» и «pong». В Boot контейнер создал бы зависимости, а веб-сервер вызывал бы маршрут; здесь всё сделано вручную.",
+      "hints": [
+        {
+          "taskId": "m17-p06",
+          "text": "Для приветствия из условия реализуйте сервис с требуемым текстом и передайте его в конструктор контроллера. Не добавляйте Spring-импорты."
+        },
+        {
+          "taskId": "m17-p07",
+          "text": "Для маршрута GET /health создайте пару точный ключ → точный ответ, затем прочитайте через get; не путайте путь с HTTP-методом."
+        }
+      ]
+    }
+  },
+  "boss": {
+    "id": "m17-boss",
+    "title": "Kontrolllektion",
+    "description": "Мини-экзамен: четыре верных ответа из пяти для зачёта.",
+    "passingScore": 0.8,
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Где Maven задаёт зависимости проекта?",
+        "options": [
+          {
+            "id": "a",
+            "label": "pom.xml"
+          },
+          {
+            "id": "b",
+            "label": "index.html"
+          },
+          {
+            "id": "c",
+            "label": "Main.java"
+          },
+          {
+            "id": "d",
+            "label": "Dockerfile"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Нужен файл Project Object Model.",
+        "explanation": "[Erklärung] pom.xml хранит координаты и зависимости.",
+        "id": "m17-b01"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Что означает IoC в Spring?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Контейнер управляет созданием и связями объектов"
+          },
+          {
+            "id": "b",
+            "label": "Все методы обязаны быть static"
+          },
+          {
+            "id": "c",
+            "label": "GET всегда изменяет данные"
+          },
+          {
+            "id": "d",
+            "label": "Только ручное создание через new"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Управление объектами передано инфраструктуре.",
+        "explanation": "[Erklärung] IoC переносит сборку приложения в контейнер.",
+        "id": "m17-b02"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какая аннотация связывает метод с HTTP GET?",
+        "options": [
+          {
+            "id": "a",
+            "label": "@PostMapping"
+          },
+          {
+            "id": "b",
+            "label": "@GetMapping"
+          },
+          {
+            "id": "c",
+            "label": "@Component"
+          },
+          {
+            "id": "d",
+            "label": "@Override"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Смотрите на название HTTP-метода.",
+        "explanation": "[Erklärung] @GetMapping регистрирует маршрут GET.",
+        "id": "m17-b03"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой способ внедрения делает зависимость явной?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Через конструктор"
+          },
+          {
+            "id": "b",
+            "label": "Глобальная переменная"
+          },
+          {
+            "id": "c",
+            "label": "Случайный static"
+          },
+          {
+            "id": "d",
+            "label": "Пустой catch"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Зависимость передаётся при создании объекта.",
+        "explanation": "[Erklärung] Конструктор явно перечисляет нужные сервисы.",
+        "id": "m17-b04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Для чего DevTools при разработке?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Автоперезапуск и быстрая обратная связь"
+          },
+          {
+            "id": "b",
+            "label": "Обязательная production-безопасность"
+          },
+          {
+            "id": "c",
+            "label": "Замена JDK"
+          },
+          {
+            "id": "d",
+            "label": "Хранение данных вместо БД"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Это инструмент локального цикла.",
+        "explanation": "[Erklärung] DevTools облегчает разработку, но не заменяет сборку и тесты.",
+        "id": "m17-b05"
+      }
+    ]
+  },
+  "exam": {
+    "id": "m17-exam",
+    "title": "Mini-Prüfung",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 470,
+    "tasks": [
+      {
+        "id": "m-exam-17-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Aufgabe] При изменении кода Devtools пересоздаёт контекст. Какой риск у значения, хранившегося только в памяти старого экземпляра?",
+        "options": [
+          {
+            "id": "a",
+            "label": "ничего не произойдёт никогда"
+          },
+          {
+            "id": "b",
+            "label": "оно может быть потеряно при перезапуске"
+          },
+          {
+            "id": "c",
+            "label": "оно станет частью pom.xml"
+          },
+          {
+            "id": "d",
+            "label": "оно автоматически запишется в БД"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Внутрипроцессное состояние не следует путать с постоянным хранением.",
+        "explanation": "[Erklärung] Верно: оно может быть потеряно при перезапуске. Внутрипроцессное состояние не следует путать с постоянным хранением."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Aufgabe] Запустите тесты Maven-командой.",
+        "template": [
+          "mvn ",
+          ""
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "test",
+            "options": [
+              "test",
+              "run",
+              "start"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Нужна фаза тестирования.",
+        "explanation": "[Erklärung] mvn test запускает тестовую фазу.",
+        "id": "m-exam-17-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините элемент Spring и его роль.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "pom.xml",
+            "right": "Описание Maven-зависимостей"
+          },
+          {
+            "id": "2",
+            "left": "@Component",
+            "right": "Регистрация кандидата в bean"
+          },
+          {
+            "id": "3",
+            "left": "@GetMapping",
+            "right": "Маршрут чтения"
+          },
+          {
+            "id": "4",
+            "left": "DevTools",
+            "right": "Перезапуск при локальной разработке"
+          }
+        ],
+        "hint": "[Hinweis] Отделите сборку, контейнер, HTTP и инструмент разработки.",
+        "explanation": "[Erklärung] Каждый элемент решает свою задачу.",
+        "id": "m-exam-17-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите класс с конструкторным внедрением сервиса.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Controller {"
+          },
+          {
+            "id": "b",
+            "text": "private final Service service;"
+          },
+          {
+            "id": "c",
+            "text": "Controller(Service service) {"
+          },
+          {
+            "id": "d",
+            "text": "this.service = service;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Поле и конструктор должны быть в классе, присваивание — в конструкторе.",
+        "explanation": "[Erklärung] Поле может стоять и после конструктора: оба порядка допустимы в Java.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m-exam-17-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "[Aufgabe] Без Spring-библиотек смоделируйте constructor injection и маршрутизацию.\nИнтерфейс Greeting имеет hello(String), RussianGreeting возвращает «Привет, имя».\nController получает Greeting через конструктор; handle(method,path) поддерживает\nGET /hello/Ира и возвращает «200 » + приветствие; неизвестный маршрут → «404».\nВ main выполните GET /hello/Ира 1 раз, затем POST /hello/Ира один раз и выведите ответы.\nКонтроллер не создаёт сервис самостоятельно.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "200 Привет, Ира\n404",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n200 Привет, Ира\n404",
+        "id": "m-exam-17-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "[Aufgabe] Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез Spring-библиотек смоделируйте constructor injection и маршрутизацию.\nИнтерфейс Greeting имеет hello(String), RussianGreeting возвращает «Привет, имя».\nController получает Greeting через конструктор; handle(method,path) поддерживает\nGET /hello/Ира и возвращает «200 » + приветствие; неизвестный маршрут → «404».\nВ main выполните GET /hello/Ира 2 раз, затем POST /hello/Ира один раз и выведите ответы.\nКонтроллер не создаёт сервис самостоятельно.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "200 Привет, Ира\n200 Привет, Ира\n404",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n200 Привет, Ира\n200 Привет, Ира\n404",
+        "id": "m-exam-17-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "[Aufgabe] Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез Spring-библиотек смоделируйте constructor injection и маршрутизацию.\nИнтерфейс Greeting имеет hello(String), RussianGreeting возвращает «Привет, имя».\nController получает Greeting через конструктор; handle(method,path) поддерживает\nGET /hello/Ира и возвращает «200 » + приветствие; неизвестный маршрут → «404».\nВ main выполните GET /hello/Ира 3 раз, затем POST /hello/Ира один раз и выведите ответы.\nКонтроллер не создаёт сервис самостоятельно.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 404\nСтрок: 4",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 404\nСтрок: 4",
+        "id": "m-exam-17-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "[Aufgabe] Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез Spring-библиотек смоделируйте constructor injection и маршрутизацию.\nИнтерфейс Greeting имеет hello(String), RussianGreeting возвращает «Привет, имя».\nController получает Greeting через конструктор; handle(method,path) поддерживает\nGET /hello/Ира и возвращает «200 » + приветствие; неизвестный маршрут → «404».\nВ main выполните GET /hello/Ира 4 раз, затем POST /hello/Ира один раз и выведите ответы.\nКонтроллер не создаёт сервис самостоятельно.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 404\nСтрок: 5\nАудит: 10/2",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 200 Привет, Ира\nОтчёт: 404\nСтрок: 5\nАудит: 10/2",
+        "id": "m-exam-17-08"
+      }
+    ]
+  }
+}

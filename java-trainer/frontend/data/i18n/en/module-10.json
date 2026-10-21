@@ -1,0 +1,1085 @@
+{
+  "id": 10,
+  "title": "Working with Files & I/O",
+  "lessons": [
+    {
+      "id": "m10-l01",
+      "title": "Introduction to File I/O",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Файловый путь представляет Path, а класс Files содержит методы для чтения и записи. Путь может быть относительным к рабочему каталогу или абсолютным; в тренажёре относительные файлы создаются во временной папке и удаляются после проверки.",
+          "[Theory] Работа с файлами может завершиться IOException: файл отсутствует, нет прав или произошла ошибка устройства. Указывайте кодировку UTF-8 явно, когда обрабатываете текст вне собственной платформы."
+        ],
+        "code": "java.nio.file.Path path = java.nio.file.Path.of(\"note.txt\");\nboolean exists = java.nio.file.Files.exists(path);",
+        "caption": "Не путайте путь и содержимое файла.",
+        "language": "java",
+        "objective": "[Goal] Создать относительный Path и проверить, существует ли файл.",
+        "walkthrough": "[Walkthrough] Path.of(\"note.txt\") строит путь относительно рабочего каталога процесса; Files.exists(path) проверяет файловую систему и вернёт false, если такого файла нет.",
+        "pitfall": "[Common Pitfall] Создание Path не создаёт сам файл. Не рассчитывайте, что относительный путь всегда указывает на каталог с исходным кодом.",
+        "deepDive": "[Deep Dive] Относительный Path разрешается относительно рабочего каталога процесса, а не обязательно рядом с Java-файлом. Files работает с файловой системой и может закончиться ошибкой ввода-вывода; проверка exists не исключает исчезновение файла перед чтением.",
+        "useCase": "[Real-World Case] Перед чтением настройки явно задайте ожидаемое расположение файла и кодировку. Запустите программу из другого каталога: если она больше не находит путь, это вопрос разрешения относительного имени, а не синтаксиса Java.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Путь — адрес файла, а не его содержимое. Файл может отсутствовать, поэтому перед работой надо понимать, к какому каталогу относится путь.",
+          "steps": [
+            "Path.of(\"data.txt\") строит относительный путь. Он разрешается от рабочего каталога процесса, а не от папки с исходным Main.java.",
+            "Files.exists(path) только сообщает, находится ли файл в момент проверки; при настоящем чтении всё равно нужно обработать IOException."
+          ],
+          "example": {
+            "code": "java.nio.file.Path path = java.nio.file.Path.of(\"data.txt\");\nSystem.out.println(java.nio.file.Files.exists(path));",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри main; результат зависит от файлов"
+          },
+          "result": "Если файла ещё нет, увидите false. Создавать файл вызовом Path.of или exists программа не будет.",
+          "bridge": "В мини-задании различайте Path и Files. В практике сначала создайте относительный файл, затем прочитайте его тем же путём."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m10-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "java.nio.file.Path path = java.nio.file.Path.of(\"data.txt\");\nSystem.out.println(java.nio.file.Files.exists(path));",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если файла ещё нет, увидите false. Создавать файл вызовом Path.of или exists программа не будет."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какой класс обозначает путь к файлу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Files"
+            },
+            {
+              "id": "b",
+              "label": "Path"
+            },
+            {
+              "id": "c",
+              "label": "StringBuilder"
+            },
+            {
+              "id": "d",
+              "label": "Scanner"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Один класс представляет путь, другой предоставляет операции.",
+          "explanation": "[Explanation] Path — представление пути, Files — набор операций.",
+          "id": "m10-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Create относительный путь.",
+          "template": [
+            "Path file = Path.",
+            "(\"note.txt\");"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "of",
+              "options": [
+                "of",
+                "read",
+                "new"
+              ]
+            }
+          ],
+          "hint": "[Hint] Начиная с Java 11 есть фабричный метод.",
+          "explanation": "[Explanation] Path.of(\"note.txt\") создаёт объект пути.",
+          "id": "m10-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m10-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Что вернёт Path.of(\"data\", \"users.txt\").getFileName(), если файл пока не существует?",
+          "options": [
+            {
+              "id": "a",
+              "label": "data"
+            },
+            {
+              "id": "b",
+              "label": "users.txt"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "исключение: файл не создан"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Path описывает путь; для разбора его компонентов обращаться к диску не нужно.",
+          "explanation": "[Explanation] Верно: users.txt. Path описывает путь; для разбора его компонентов обращаться к диску не нужно."
+        },
+        {
+          "id": "m10-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m10-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Для пути Path.of(\"data\", \"users.txt\") выведите последний компонент пути и его родительский каталог через двоеточие. Не создавайте настоящий файл.",
+          "expectedOutput": "users.txt:data",
+          "hint": "[Hint] Методы getFileName() и getParent() возвращают части Path; чтение файлов здесь не требуется.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'users.txt:data'. Методы getFileName() и getParent() возвращают части Path; чтение файлов здесь не требуется."
+        }
+      ]
+    },
+    {
+      "id": "m10-l02",
+      "title": "Reading from Files",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Files.readString(path, charset) читает целый небольшой текстовый файл. Для больших файлов удобнее BufferedReader: он читает строки постепенно, не загружая весь файл в память.",
+          "[Theory] Потоки ввода необходимо закрывать. Конструкция try-with-resources автоматически вызовет close даже при исключении; IOException нужно обработать или указать в throws."
+        ],
+        "code": "try (var reader = java.nio.file.Files.newBufferedReader(path)) {\n    String first = reader.readLine();\n}",
+        "caption": "Большие файлы читайте потоково.",
+        "language": "java",
+        "objective": "[Goal] Прочитать строку через BufferedReader и гарантированно закрыть ресурс.",
+        "walkthrough": "[Walkthrough] newBufferedReader(path) открывает поток; readLine() читает первую строку или возвращает null для пустого файла. try-with-resources закрывает reader и при исключении.",
+        "pitfall": "[Common Pitfall] Не вызывайте методы у результата readLine() до проверки на null; для больших файлов не загружайте всё содержимое через readString.",
+        "deepDive": "[Deep Dive] readString удобно для маленького файла, но требует памяти примерно пропорционально его размеру. BufferedReader позволяет обрабатывать строки по одной; try-with-resources закрывает дескриптор и при штатном выходе, и при исключении.",
+        "useCase": "Для большого журнала считайте только подходящие строки, не собирая весь журнал в одну String. Check пустой файл, отсутствующий файл и некорректный формат строки как отдельные случаи.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Чтение целого файла удобно для малого объёма, а BufferedReader читает постепенно. Ресурс нужно закрывать, даже если разбор строки закончился ошибкой.",
+          "steps": [
+            "Откройте reader в try-with-resources: после фигурной скобки Java вызовет close автоматически.",
+            "readLine() возвращает строку без символа перевода либо null при конце файла. Не вызывайте методы строки до проверки, что она существует."
+          ],
+          "example": {
+            "code": "java.nio.file.Path path = java.nio.file.Path.of(\"people.txt\");\ntry (var reader = java.nio.file.Files.newBufferedReader(path)) {\n    String first = reader.readLine();\n    if (first != null) System.out.println(first);\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; файл и обработка IOException нужны отдельно"
+          },
+          "result": "Если файл содержит строку «Анна», она появится в консоли. Для пустого файла ничего не выведется; отсутствующий файл вызовет IOException.",
+          "bridge": "В упражнении узнайте роль try-with-resources; в практике сначала запишите маленький файл, затем прочитайте его без риска утечки reader."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m10-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "java.nio.file.Path path = java.nio.file.Path.of(\"people.txt\");\ntry (var reader = java.nio.file.Files.newBufferedReader(path)) {\n    String first = reader.readLine();\n    if (first != null) System.out.println(first);\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если файл содержит строку «Анна», она появится в консоли. Для пустого файла ничего не выведется; отсутствующий файл вызовет IOException."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что автоматически закрывает BufferedReader?",
+          "options": [
+            {
+              "id": "a",
+              "label": "try-with-resources"
+            },
+            {
+              "id": "b",
+              "label": "Оператор =="
+            },
+            {
+              "id": "c",
+              "label": "Обычный for"
+            },
+            {
+              "id": "d",
+              "label": "Поля static"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Ресурс объявлен внутри круглых скобок try.",
+          "explanation": "[Explanation] try-with-resources вызывает close в конце блока.",
+          "id": "m10-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Прочитайте весь небольшой текст UTF-8.",
+          "template": [
+            "String text = Files.",
+            "(path, StandardCharsets.UTF_8);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "readString",
+              "options": [
+                "readString",
+                "writeString",
+                "exists"
+              ]
+            }
+          ],
+          "hint": "[Hint] Выбирайте метод чтения, не записи.",
+          "explanation": "[Explanation] Files.readString возвращает содержимое текстового файла.",
+          "id": "m10-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m10-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Files.readAllLines читает файл с двумя строками. Как получить вторую без выхода за границы?",
+          "options": [
+            {
+              "id": "a",
+              "label": "lines.get(2)"
+            },
+            {
+              "id": "b",
+              "label": "lines.get(1)"
+            },
+            {
+              "id": "c",
+              "label": "lines[2]"
+            },
+            {
+              "id": "d",
+              "label": "lines.length()"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "The list строк индексируется с нуля.",
+          "explanation": "Верно: lines.get(1). The list строк индексируется с нуля."
+        },
+        {
+          "id": "m10-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m10-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create временный текстовый файл через Files.createTempFile, запишите две строки «Лена» и «Мира» в UTF-8, затем прочитайте Files.readAllLines и выведите количество строк.",
+          "expectedOutput": "2",
+          "hint": "[Hint] Очищайте файл в finally; не используйте абсолютный путь или файлы другого пользователя.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '2'. Очищайте файл в finally; не используйте абсолютный путь или файлы другого пользователя."
+        }
+      ]
+    },
+    {
+      "id": "m10-l03",
+      "title": "Parsing Strings",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Прочитав строку, часто нужно разобрать поля: split(\",\") разделит простой список, trim() уберёт лишние пробелы, Integer.parseInt преобразует число из текста. Проверяйте число полей до обращения по индексу.",
+          "[Theory] Простой split не является полноценным CSV-парсером: запятые внутри кавычек требуют отдельной библиотеки. NumberFormatException подскажет, что текст не удалось преобразовать в число."
+        ],
+        "code": "String[] parts = \"Лена, 25\".split(\",\");\nint age = Integer.parseInt(parts[1].trim());",
+        "caption": "Для сложного CSV нужен настоящий парсер.",
+        "language": "java",
+        "objective": "[Goal] Разделить простую строку по запятой и безопасно преобразовать числовое поле.",
+        "walkthrough": "[Walkthrough] split(\",\") превращает «Лена, 25» в две части; trim() убирает пробел перед 25, затем parseInt возвращает число 25.",
+        "pitfall": "[Common Pitfall] Простой split(\",\") не понимает кавычки и запятые внутри CSV-полей. Перед обращением к parts[1] проверьте число частей.",
+        "deepDive": "[Deep Dive] Разбор входной строки — отдельный этап между чтением и бизнес-логикой. После split проверьте количество полей и преобразование каждого значения; split для CSV с кавычками меняет смысл данных и не заменяет CSV-парсер.",
+        "useCase": "[Real-World Case] Для строки «имя,возраст» сначала убедитесь, что есть два поля, потом преобразуйте возраст и выдайте понятное сообщение при ошибке. Протестируйте лишний разделитель и строку с нечисловым возрастом.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Чтение даёт текст, а не готовые поля объекта. После разделения строки проверьте части и только затем преобразуйте число.",
+          "steps": [
+            "split(\",\") делит простой список по запятой. parts[0].trim() убирает пробелы из имени, parts[1] содержит возраст пока ещё в виде строки.",
+            "Integer.parseInt(parts[1].trim()) преобразует текст в int и может бросить NumberFormatException. До доступа parts[1] проверьте, что частей минимум две."
+          ],
+          "example": {
+            "code": "String row = \"Мира, 22\";\nString[] parts = row.split(\",\");\nif (parts.length == 2) {\n    int age = Integer.parseInt(parts[1].trim());\n    System.out.println(parts[0].trim() + \":\" + age);\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Разбор простой строки внутри main"
+          },
+          "result": "Вывод «Мира:22». Настоящий CSV с кавычками и запятыми внутри поля требует полноценного парсера, не одного split.",
+          "bridge": "В мини-задании объясните преобразование текста в число. Для практики измените считанный возраст после проверки формата и только потом напечатайте итог."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m10-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "String row = \"Мира, 22\";\nString[] parts = row.split(\",\");\nif (parts.length == 2) {\n    int age = Integer.parseInt(parts[1].trim());\n    System.out.println(parts[0].trim() + \":\" + age);\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Вывод «Мира:22». Настоящий CSV с кавычками и запятыми внутри поля требует полноценного парсера, не одного split."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что может произойти при Integer.parseInt(\"двадцать\")?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Вернёт 0"
+            },
+            {
+              "id": "b",
+              "label": "NumberFormatException"
+            },
+            {
+              "id": "c",
+              "label": "Создаст массив"
+            },
+            {
+              "id": "d",
+              "label": "Вернёт null"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "The method ожидает десятичные цифры.",
+          "explanation": "[Explanation] Нечисловой текст приводит к NumberFormatException.",
+          "id": "m10-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Удалите пробелы вокруг поля возраста.",
+          "template": [
+            "int age = Integer.parseInt(parts[1].",
+            "());"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "trim",
+              "options": [
+                "trim",
+                "split",
+                "replaceAll"
+              ]
+            }
+          ],
+          "hint": "The method удаляет пробелы по краям String.",
+          "explanation": "[Explanation] trim() подготавливает поле для parseInt.",
+          "id": "m10-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m10-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] После \"id;Mira;23\".split(\";\") чему равен элемент с индексом 1?",
+          "options": [
+            {
+              "id": "a",
+              "label": "id"
+            },
+            {
+              "id": "b",
+              "label": "Mira"
+            },
+            {
+              "id": "c",
+              "label": "23"
+            },
+            {
+              "id": "d",
+              "label": "id;Mira;23"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Разделитель не попадает в элементы массива, индексы начинаются с 0.",
+          "explanation": "[Explanation] Верно: Mira. Разделитель не попадает в элементы массива, индексы начинаются с 0."
+        },
+        {
+          "id": "m10-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m10-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Разберите строку «id;Mira;23» через split(\";\"). Print имя и возраст из полученного массива через двоеточие без печати id.",
+          "expectedOutput": "Mira:23",
+          "hint": "[Hint] Элементы после split находятся по индексам 0, 1 и 2; разделитель ; — не специальный символ регулярного выражения.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Mira:23'. Элементы после split находятся по индексам 0, 1 и 2; разделитель ; — не специальный символ регулярного выражения."
+        }
+      ]
+    },
+    {
+      "id": "m10-l04",
+      "title": "Writing to Files",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Files.writeString(path, text, charset) записывает текст и по умолчанию создаёт файл или заменяет его содержимое. Для добавления в конец нужен StandardOpenOption.APPEND вместе с CREATE.",
+          "[Theory] Не пишите в произвольные пути без контроля: относительный файл в практике остаётся в одноразовом каталоге. При критичных данных сначала пишите временный файл, затем заменяйте основной аккуратно."
+        ],
+        "code": "Files.writeString(path, \"Привет\", StandardCharsets.UTF_8);\nString text = Files.readString(path, StandardCharsets.UTF_8);",
+        "caption": "По умолчанию запись заменяет текст.",
+        "language": "java",
+        "objective": "[Goal] Записать и прочитать UTF-8 текст с явным указанием кодировки.",
+        "walkthrough": "[Walkthrough] Files.writeString записывает «Привет» в path, а Files.readString с UTF-8 вернёт тот же текст. По умолчанию writeString перезаписывает содержимое.",
+        "pitfall": "[Common Pitfall] Не используйте разные кодировки при записи и чтении; для добавления к существующему файлу нужен StandardOpenOption.APPEND.",
+        "deepDive": "[Deep Dive] Режим записи определяет сохранность старых данных: обычная запись заменяет содержимое, APPEND добавляет после него. Файл можно закрыть автоматически через try-with-resources; для критичного обновления сначала подготовьте новый файл.",
+        "useCase": "[Real-World Case] При сохранении списка задач решите, нужно ли переписать снимок целиком или дописать событие в журнал. Сбой между двумя записями способен оставить файл неполным — продумайте резервную копию или замену через временный файл.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Запись файла изменяет данные на диске: по умолчанию writeString создаёт файл или заменяет его содержимое. При повторном запуске старый текст будет перезаписан.",
+          "steps": [
+            "Получите Path относительно рабочего каталога и передайте в Files.writeString вместе со строкой и UTF-8.",
+            "Считайте файл через Files.readString с той же кодировкой; println покажет сохранённое значение. Код должен обработать IOException или объявить throws."
+          ],
+          "example": {
+            "code": "java.nio.file.Path path = java.nio.file.Path.of(\"message.txt\");\njava.nio.file.Files.writeString(path, \"Готово\", java.nio.charset.StandardCharsets.UTF_8);\nString saved = java.nio.file.Files.readString(path, java.nio.charset.StandardCharsets.UTF_8);\nSystem.out.println(saved);",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main, требующий обработки IOException"
+          },
+          "result": "В консоли будет «Готово». На диске останется message.txt; в учебной проверке временный каталог удаляется после запуска.",
+          "bridge": "Для задачи с people.csv примените ту же пару writeString/readString, затем разберите полученную строку по правилу предыдущего урока."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m10-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "java.nio.file.Path path = java.nio.file.Path.of(\"message.txt\");\njava.nio.file.Files.writeString(path, \"Готово\", java.nio.charset.StandardCharsets.UTF_8);\nString saved = java.nio.file.Files.readString(path, java.nio.charset.StandardCharsets.UTF_8);\nSystem.out.println(saved);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. В консоли будет «Готово». На диске останется message.txt; в учебной проверке временный каталог удаляется после запуска."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что делает Files.writeString без APPEND с существующим файлом?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Всегда дописывает в конец"
+            },
+            {
+              "id": "b",
+              "label": "Заменяет содержимое"
+            },
+            {
+              "id": "c",
+              "label": "Удаляет каталог"
+            },
+            {
+              "id": "d",
+              "label": "Только читает файл"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Поведение записи по умолчанию отличается от APPEND.",
+          "explanation": "[Explanation] Содержимое существующего файла перезаписывается.",
+          "id": "m10-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Выберите опцию добавления в конец файла.",
+          "template": [
+            "Files.writeString(path, text, UTF_8, StandardOpenOption.CREATE, StandardOpenOption.",
+            ");"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "APPEND",
+              "options": [
+                "APPEND",
+                "READ",
+                "DELETE_ON_CLOSE"
+              ]
+            }
+          ],
+          "hint": "[Hint] CREATE создаёт отсутствующий файл; другая опция дописывает.",
+          "explanation": "[Explanation] CREATE создаёт файл при необходимости, APPEND дописывает в конец.",
+          "id": "m10-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m10-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Что случится при Files.writeString(path, \"two\") после Files.writeString(path, \"one\") без опции APPEND?",
+          "options": [
+            {
+              "id": "a",
+              "label": "one\ntwo"
+            },
+            {
+              "id": "b",
+              "label": "onetwo"
+            },
+            {
+              "id": "c",
+              "label": "останется one"
+            },
+            {
+              "id": "d",
+              "label": "старое содержимое заменится на two"
+            }
+          ],
+          "correct": [
+            "d"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Для дописывания нужна отдельная опция открытия файла.",
+          "explanation": "[Explanation] Верно: старое содержимое заменится на two. Для дописывания нужна отдельная опция открытия файла."
+        },
+        {
+          "id": "m10-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m10-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create временный файл, сначала запишите «one», потом допишите «two» с новой строки, прочитайте его и выведите две строки. В конце удалите файл.",
+          "expectedOutput": "one\ntwo",
+          "hint": "[Hint] Для второй записи используйте StandardOpenOption.APPEND; Files.writeString не добавляет перевод строки автоматически.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'one\\ntwo'. Для второй записи используйте StandardOpenOption.APPEND; Files.writeString не добавляет перевод строки автоматически."
+        }
+      ]
+    },
+    {
+      "id": "m10-l05",
+      "title": "Object Serialization and Deserialization",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Сериализация переводит объект в последовательность байтов, а десериализация восстанавливает его. Для встроенного механизма Java класс реализует Serializable; при изменении класса помогает явный serialVersionUID.",
+          "[Theory] ObjectOutputStream и ObjectInputStream работают с бинарным форматом, не предназначенным для чтения человеком. Не десериализуйте недоверенные данные: такой ввод способен привести к опасному поведению. Для обмена часто лучше явный JSON с проверкой."
+        ],
+        "code": "class Note implements java.io.Serializable {\n    private static final long serialVersionUID = 1L;\n    String text;\n}",
+        "caption": "Недоверенную сериализацию не читайте.",
+        "language": "java",
+        "objective": "[Goal] Отличить сериализацию объектов от текстового файла и учитывать её ограничения.",
+        "walkthrough": "[Walkthrough] Note implements Serializable разрешает ObjectOutputStream сохранять экземпляры; serialVersionUID помогает контролировать совместимость классов при чтении.",
+        "pitfall": "[Common Pitfall] ObjectInputStream для недоверенного файла опасен: возможны вредоносные цепочки классов. Внешние данные лучше читать в контролируемом формате.",
+        "deepDive": "[Deep Dive] Serializable описывает объектный граф в бинарном формате Java, зависящем от структуры классов. serialVersionUID помогает проверять совместимость версии, но не превращает формат в универсальный контракт обмена данными.",
+        "useCase": "[Real-World Case] Для резервной копии внутри доверенной программы сравните Java-сериализацию с явным текстовым форматом. Если файл приходит извне, не вызывайте ObjectInputStream.readObject() на нём: сначала выберите безопасный формат и валидацию.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Сериализация Java сохраняет объект в бинарный поток; вернуть его можно лишь при согласованных классах. Не используйте ObjectInputStream для чужого файла.",
+          "steps": [
+            "The class Note реализует Serializable и объявляет serialVersionUID, чтобы версия формата была явной. Конструктор заполняет поле до записи.",
+            "Create относительный Path и откройте ObjectOutputStream внутри try: writeObject(new Note(...)) сохранит собственный объект. Блок try автоматически закроет поток.",
+            "Откройте ObjectInputStream для ТОГО ЖЕ файла, прочитайте readObject() и приведите результат к Note. Второй try закроет ресурс даже при ошибке."
+          ],
+          "example": {
+            "code": "class Note implements java.io.Serializable {\n    private static final long serialVersionUID = 1L;\n    String text;\n    Note(String text) { this.text = text; }\n}\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        var path = java.nio.file.Path.of(\"sample.bin\");\n        try (var out = new java.io.ObjectOutputStream(java.nio.file.Files.newOutputStream(path))) {\n            out.writeObject(new Note(\"Пример\"));\n        }\n        try (var input = new java.io.ObjectInputStream(java.nio.file.Files.newInputStream(path))) {\n            Note restored = (Note) input.readObject();\n            System.out.println(restored.text);\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Полная программа с записью и чтением своего объекта",
+            "stdout": "Пример"
+          },
+          "result": "Чтение восстановит собственную запись и напечатает «Пример». Потоки закрываются автоматически; throws Exception здесь только для краткого учебного примера.",
+          "bridge": "В практической задаче создайте свой Note и запишите его в одноразовый файл с именем из условия. Не читайте неизвестные бинарные данные извне."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m10-l05-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Note implements java.io.Serializable {\n    private static final long serialVersionUID = 1L;\n    String text;\n    Note(String text) { this.text = text; }\n}\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        var path = java.nio.file.Path.of(\"sample.bin\");\n        try (var out = new java.io.ObjectOutputStream(java.nio.file.Files.newOutputStream(path))) {\n            out.writeObject(new Note(\"Пример\"));\n        }\n        try (var input = new java.io.ObjectInputStream(java.nio.file.Files.newInputStream(path))) {\n            Note restored = (Note) input.readObject();\n            System.out.println(restored.text);\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Чтение восстановит собственную запись и напечатает «Пример». Потоки закрываются автоматически; throws Exception здесь только для краткого учебного примера."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что требуется классу для стандартной Java-сериализации?",
+          "options": [
+            {
+              "id": "a",
+              "label": "implements Serializable"
+            },
+            {
+              "id": "b",
+              "label": "extends Files"
+            },
+            {
+              "id": "c",
+              "label": "static main"
+            },
+            {
+              "id": "d",
+              "label": "только поле String"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Это маркерный интерфейс из java.io.",
+          "explanation": "[Explanation] Serializable разрешает ObjectOutputStream записывать объект.",
+          "id": "m10-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Укажите интерфейс для сериализуемого класса.",
+          "template": [
+            "class Note ",
+            " Serializable { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "implements",
+              "options": [
+                "implements",
+                "throws",
+                "new"
+              ]
+            }
+          ],
+          "hint": "The class реализует интерфейс, а не наследуется от него как от класса.",
+          "explanation": "[Explanation] implements Serializable добавляет маркер сериализации.",
+          "id": "m10-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m10-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] В строке сохранены имя и возраст «Мира;23». Чем преобразовать возраст после split, чтобы создать User с int age?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Integer.parseInt(parts[1])"
+            },
+            {
+              "id": "b",
+              "label": "parts[1].toInt()"
+            },
+            {
+              "id": "c",
+              "label": "(int) parts[1]"
+            },
+            {
+              "id": "d",
+              "label": "String.parse(parts[1])"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Чтение файла даёт текст; целое число нужно разобрать явно.",
+          "explanation": "[Explanation] Верно: Integer.parseInt(parts[1]). Чтение файла даёт текст; целое число нужно разобрать явно."
+        },
+        {
+          "id": "m10-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m10-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Declare record User(String name,int age). Create объект User(\"Мира\", 23), сформируйте строку \"Мира;23\", затем разберите её в новый User и выведите его компоненты через двоеточие.",
+          "expectedOutput": "Мира:23",
+          "hint": "[Hint] Это учебная сериализация без сторонних библиотек: соберите строку, split(\";\"), Integer.parseInt и конструктор record.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира:23'. Это учебная сериализация без сторонних библиотек: соберите строку, split(\";\"), Integer.parseInt и конструктор record."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Module 10 Final Practice",
+    "description": "Поработайте с UTF-8, текстовыми полями и безопасными относительными путями.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Task] Как правильно закрывать BufferedReader после чтения?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Положиться на сборщик мусора"
+          },
+          {
+            "id": "b",
+            "label": "Объявить в try-with-resources"
+          },
+          {
+            "id": "c",
+            "label": "Вызвать toString()"
+          },
+          {
+            "id": "d",
+            "label": "Сделать поле public"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "Use синтаксис try (...).",
+        "explanation": "[Explanation] try-with-resources закрывает ресурс и при ошибке.",
+        "id": "m10-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Прочитайте строку файла через Files.",
+        "template": [
+          "String value = Files.",
+          "(path, StandardCharsets.UTF_8);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "readString",
+            "options": [
+              "readString",
+              "writeString",
+              "get"
+            ]
+          }
+        ],
+        "hint": "The method возвращает содержимое целиком.",
+        "explanation": "[Explanation] readString удобен для небольших файлов.",
+        "id": "m10-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте файловый инструмент.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Path",
+            "right": "Адрес файла или каталога"
+          },
+          {
+            "id": "2",
+            "left": "Files",
+            "right": "Операции чтения и записи"
+          },
+          {
+            "id": "3",
+            "left": "BufferedReader",
+            "right": "Построчное чтение"
+          },
+          {
+            "id": "4",
+            "left": "Serializable",
+            "right": "Маркер бинарной сериализации объекта"
+          }
+        ],
+        "hint": "Consider кто хранит путь, кто читает строки, а кто помечает класс.",
+        "explanation": "[Explanation] У файловых API разные роли.",
+        "id": "m10-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите блок автоматического закрытия reader.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "try (var reader = Files.newBufferedReader(path)) {"
+          },
+          {
+            "id": "b",
+            "text": "String line = reader.readLine();"
+          },
+          {
+            "id": "c",
+            "text": "System.out.println(line);"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Ресурс объявляют в скобках try, читают и выводят внутри.",
+        "explanation": "[Explanation] Reader закроется после блока.",
+        "id": "m10-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Task] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Files.readString удобен для небольшого файла"
+          },
+          {
+            "id": "b",
+            "label": "split(\",\") полноценно обрабатывает любой CSV"
+          },
+          {
+            "id": "c",
+            "label": "Путь к файлу представляет Path"
+          },
+          {
+            "id": "d",
+            "label": "Недоверенная десериализация опасна"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hint] CSV с запятыми в кавычках сложнее простого split.",
+        "explanation": "[Explanation] Path задаёт путь; Files читает; недоверенным бинарным данным не доверяйте.",
+        "id": "m10-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Task] Запишите в относительный файл \"people.csv\" текст \"Alice,30\" в UTF-8. Прочитайте, разделите по запятой, увеличьте возраст на 1 и выведите \"Alice:31\".",
+        "starterCode": "import java.nio.file.*;\nimport java.nio.charset.StandardCharsets;\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path file = Path.of(\"people.csv\");\n        // Запишите, прочитайте, разберите и выведите\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Alice:31",
+        "hint": "Use Files.writeString, Files.readString, split(\",\") и Integer.parseInt.",
+        "explanation": "[Explanation] Запись, чтение и разбор строки выполнены.",
+        "id": "m10-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Сериализуйте Note(\"готово\") в относительный файл note.bin и прочитайте его обратно. Print восстановленное поле text. Use только созданные вами данные.",
+        "starterCode": "import java.io.*;\nclass Note implements Serializable {\n    private static final long serialVersionUID = 1L;\n    String text;\n    Note(String text) { this.text = text; }\n}\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        // Создайте Note, запишите note.bin, прочитайте и выведите text\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "готово",
+        "hint": "[Hint] Пишите через ObjectOutputStream, читайте через ObjectInputStream и закройте оба в try-with-resources.",
+        "explanation": "[Explanation] Свой объект записан и восстановлен из временного файла.",
+        "id": "m10-p07"
+      }
+    ],
+    "id": "m10-practice",
+    "primer": {
+      "why": "Файловые задачи требуют двух разных умений: преобразовать текст в данные и закрыть ресурсы после записи/чтения. Здесь используются только созданные вами относительные файлы.",
+      "steps": [
+        "Для маленькой строки создайте Path.of(\"memo.txt\"), вызовите Files.writeString с UTF-8, затем Files.readString с тем же путём. IOException обработайте или объявите.",
+        "Для бинарного объекта нужен Serializable, ObjectOutputStream.writeObject и ObjectInputStream.readObject. Оба потока открывайте через try-with-resources и не читайте недоверенные файлы."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) throws java.io.IOException {\n        var path = java.nio.file.Path.of(\"memo.txt\");\n        java.nio.file.Files.writeString(path, \"Мира,22\", java.nio.charset.StandardCharsets.UTF_8);\n        String[] parts = java.nio.file.Files.readString(path, java.nio.charset.StandardCharsets.UTF_8).split(\",\");\n        System.out.println(parts[0] + \":\" + Integer.parseInt(parts[1]));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная программа с чтением собственного файла",
+        "stdout": "Мира:22"
+      },
+      "result": "Вывод «Мира:22». Файл memo.txt создаётся локально; в проверке тренажёра временный каталог очищается после запуска.",
+      "hints": [
+        {
+          "taskId": "m10-p06",
+          "text": "Для people.csv возьмите путь из условия, измените только прочитанное число перед выводом и не полагайтесь на заранее существующий файл."
+        },
+        {
+          "taskId": "m10-p07",
+          "text": "Для note.bin сначала создайте объект своего класса и сериализуйте его; только после закрытия выходного потока читайте обратно и выводите поле."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m10-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 400,
+    "tasks": [
+      {
+        "id": "m-exam-10-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] В строке сохранены имя и возраст «Мира;23». Чем преобразовать возраст после split, чтобы создать User с int age?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Integer.parseInt(parts[1])"
+          },
+          {
+            "id": "b",
+            "label": "parts[1].toInt()"
+          },
+          {
+            "id": "c",
+            "label": "(int) parts[1]"
+          },
+          {
+            "id": "d",
+            "label": "String.parse(parts[1])"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Чтение файла даёт текст; целое число нужно разобрать явно.",
+        "explanation": "[Explanation] Верно: Integer.parseInt(parts[1]). Чтение файла даёт текст; целое число нужно разобрать явно."
+      },
+      {
+        "type": "fill",
+        "prompt": "Create относительный путь.",
+        "template": [
+          "Path file = Path.",
+          "(\"note.txt\");"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "of",
+            "options": [
+              "of",
+              "read",
+              "new"
+            ]
+          }
+        ],
+        "hint": "[Hint] Начиная с Java 11 есть фабричный метод.",
+        "explanation": "[Explanation] Path.of(\"note.txt\") создаёт объект пути.",
+        "id": "m-exam-10-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте файловый инструмент.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Path",
+            "right": "Адрес файла или каталога"
+          },
+          {
+            "id": "2",
+            "left": "Files",
+            "right": "Операции чтения и записи"
+          },
+          {
+            "id": "3",
+            "left": "BufferedReader",
+            "right": "Построчное чтение"
+          },
+          {
+            "id": "4",
+            "left": "Serializable",
+            "right": "Маркер бинарной сериализации объекта"
+          }
+        ],
+        "hint": "Consider кто хранит путь, кто читает строки, а кто помечает класс.",
+        "explanation": "[Explanation] У файловых API разные роли.",
+        "id": "m-exam-10-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите блок автоматического закрытия reader.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "try (var reader = Files.newBufferedReader(path)) {"
+          },
+          {
+            "id": "b",
+            "text": "String line = reader.readLine();"
+          },
+          {
+            "id": "c",
+            "text": "System.out.println(line);"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Ресурс объявляют в скобках try, читают и выводят внутри.",
+        "explanation": "[Explanation] Reader закроется после блока.",
+        "id": "m-exam-10-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Create CsvReport с методом load(Path), который через BufferedReader в\ntry-with-resources читает CSV имя,число и возвращает сумму чисел. В main запишите UTF-8\nфайл exam.csv со строками «Мяч,1», «Книга,4», «Ручка,3». Прочитайте его методом load.\nPrint сумму, затем первую строку файла, прочитанную через Files.readAllLines.\nUse относительный путь, файл создавайте сами. Никаких внешних библиотек.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "8\nМяч,1",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n8\nМяч,1",
+        "id": "m-exam-10-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nCreate CsvReport с методом load(Path), который через BufferedReader в\ntry-with-resources читает CSV имя,число и возвращает сумму чисел. В main запишите UTF-8\nфайл exam.csv со строками «Мяч,2», «Книга,4», «Ручка,3». Прочитайте его методом load.\nPrint сумму, затем первую строку файла, прочитанную через Files.readAllLines.\nUse относительный путь, файл создавайте сами. Никаких внешних библиотек.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "9\nМяч,2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n9\nМяч,2",
+        "id": "m-exam-10-06"
+      }
+    ]
+  }
+}

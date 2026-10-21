@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">JavaDa 移动版</string>
+    <string name="course_map">课程地图</string>
+    <string name="junior_labs">Junior 实战实验</string>
+    <string name="sync_progress">同步 progress.json</string>
+    <string name="import_progress">导入 progress.json</string>
+    <string name="export_progress">导出 progress.json</string>
+    <string name="check_solution">检查解答</string>
+    <string name="show_hint">显示提示</string>
+    <string name="start_exam">开始模块小测验</string>
+</resources>

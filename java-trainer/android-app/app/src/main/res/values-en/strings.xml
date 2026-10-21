@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">JavaDa Mobile</string>
+    <string name="course_map">Course Map</string>
+    <string name="junior_labs">Junior Labs</string>
+    <string name="sync_progress">Sync progress.json</string>
+    <string name="import_progress">Import progress.json</string>
+    <string name="export_progress">Export progress.json</string>
+    <string name="check_solution">Check Solution</string>
+    <string name="show_hint">Show Hint</string>
+    <string name="start_exam">Start Mini-Exam</string>
+</resources>

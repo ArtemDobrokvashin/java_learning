@@ -1,0 +1,1377 @@
+{
+  "id": 12,
+  "title": "Multihilo y concurrencia",
+  "lessons": [
+    {
+      "id": "m12-l01",
+      "title": "Introducción al multihilo",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Поток (thread) — отдельная последовательность выполнения внутри процесса; несколько потоков разделяют память процесса. Многопоточность помогает выполнять независимые задачи и не блокировать работу при ожидании.",
+          "[Teoría] Параллельное выполнение на разных ядрах не гарантировано: система планирует время потоков. Состояние, разделяемое потоками, требует согласования доступа, иначе результат может зависеть от порядка операций."
+        ],
+        "code": "Thread worker = new Thread(() -> System.out.println(\"Работа\"));\nworker.start();",
+        "caption": "Общая память даёт возможности и риски.",
+        "language": "java",
+        "objective": "[Objetivo] Запустить независимую задачу в потоке и назвать риск общей памяти.",
+        "walkthrough": "[Análisis] worker.start() просит JVM выполнить лямбду в новом потоке и напечатать «Работа». Порядок печати относительно кода вызывающего потока не фиксирован.",
+        "pitfall": "[Error común] Вызов worker.run() вместо start() выполнит работу в текущем потоке; для общих изменяемых данных нужна синхронизация.",
+        "deepDive": "[En profundidad] Потоки одного процесса разделяют объекты в куче, но выполняют шаги независимо. Когда оба меняют общую переменную, один лишь ожидаемый порядок в исходном тексте не гарантирует порядок чтения и записи между потоками.",
+        "useCase": "[Caso práctico] Если фоновая задача загружает данные, не считайте их готовыми сразу после start(). Передайте результат через Future или дождитесь завершения, затем сравните поведение при разных скоростях работы задач.",
+        "guide": {
+          "why": "[Guía paso a paso] Поток выполняет работу независимо от вызывающего кода. Это полезно для фоновой задачи, но порядок действий двух потоков заранее не гарантирован.",
+          "steps": [
+            "Crea new Thread(...) с лямбдой, описывающей действие; в этот момент задача ещё не запущена.",
+            "Вызов start() запускает поток; join() дожидается завершения перед использованием результата. Без ожидания main мог бы закончить раньше печати работника."
+          ],
+          "example": {
+            "code": "Thread worker = new Thread(() -> System.out.println(\"Задача закончилась\"));\nworker.start();\nworker.join();\nSystem.out.println(\"Оба потока завершили шаг\");",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; объявите throws InterruptedException"
+          },
+          "result": "Первая строка появится до второй благодаря join. Без join такой порядок не обещан.",
+          "bridge": "В мини-задании выбирайте start(), а не run(). В практике дождитесь двух работников до печати общего результата."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l01-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "Thread worker = new Thread(() -> System.out.println(\"Задача закончилась\"));\nworker.start();\nworker.join();\nSystem.out.println(\"Оба потока завершили шаг\");",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Первая строка появится до второй благодаря join. Без join такой порядок не обещан."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что делят потоки одного процесса?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Никогда ничего"
+            },
+            {
+              "id": "b",
+              "label": "Память процесса"
+            },
+            {
+              "id": "c",
+              "label": "Только текст программы, но не данные"
+            },
+            {
+              "id": "d",
+              "label": "Отдельные JVM"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Потоки существуют внутри одного процесса.",
+          "explanation": "[Explicación] Они разделяют память процесса и могут обращаться к общим объектам.",
+          "id": "m12-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Запустите новый поток, а не обычный вызов метода.",
+          "template": [
+            "worker.",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "start",
+              "options": [
+                "start",
+                "run",
+                "yield"
+              ]
+            }
+          ],
+          "hint": "[Pista] run() сам по себе выполнится в текущем потоке.",
+          "explanation": "[Explicación] start() создаёт отдельный поток исполнения.",
+          "id": "m12-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Где выполнится код Runnable, если вызвать runnable.run() без создания Thread?",
+          "options": [
+            {
+              "id": "a",
+              "label": "в отдельном фоновом потоке"
+            },
+            {
+              "id": "b",
+              "label": "в текущем потоке"
+            },
+            {
+              "id": "c",
+              "label": "никогда"
+            },
+            {
+              "id": "d",
+              "label": "в случайном процессе"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] run() — обычный вызов метода; новый поток создаёт start() у Thread.",
+          "explanation": "[Explicación] Верно: в текущем потоке. run() — обычный вызов метода; новый поток создаёт start() у Thread."
+        },
+        {
+          "id": "m12-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Tarea] Опишите Runnable, которое увеличивает AtomicInteger два раза. Вызовите run() и выведите get(); пока что не запускайте отдельный поток.",
+          "expectedOutput": "2",
+          "hint": "[Pista] Вызов run() выполняется в текущем потоке; AtomicInteger.get() возвращает накопленное значение.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '2'. Вызов run() выполняется в текущем потоке; AtomicInteger.get() возвращает накопленное значение."
+        }
+      ]
+    },
+    {
+      "id": "m12-l02",
+      "title": "Hilos y procesos en Java",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Создать задачу можно через Runnable, а запустить — через Thread.start(). Вызов run() напрямую всего лишь обычный вызов метода в текущем потоке. Поддерживайте завершение потоков через join или высокоуровневые исполнители.",
+          "[Teoría] Процесс изолирован от других процессов своим адресным пространством, тогда как потоки одного процесса делят объекты. Создание множества потоков дорого: для задач обычно используют пул ExecutorService."
+        ],
+        "code": "Runnable task = () -> System.out.println(\"Готово\");\nThread thread = new Thread(task);\nthread.start();\nthread.join();",
+        "caption": "Не путайте start() и run().",
+        "language": "java",
+        "objective": "[Objetivo] Различить Runnable, Thread.start() и ожидание завершения через join().",
+        "walkthrough": "[Análisis] Runnable хранит действие, Thread отвечает за поток. start() запускает задачу, а join() блокирует вызывающий поток до её завершения.",
+        "pitfall": "[Error común] sleep(100) не гарантирует завершение чужого потока; используйте join() или Future.get(), если результат должен быть готов.",
+        "deepDive": "[En profundidad] Runnable описывает действие, Thread — его жизненный цикл. start создаёт независимое выполнение ровно один раз; join устанавливает точку, после которой вызывающий поток может безопасно опираться на факт завершения задачи.",
+        "useCase": "[Caso práctico] Для фоновой обработки файла запустите поток и дождитесь join перед чтением результата. Вызовите run вместо start в эксперименте: порядок станет последовательным, и ожидаемой параллельности не будет.",
+        "guide": {
+          "why": "[Guía paso a paso] Runnable задаёт действие, Thread — конкретное исполнение. Методы start и join выполняют разные роли: запустить и дождаться.",
+          "steps": [
+            "Запишите Runnable с лямбдой. Передайте его в new Thread(task), чтобы связать работу с потоком.",
+            "Вызовите thread.start();, затем thread.join();. Если вместо start вызвать run(), задача выполнится в вызывающем потоке и параллельности не будет."
+          ],
+          "example": {
+            "code": "Runnable task = () -> System.out.println(\"Сделано\");\nThread thread = new Thread(task);\nthread.start();\nthread.join();\nSystem.out.println(\"Получен результат\");",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; объявите throws InterruptedException"
+          },
+          "result": "Сначала появится «Сделано», затем «Получен результат». join блокирует main, пока запущенный поток не завершится.",
+          "bridge": "В мини-задании объясните, когда заканчивается другой поток. В практике используйте join для обоих работников, а не задержку sleep на глаз."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l02-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "Runnable task = () -> System.out.println(\"Сделано\");\nThread thread = new Thread(task);\nthread.start();\nthread.join();\nSystem.out.println(\"Получен результат\");",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Сначала появится «Сделано», затем «Получен результат». join блокирует main, пока запущенный поток не завершится."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что происходит при прямом вызове thread.run()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Создаётся новый поток"
+            },
+            {
+              "id": "b",
+              "label": "Метод выполняется в текущем потоке"
+            },
+            {
+              "id": "c",
+              "label": "JVM завершает процесс"
+            },
+            {
+              "id": "d",
+              "label": "Выбрасывается IOException"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Только start() регистрирует новый поток.",
+          "explanation": "[Explicación] run() вызывается как обычный метод.",
+          "id": "m12-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Дождитесь завершения потока.",
+          "template": [
+            "thread.",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "join",
+              "options": [
+                "join",
+                "sleep",
+                "interrupt"
+              ]
+            }
+          ],
+          "hint": "[Pista] Нужен метод ожидания завершения другого потока.",
+          "explanation": "[Explicación] join() ждёт окончания thread.",
+          "id": "m12-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Почему после thread.start() перед чтением результата часто требуется thread.join()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "join создаёт второй поток"
+            },
+            {
+              "id": "b",
+              "label": "join ждёт завершения выбранного потока"
+            },
+            {
+              "id": "c",
+              "label": "join увеличивает число потоков"
+            },
+            {
+              "id": "d",
+              "label": "join автоматически исправляет гонки данных"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] join устанавливает порядок: чтение только после завершения работы потока.",
+          "explanation": "[Explicación] Верно: join ждёт завершения выбранного потока. join устанавливает порядок: чтение только после завершения работы потока."
+        },
+        {
+          "id": "m12-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea Thread с Runnable, который присваивает AtomicInteger число 7. Запустите start(), дождитесь join() и затем выведите значение.",
+          "expectedOutput": "7",
+          "hint": "[Pista] В отличие от run(), start() создаёт поток; join() гарантирует, что печать будет после завершения.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '7'. В отличие от run(), start() создаёт поток; join() гарантирует, что печать будет после завершения."
+        }
+      ]
+    },
+    {
+      "id": "m12-l03",
+      "title": "Estado del hilo y sincronización",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Состояния потока включают NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING и TERMINATED. Поток может ждать монитор, другой поток или истечения таймера; конкретный порядок переключений не определён.",
+          "[Teoría] Даже простой счётчик count++ не атомарен: это чтение, изменение и запись. Для безопасного изменения разделяемого состояния используйте synchronized, атомарные классы или подходящие конкурентные коллекции."
+        ],
+        "code": "synchronized void increment() { count++; }\n// Без синхронизации два потока могут потерять обновления.",
+        "caption": "Состояние меняется независимо от порядка запуска.",
+        "language": "java",
+        "objective": "[Objetivo] Распознать возможную гонку при count++ и выбрать механизм синхронизации.",
+        "walkthrough": "[Análisis] count++ — чтение, вычисление и запись, а не одна атомарная операция. synchronized защищает обновление общим монитором объекта от одновременных вызовов.",
+        "pitfall": "[Error común] volatile делает запись видимой другим потокам, но не превращает count++ в атомарную операцию. Синхронизируйте доступ или используйте AtomicInteger.",
+        "deepDive": "[En profundidad] Выражение count++ состоит из чтения, сложения и записи; два потока могут прочитать одно старое значение и потерять одно увеличение. Видимость значения и атомарность изменения — разные гарантии многопоточности.",
+        "useCase": "[Caso práctico] Запустите два потока с множеством увеличений общего счётчика и сравните результат с ожидаемой суммой. Затем замените поле на AtomicInteger или защитите общий участок одним монитором и повторите проверку.",
+        "guide": {
+          "why": "[Guía paso a paso] Общий count++ не атомарен: два потока могут прочитать одно старое число и потерять увеличение. synchronized защищает изменение при использовании одного монитора.",
+          "steps": [
+            "Поместите изменяемое поле и increment() в один Counter. В блоке synchronized(lock) одновременный доступ защищает общий объект lock.",
+            "Защитите чтение get() тем же lock: после ожидания потоков вы увидите согласованное число, а не устаревшее значение."
+          ],
+          "example": {
+            "code": "class Counter {\n    private int count;\n    private final Object lock = new Object();\n    void increment() { synchronized (lock) { count++; } }\n    int get() { synchronized (lock) { return count; } }\n}\n// оба потока вызывают counter.increment()\n// после join() обоих:\nSystem.out.println(counter.get());",
+            "language": "java",
+            "runnable": false,
+            "label": "Общий объект и схема синхронизации"
+          },
+          "result": "Если два потока сделали по одному увеличению и их дождались через join, результат будет 2; без защиты он мог бы быть 1.",
+          "bridge": "Для практики создайте один общий Counter, передайте его обоим потокам и дождитесь их завершения до вызова get()."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l03-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "class Counter {\n    private int count;\n    private final Object lock = new Object();\n    void increment() { synchronized (lock) { count++; } }\n    int get() { synchronized (lock) { return count; } }\n}\n// оба потока вызывают counter.increment()\n// после join() обоих:\nSystem.out.println(counter.get());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Если два потока сделали по одному увеличению и их дождались через join, результат будет 2; без защиты он мог бы быть 1."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Почему count++ небезопасен без синхронизации при двух потоках?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Оператор запрещён JVM"
+            },
+            {
+              "id": "b",
+              "label": "Состоит из нескольких шагов, возможна гонка"
+            },
+            {
+              "id": "c",
+              "label": "Всегда вызывает Error"
+            },
+            {
+              "id": "d",
+              "label": "Работает только для String"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Два потока могут прочитать старое значение одновременно.",
+          "explanation": "[Explicación] Нужна атомарность чтения и обновления.",
+          "id": "m12-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Защитите метод общей блокировкой объекта.",
+          "template": [
+            "",
+            " void increment() { count++; }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "synchronized",
+              "options": [
+                "volatile",
+                "synchronized",
+                "static"
+              ]
+            }
+          ],
+          "hint": "[Pista] Ключевое слово захватывает монитор объекта.",
+          "explanation": "[Explicación] synchronized делает критическую секцию взаимоисключающей.",
+          "id": "m12-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Когда thread.isAlive() гарантированно вернёт false для потока, который запущен и уже дождались через join()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "после join()"
+            },
+            {
+              "id": "b",
+              "label": "сразу после start()"
+            },
+            {
+              "id": "c",
+              "label": "внутри его run()"
+            },
+            {
+              "id": "d",
+              "label": "перед start() и только тогда"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Pista] После успешного join поток завершил run; до ожидания его состояние меняется асинхронно.",
+          "explanation": "[Explicación] Верно: после join(). После успешного join поток завершил run; до ожидания его состояние меняется асинхронно."
+        },
+        {
+          "id": "m12-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea поток, инкрементирующий AtomicInteger пять раз. После start() сделайте join() и выведите логическое !thread.isAlive() и итог get() через двоеточие.",
+          "expectedOutput": "true:5",
+          "hint": "[Pista] Проверяйте состояние только после join(): порядок выполнения потоков до синхронизации не определён.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: 'true:5'. Проверяйте состояние только после join(): порядок выполнения потоков до синхронизации не определён."
+        }
+      ]
+    },
+    {
+      "id": "m12-l04",
+      "title": "Métodos isAlive y sleep",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Метод isAlive показывает, запущен ли поток и не завершился ли он ещё. Thread.sleep(ms) приостанавливает текущий поток на приблизительное время; его может прервать interrupt.",
+          "[Teoría] sleep не освобождает монитор synchronized и не гарантирует точную длительность задержки. Для ожидания результата другого потока используйте join или Future.get, а не бесконечный опрос isAlive."
+        ],
+        "code": "Thread thread = new Thread(() -> { });\nthread.start();\nthread.join();\nSystem.out.println(thread.isAlive()); // false",
+        "caption": "Не используйте sleep как механизм синхронизации.",
+        "language": "java",
+        "objective": "[Objetivo] Проверить состояние потока после join() и понять, почему sleep не синхронизатор.",
+        "walkthrough": "[Análisis] После start() поток может уже работать или завершиться. join() дожидается завершения; после него isAlive() для этого потока вернёт false.",
+        "pitfall": "[Error común] Проверка isAlive() сразу после start() недетерминированна: короткая задача может завершиться до проверки. sleep не исправит гонку.",
+        "deepDive": "[En profundidad] sleep задерживает текущий поток, а не ждёт конкретное событие в другом. isAlive наблюдает мгновенное состояние: между вызовом и следующим действием оно может поменяться, поэтому одного опроса недостаточно для координации.",
+        "useCase": "[Caso práctico] Вместо цикла «пока isAlive, спать» используйте join и отдельно обработайте InterruptedException. Испытайте задачу, которая завершается почти мгновенно: результат проверки сразу после start недетерминирован.",
+        "guide": {
+          "why": "[Guía paso a paso] isAlive() показывает состояние потока в момент запроса, а sleep лишь задерживает текущий поток. Ни один из этих методов не является надёжным ожиданием результата другого.",
+          "steps": [
+            "Crea задачу и запустите start(). Сразу после запуска isAlive() может дать любой результат: короткая задача уже могла завершиться.",
+            "После join() поток точно завершён и isAlive() вернёт false. Обработайте InterruptedException, вместо того чтобы угадывать время через sleep."
+          ],
+          "example": {
+            "code": "Thread worker = new Thread(() -> { int value = 1 + 1; });\nworker.start();\nworker.join();\nSystem.out.println(worker.isAlive());",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; объявите throws InterruptedException"
+          },
+          "result": "Вывод false после join стабилен; проверка сразу после start не даёт такой гарантии.",
+          "bridge": "В мини-задании различите временную паузу и ожидание завершения. В практике используйте join, чтобы напечатать счётчик после обоих потоков."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l04-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "Thread worker = new Thread(() -> { int value = 1 + 1; });\nworker.start();\nworker.join();\nSystem.out.println(worker.isAlive());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Вывод false после join стабилен; проверка сразу после start не даёт такой гарантии."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что покажет isAlive после успешного join()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "true"
+            },
+            {
+              "id": "b",
+              "label": "false"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "Случайное число"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] join возвращается после завершения потока.",
+          "explanation": "[Explicación] Завершившийся поток больше не isAlive.",
+          "id": "m12-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Приостановите текущий поток на 100 мс.",
+          "template": [
+            "Thread.",
+            "(100);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "sleep",
+              "options": [
+                "sleep",
+                "join",
+                "isAlive"
+              ]
+            }
+          ],
+          "hint": "[Pista] Это статический метод Thread.",
+          "explanation": "[Explicación] Thread.sleep делает паузу текущего потока.",
+          "id": "m12-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Какой подход гарантирует ожидание результата потока после sleep(10), если планировщик задержал его запуск?",
+          "options": [
+            {
+              "id": "a",
+              "label": "sleep(10) в main"
+            },
+            {
+              "id": "b",
+              "label": "join() в main"
+            },
+            {
+              "id": "c",
+              "label": "yield() в main"
+            },
+            {
+              "id": "d",
+              "label": "isAlive() без цикла"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Пауза фиксированной длины не является сигналом завершения другого потока.",
+          "explanation": "[Explicación] Верно: join() в main. Пауза фиксированной длины не является сигналом завершения другого потока."
+        },
+        {
+          "id": "m12-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Tarea] Запустите Thread, который вызывает Thread.sleep(10) и присваивает AtomicInteger значение 3. Дождитесь join и выведите число; обработайте InterruptedException.",
+          "expectedOutput": "3",
+          "hint": "[Pista] sleep принимает миллисекунды и может быть прерван; join не заменяется произвольной паузой main.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '3'. sleep принимает миллисекунды и может быть прерван; join не заменяется произвольной паузой main."
+        }
+      ]
+    },
+    {
+      "id": "m12-l05",
+      "title": "Palabra clave synchronized",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] synchronized создаёт критическую секцию: один поток за раз владеет монитором объекта. Экземплярный synchronized-метод блокирует this; статический — объект Class.",
+          "[Teoría] Блокируйте только нужную короткую операцию и следите за порядком нескольких блокировок, чтобы избежать взаимной блокировки (deadlock). volatile обеспечивает видимость, но не делает count++ атомарным."
+        ],
+        "code": "class Counter {\n    private int count;\n    synchronized void increment() { count++; }\n    synchronized int get() { return count; }\n}",
+        "caption": "Взаимоисключение и видимость — разные свойства.",
+        "language": "java",
+        "objective": "[Objetivo] Сделать инкремент потокобезопасным и читать результат под тем же монитором.",
+        "walkthrough": "[Análisis] В Counter оба метода synchronized используют монитор одного экземпляра. Инкременты не переписывают друг друга, а get() видит актуальное значение.",
+        "pitfall": "[Error común] Два synchronized-метода на разных объектах блокируют разные мониторы: для общей переменной они не обеспечат взаимное исключение.",
+        "deepDive": "[En profundidad] Для взаимного исключения все участвующие потоки должны синхронизироваться на одном и том же мониторе. Вход и выход из synchronized также создают гарантии видимости изменений между потоками, использующими этот монитор.",
+        "useCase": "[Caso práctico] Если два объекта Counter обновляют одно статическое поле, synchronized-метод экземпляра блокирует разные this и не защищает счётчик. Выберите общий монитор либо AtomicInteger и проверьте итог под нагрузкой.",
+        "guide": {
+          "why": "[Guía paso a paso] Монитор привязан к конкретному объекту. synchronized-методы на одном Counter согласуют и запись, и чтение; на двух независимых Counter у каждого свой замок.",
+          "steps": [
+            "Обновляйте private count внутри synchronized void increment(), чтобы второй поток не вмешался между чтением и записью.",
+            "Для проверки сделайте synchronized int get() на том же экземпляре. При работе с общей переменной не раздавайте потокам разные объекты Counter."
+          ],
+          "example": {
+            "code": "class Counter {\n    private int count;\n    synchronized void increment() { count++; }\n    synchronized int get() { return count; }\n}\n// в main:\nCounter shared = new Counter();\nshared.increment();\nshared.increment();\nSystem.out.println(shared.get());",
+            "language": "java",
+            "runnable": false,
+            "label": "Класс и один общий экземпляр"
+          },
+          "result": "После двух последовательных вызовов результат 2. Для конкурентного варианта используйте ОДИН shared в обоих потоках.",
+          "bridge": "В практическом задании повторите метод с 100 вызовами из каждого потока, затем дождитесь обоих через join и считайте значение."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l05-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "class Counter {\n    private int count;\n    synchronized void increment() { count++; }\n    synchronized int get() { return count; }\n}\n// в main:\nCounter shared = new Counter();\nshared.increment();\nshared.increment();\nSystem.out.println(shared.get());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. После двух последовательных вызовов результат 2. Для конкурентного варианта используйте ОДИН shared в обоих потоках."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Делает ли volatile int count безопасным выражение count++?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Да, полностью"
+            },
+            {
+              "id": "b",
+              "label": "Нет, нужны атомарная операция или блокировка"
+            },
+            {
+              "id": "c",
+              "label": "Только при двух потоках"
+            },
+            {
+              "id": "d",
+              "label": "Да, если count = 0"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Видимость изменения не равна атомарности.",
+          "explanation": "[Explicación] count++ остаётся набором нескольких действий.",
+          "id": "m12-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Защитите блок кода монитором lock.",
+          "template": [
+            "",
+            " (lock) { count++; }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "synchronized",
+              "options": [
+                "synchronized",
+                "volatile",
+                "final"
+              ]
+            }
+          ],
+          "hint": "[Pista] Блок синхронизации указывает объект блокировки.",
+          "explanation": "[Explicación] synchronized(lock) не даёт двум потокам войти одновременно.",
+          "id": "m12-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Что защитит общее int count от потерянных обновлений при инкременте из двух потоков?",
+          "options": [
+            {
+              "id": "a",
+              "label": "synchronized-метод inc()"
+            },
+            {
+              "id": "b",
+              "label": "println(count) после каждого инкремента"
+            },
+            {
+              "id": "c",
+              "label": "Thread.yield()"
+            },
+            {
+              "id": "d",
+              "label": "массив int[] вместо int"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Чтение, сложение и запись составляют одну критическую секцию.",
+          "explanation": "[Explicación] Верно: synchronized-метод inc(). Чтение, сложение и запись составляют одну критическую секцию."
+        },
+        {
+          "id": "m12-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea общий Counter со synchronized void inc(). Запустите два потока по 100 вызовов inc(), дождитесь обоих через join и выведите итог.",
+          "expectedOutput": "200",
+          "hint": "[Pista] Синхронизируйте изменение общего поля, а не println; без двух join результат может быть преждевременным.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '200'. Синхронизируйте изменение общего поля, а не println; без двух join результат может быть преждевременным."
+        }
+      ]
+    },
+    {
+      "id": "m12-l06",
+      "title": "Método yield()",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Thread.yield() сообщает планировщику, что текущий поток готов уступить процессор. Это лишь подсказка, а не гарантия переключения, порядка или справедливого исполнения.",
+          "[Teoría] Нельзя строить корректность многопоточной программы на yield или sleep. Для связи между потоками используйте join, Future, блокировки и высокоуровневые синхронизаторы."
+        ],
+        "code": "while (!done) {\n    Thread.yield(); // подсказка, не условие корректности\n}",
+        "caption": "Подсказка планировщику не заменяет синхронизацию.",
+        "language": "java",
+        "objective": "[Objetivo] Описать эффект Thread.yield() и объяснить, почему он не обеспечивает видимость.",
+        "walkthrough": "[Análisis] yield() лишь предлагает планировщику уступить время. В показанном цикле проверка done станет надёжной только при корректной публикации переменной, например volatile.",
+        "pitfall": "[Error común] Обычный boolean done без volatile или блокировки может никогда не обновиться для другого потока: частый вызов yield() этого не исправляет.",
+        "deepDive": "[En profundidad] yield всего лишь совет планировщику; поток может продолжить работу немедленно. Он не публикует данные и не заменяет volatile или блокировку, даже если цикл с yield случайно сработал несколько раз подряд.",
+        "useCase": "[Caso práctico] При ожидании флага завершения используйте Future, join или корректно опубликованный сигнал вместо «покрутиться и уступить». Программа должна оставаться верной при любом допустимом порядке планирования.",
+        "guide": {
+          "why": "[Guía paso a paso] yield() только предлагает планировщику дать шанс другому потоку. Из этого нельзя вывести порядок работы и нельзя исправить невидимость изменённого флага.",
+          "steps": [
+            "Для сигнала окончания работы выберите механизм с гарантией: volatile для простой видимости флага, join или Future для завершения задачи.",
+            "Вызов Thread.yield() допустим как подсказка, но не должен стоять вместо логики ожидания или менять правильность программы."
+          ],
+          "example": {
+            "code": "Thread worker = new Thread(() -> {\n    Thread.yield(); // подсказка планировщику\n    System.out.println(\"Готово\");\n});\nworker.start();\nworker.join();\nSystem.out.println(\"Дождались благодаря join\");",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; объявите throws InterruptedException"
+          },
+          "result": "Обе строки появятся в определённом порядке благодаря join, а не благодаря случайному решению планировщика после yield.",
+          "bridge": "В упражнении объясните, чего yield НЕ гарантирует. Для практической задачи выбирайте join и synchronized, а не бесконечный цикл с yield."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l06-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "Thread worker = new Thread(() -> {\n    Thread.yield(); // подсказка планировщику\n    System.out.println(\"Готово\");\n});\nworker.start();\nworker.join();\nSystem.out.println(\"Дождались благодаря join\");",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Обе строки появятся в определённом порядке благодаря join, а не благодаря случайному решению планировщика после yield."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Гарантирует ли Thread.yield() запуск другого потока?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Да, всегда"
+            },
+            {
+              "id": "b",
+              "label": "Нет, это подсказка планировщику"
+            },
+            {
+              "id": "c",
+              "label": "Да, если вызван в main"
+            },
+            {
+              "id": "d",
+              "label": "Да, на двух ядрах"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Планировщик вправе продолжить текущий поток.",
+          "explanation": "[Explicación] yield не задаёт контракт переключения.",
+          "id": "m12-l06-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Вызовите подсказку планировщику.",
+          "template": [
+            "Thread.",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "yield",
+              "options": [
+                "yield",
+                "join",
+                "start"
+              ]
+            }
+          ],
+          "hint": "[Pista] Этот метод статический и не принимает аргументов.",
+          "explanation": "[Explicación] Thread.yield() лишь предлагает уступить выполнение.",
+          "id": "m12-l06-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l06-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Что гарантирует Thread.yield() при выполнении цикла?",
+          "options": [
+            {
+              "id": "a",
+              "label": "запуск ровно одного другого потока"
+            },
+            {
+              "id": "b",
+              "label": "отсутствие гарантий смены потока"
+            },
+            {
+              "id": "c",
+              "label": "ожидание конца всех потоков"
+            },
+            {
+              "id": "d",
+              "label": "атомарность инкремента"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] yield — рекомендация планировщику, не механизм координации.",
+          "explanation": "[Explicación] Верно: отсутствие гарантий смены потока. yield — рекомендация планировщику, не механизм координации."
+        },
+        {
+          "id": "m12-l06-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l06",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea поток, где в цикле три раза вызывается Thread.yield() и увеличивается AtomicInteger. После join выведите итог, не делайте предположений о расписании.",
+          "expectedOutput": "3",
+          "hint": "[Pista] yield() — подсказка планировщику, а не контракт о том, какой поток выполнится следующим.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '3'. yield() — подсказка планировщику, а не контракт о том, какой поток выполнится следующим."
+        }
+      ]
+    },
+    {
+      "id": "m12-l07",
+      "title": "Uso de Callable y Executors",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Callable<V> похож на Runnable, но возвращает результат и может бросать исключения. ExecutorService управляет пулом потоков, а submit(callable) даёт Future<V>; get() ожидает результат.",
+          "[Teoría] Завершайте ExecutorService методом shutdown, иначе рабочие потоки могут удерживать JVM после выполнения main. Для простой задачи достаточно одного потока в newSingleThreadExecutor()."
+        ],
+        "code": "var pool = java.util.concurrent.Executors.newSingleThreadExecutor();\nvar future = pool.submit(() -> 42);\nSystem.out.println(future.get());\npool.shutdown();",
+        "caption": "Future представляет результат будущего вычисления.",
+        "language": "java",
+        "objective": "[Objetivo] Вернуть значение из Callable через Future и корректно завершить пул потоков.",
+        "walkthrough": "[Análisis] submit отправляет задачу в пул; future.get() ждёт и получает 42, затем shutdown() запрещает новые задачи и начинает штатное завершение.",
+        "pitfall": "[Error común] Не забывайте закрыть ExecutorService: его рабочие потоки могут удерживать процесс. get() может бросить исключение, его нужно обработать или объявить.",
+        "deepDive": "[En profundidad] Callable<V> описывает работу с результатом, submit помещает её в ExecutorService, а Future связывает получателя с результатом или исключением. get блокируется до завершения задачи; shutdown запрещает приём новых работ.",
+        "useCase": "[Caso práctico] Для двух независимых расчётов отправьте обе задачи до первого get, чтобы они могли исполняться параллельно. После получения результатов закройте пул; если задача зависает, предусмотрите ожидание с таймаутом.",
+        "guide": {
+          "why": "[Guía paso a paso] Пул позволяет переиспользовать рабочие потоки, а Callable возвращает значение задачи. Future отделяет отправку работы от получения результата.",
+          "steps": [
+            "Crea ExecutorService через Executors.newSingleThreadExecutor() и передайте лямбду в submit(). Возвращённый Future ещё не обязан содержать готовый результат.",
+            "future.get() дождётся окончания и вернёт значение. Затем вызовите pool.shutdown(), иначе рабочий поток может удерживать приложение запущенным."
+          ],
+          "example": {
+            "code": "var pool = java.util.concurrent.Executors.newSingleThreadExecutor();\ntry {\n    var future = pool.submit(() -> 6 * 7);\n    System.out.println(future.get());\n} finally {\n    pool.shutdown();\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент main; обработайте InterruptedException и ExecutionException"
+          },
+          "result": "На экране 42. get() также может передать исключение задачи вызывающему коду; это нужно обработать или объявить.",
+          "bridge": "В мини-задании отличите Callable от Runnable по возвращаемому результату. В практике отправьте вычисление и не забудьте закрыть пул."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m12-l07-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "var pool = java.util.concurrent.Executors.newSingleThreadExecutor();\ntry {\n    var future = pool.submit(() -> 6 * 7);\n    System.out.println(future.get());\n} finally {\n    pool.shutdown();\n}",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. На экране 42. get() также может передать исключение задачи вызывающему коду; это нужно обработать или объявить."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что возвращает submit(Callable<Integer>)?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Немедленно int"
+            },
+            {
+              "id": "b",
+              "label": "Future<Integer>"
+            },
+            {
+              "id": "c",
+              "label": "Thread.sleep"
+            },
+            {
+              "id": "d",
+              "label": "IOException"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Результат задачи может быть готов позже.",
+          "explanation": "[Explicación] Future позволяет дождаться результата через get().",
+          "id": "m12-l07-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Корректно завершите пул после задач.",
+          "template": [
+            "pool.",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "shutdown",
+              "options": [
+                "shutdown",
+                "closeNow",
+                "sleep"
+              ]
+            }
+          ],
+          "hint": "[Pista] Нужно перестать принимать новые задачи и завершить рабочие потоки.",
+          "explanation": "[Explicación] shutdown инициирует аккуратное завершение ExecutorService.",
+          "id": "m12-l07-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m12-l07-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Как корректно получить результат Callable<Integer> после submit в ExecutorService?",
+          "options": [
+            {
+              "id": "a",
+              "label": "вызвать Runnable.run()"
+            },
+            {
+              "id": "b",
+              "label": "через Future.get()"
+            },
+            {
+              "id": "c",
+              "label": "через Thread.isAlive()"
+            },
+            {
+              "id": "d",
+              "label": "читать return из submit как int"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Future представляет асинхронный результат; пул затем следует завершить.",
+          "explanation": "[Explicación] Верно: через Future.get(). Future представляет асинхронный результат; пул затем следует завершить."
+        },
+        {
+          "id": "m12-l07-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m12-l07",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea ExecutorService с одним потоком и Callable<Integer>, возвращающим 6 * 7. Получите результат Future.get(), завершите executor в finally и выведите число.",
+          "expectedOutput": "42",
+          "hint": "[Pista] submit(Callable) возвращает Future; shutdown() освобождает пул, иначе учебная программа может висеть.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '42'. submit(Callable) возвращает Future; shutdown() освобождает пул, иначе учебная программа может висеть."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Práctica final del módulo 12",
+    "description": "Usa Thread, synchronized и ExecutorService без гонок.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Какой вызов запускает новый поток?",
+        "options": [
+          {
+            "id": "a",
+            "label": "thread.run()"
+          },
+          {
+            "id": "b",
+            "label": "thread.start()"
+          },
+          {
+            "id": "c",
+            "label": "Thread.yield()"
+          },
+          {
+            "id": "d",
+            "label": "thread.isAlive()"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Pista] run() вызывается как обычный метод.",
+        "explanation": "[Explicación] start() создаёт поток и затем вызывает его run().",
+        "id": "m12-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Tarea] Получите результат задачи из Future.",
+        "template": [
+          "int value = future.",
+          "();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "get",
+            "options": [
+              "get",
+              "run",
+              "yield"
+            ]
+          }
+        ],
+        "hint": "[Pista] Этот вызов может дождаться окончания задачи.",
+        "explanation": "[Explicación] Future.get возвращает вычисленный результат.",
+        "id": "m12-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Сопоставьте механизм многопоточности.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "join()",
+            "right": "Ожидание завершения потока"
+          },
+          {
+            "id": "2",
+            "left": "synchronized",
+            "right": "Взаимоисключение через монитор"
+          },
+          {
+            "id": "3",
+            "left": "Callable",
+            "right": "Задача с результатом"
+          },
+          {
+            "id": "4",
+            "left": "yield()",
+            "right": "Подсказка планировщику без гарантии"
+          }
+        ],
+        "hint": "[Pista] Разделите ожидание, блокировку, задачу и подсказку.",
+        "explanation": "[Explicación] Для каждого механизма определена своя гарантия.",
+        "id": "m12-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите последовательность запуска и ожидания Thread.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "Thread worker = new Thread(task);"
+          },
+          {
+            "id": "b",
+            "text": "worker.start();"
+          },
+          {
+            "id": "c",
+            "text": "worker.join();"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(worker.isAlive());"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Сначала создайте поток, затем запустите, дождитесь и проверьте.",
+        "explanation": "[Explicación] После join isAlive вернёт false.",
+        "id": "m12-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "volatile делает count++ атомарным"
+          },
+          {
+            "id": "b",
+            "label": "ExecutorService нужно завершать shutdown()"
+          },
+          {
+            "id": "c",
+            "label": "sleep гарантирует порядок потоков"
+          },
+          {
+            "id": "d",
+            "label": "Future.get() может ждать результата"
+          }
+        ],
+        "correct": [
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Pista] Видимость и атомарность разные вещи; sleep не синхронизатор.",
+        "explanation": "[Explicación] Пул следует закрывать, а get получает будущий результат.",
+        "id": "m12-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Tarea] Сделайте synchronized метод increment() в Counter. Запустите два потока, каждый увеличивает счётчик 100 раз. Дождитесь обоих через join() и выведите 200.",
+        "starterCode": "class Counter {\n    private int count = 0;\n    void increment() { count++; } // Защитите метод\n    int get() { return count; }\n}\npublic class Main {\n    public static void main(String[] args) throws InterruptedException {\n        Counter counter = new Counter();\n        Runnable task = () -> { for (int i = 0; i < 100; i++) counter.increment(); };\n        // Создайте и запустите два Thread, дождитесь и выведите get()\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "200",
+        "hint": "[Pista] Поставьте synchronized у increment(); запустите оба потока и вызовите join() для каждого.",
+        "explanation": "[Explicación] Синхронизация сохранила все 200 увеличений.",
+        "id": "m12-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Crea ExecutorService с одним потоком. Отправьте Callable<Integer>, возвращающий 42, выведите результат Future.get() и завершите пул shutdown().",
+        "starterCode": "import java.util.concurrent.*;\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ExecutorService pool = Executors.newSingleThreadExecutor();\n        try {\n            // Вызовите submit, получите Future<Integer> и выведите результат\n        } finally {\n            pool.shutdown();\n        }\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "42",
+        "hint": "Executors.newSingleThreadExecutor(), pool.submit(() -> 42), future.get(), pool.shutdown().",
+        "explanation": "[Explicación] Callable вернул 42, пул завершился.",
+        "id": "m12-p07"
+      }
+    ],
+    "id": "m12-practice",
+    "primer": {
+      "why": "Два потока должны менять ОДИН общий счётчик. Защитите изменение synchronized и дождитесь обоих потоков через join; печать до ожидания была бы гонкой с работой.",
+      "steps": [
+        "Counter хранит count и synchronized void increment(): операция чтения/записи защищена общим монитором экземпляра.",
+        "Для каждого Thread передайте Runnable с циклом. После start() у обоих вызовите join() у обоих и только затем читайте get(). Для Callable вместо Thread получите Future через submit."
+      ],
+      "example": {
+        "code": "class Counter {\n    private int count;\n    synchronized void increment() { count++; }\n    synchronized int get() { return count; }\n}\npublic class Main {\n    public static void main(String[] args) throws InterruptedException {\n        Counter counter = new Counter();\n        Runnable task = () -> { for (int i = 0; i < 3; i++) counter.increment(); };\n        Thread first = new Thread(task);\n        Thread second = new Thread(task);\n        first.start(); second.start();\n        first.join(); second.join();\n        System.out.println(counter.get());\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная программа с двумя потоками и ожиданием",
+        "stdout": "6"
+      },
+      "result": "Вывод будет 6 при любом порядке работы потоков: три увеличения делает каждый, оба завершились до чтения.",
+      "hints": [
+        {
+          "taskId": "m12-p06",
+          "text": "В задаче со счётчиком поменяйте число итераций на требуемое, не создавайте по отдельному Counter для каждого работника."
+        },
+        {
+          "taskId": "m12-p07",
+          "text": "В задаче с пулом отправьте Callable<Integer> через submit, распечатайте значение get и завершите ExecutorService через shutdown."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m12-exam",
+    "title": "Mini-examen",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 420,
+    "tasks": [
+      {
+        "id": "m-exam-12-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Tarea] Как корректно получить результат Callable<Integer> после submit в ExecutorService?",
+        "options": [
+          {
+            "id": "a",
+            "label": "вызвать Runnable.run()"
+          },
+          {
+            "id": "b",
+            "label": "через Future.get()"
+          },
+          {
+            "id": "c",
+            "label": "через Thread.isAlive()"
+          },
+          {
+            "id": "d",
+            "label": "читать return из submit как int"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Pista] Future представляет асинхронный результат; пул затем следует завершить.",
+        "explanation": "[Explicación] Верно: через Future.get(). Future представляет асинхронный результат; пул затем следует завершить."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Tarea] Запустите новый поток, а не обычный вызов метода.",
+        "template": [
+          "worker.",
+          "();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "start",
+            "options": [
+              "start",
+              "run",
+              "yield"
+            ]
+          }
+        ],
+        "hint": "[Pista] run() сам по себе выполнится в текущем потоке.",
+        "explanation": "[Explicación] start() создаёт отдельный поток исполнения.",
+        "id": "m-exam-12-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Сопоставьте механизм многопоточности.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "join()",
+            "right": "Ожидание завершения потока"
+          },
+          {
+            "id": "2",
+            "left": "synchronized",
+            "right": "Взаимоисключение через монитор"
+          },
+          {
+            "id": "3",
+            "left": "Callable",
+            "right": "Задача с результатом"
+          },
+          {
+            "id": "4",
+            "left": "yield()",
+            "right": "Подсказка планировщику без гарантии"
+          }
+        ],
+        "hint": "[Pista] Разделите ожидание, блокировку, задачу и подсказку.",
+        "explanation": "[Explicación] Для каждого механизма определена своя гарантия.",
+        "id": "m-exam-12-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите последовательность запуска и ожидания Thread.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "Thread worker = new Thread(task);"
+          },
+          {
+            "id": "b",
+            "text": "worker.start();"
+          },
+          {
+            "id": "c",
+            "text": "worker.join();"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(worker.isAlive());"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Сначала создайте поток, затем запустите, дождитесь и проверьте.",
+        "explanation": "[Explicación] После join isAlive вернёт false.",
+        "id": "m-exam-12-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Crea Counter с синхронизированными increment() и get(). Запустите два Thread,\nкаждый увеличивает общий счётчик 1 * 100 раз. Дождитесь обоих через join().\nЧерез ExecutorService с одним потоком отправьте Callable, возвращающий удвоенный get().\nImprime get(), затем результат Future.get(). Обязательно закройте executor в finally.\nВывод должен быть детерминированным при любом порядке выполнения потоков.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "200\n400",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n200\n400",
+        "id": "m-exam-12-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nCrea Counter с синхронизированными increment() и get(). Запустите два Thread,\nкаждый увеличивает общий счётчик 2 * 100 раз. Дождитесь обоих через join().\nЧерез ExecutorService с одним потоком отправьте Callable, возвращающий удвоенный get().\nImprime get(), затем результат Future.get(). Обязательно закройте executor в finally.\nВывод должен быть детерминированным при любом порядке выполнения потоков.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "400\n800",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n400\n800",
+        "id": "m-exam-12-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nCrea Counter с синхронизированными increment() и get(). Запустите два Thread,\nкаждый увеличивает общий счётчик 3 * 100 раз. Дождитесь обоих через join().\nЧерез ExecutorService с одним потоком отправьте Callable, возвращающий удвоенный get().\nImprime get(), затем результат Future.get(). Обязательно закройте executor в finally.\nВывод должен быть детерминированным при любом порядке выполнения потоков.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 600\nОтчёт: 1200\nСтрок: 2",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 600\nОтчёт: 1200\nСтрок: 2",
+        "id": "m-exam-12-07"
+      }
+    ]
+  }
+}

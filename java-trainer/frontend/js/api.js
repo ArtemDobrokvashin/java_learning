@@ -1,5 +1,6 @@
 import { readCache, writeCache } from './storage.js';
 import { courseStatuses } from './utils/course.js';
+import { getLanguage } from './i18n.js';
 
 async function requestJson(url, options = {}, timeoutMs = 10_000) {
   const controller = new AbortController();
@@ -49,20 +50,22 @@ export function getCourseRevision() {
 }
 
 export async function getModules(state) {
-  const cached = readCache('index', { revision: activeCourseRevision });
+  const lang = getLanguage();
+  const cacheKey = lang === 'ru' ? 'index' : `index.${lang}`;
+  const cached = readCache(cacheKey, { revision: activeCourseRevision });
   if (cached) return courseStatuses(cached, state);
   const completed = state.completedPractices.join(',');
   const bossPassed = Object.entries(state.bossScores)
     .filter(([, score]) => score?.passed).map(([id]) => id).join(',');
   const examPassed = Object.entries(state.examScores || {}).filter(([, score]) => score?.passed).map(([id]) => id).join(',');
-  const query = new URLSearchParams({ completed, bossPassed, examPassed });
+  const query = new URLSearchParams({ completed, bossPassed, examPassed, ...(lang !== 'ru' ? { lang } : {}) });
   try {
     const data = await requestJson(`/api/modules?${query}`);
     if (data.revision) activeCourseRevision = data.revision;
-    writeCache('index', data.modules, activeCourseRevision);
+    writeCache(cacheKey, data.modules, activeCourseRevision);
     return courseStatuses(data.modules, state);
   } catch (error) {
-    const stale = readCache('index', { allowStale: true });
+    const stale = readCache(cacheKey, { allowStale: true });
     if (stale) return courseStatuses(stale, state);
     throw error;
   }
@@ -70,11 +73,13 @@ export async function getModules(state) {
 
 export async function getModuleContent(moduleId) {
   if (!Number.isInteger(moduleId) || moduleId < 1 || moduleId > 22) throw new Error('Неизвестный модуль.');
-  const key = `module-${moduleId}`;
+  const lang = getLanguage();
+  const key = lang === 'ru' ? `module-${moduleId}` : `module-${moduleId}.${lang}`;
   const cached = readCache(key, { revision: activeCourseRevision });
   if (cached) return cached;
+  const pathPrefix = lang === 'ru' ? '/data' : `/data/i18n/${lang}`;
   try {
-    const data = await requestJson(`/data/module-${String(moduleId).padStart(2, '0')}.json`);
+    const data = await requestJson(`${pathPrefix}/module-${String(moduleId).padStart(2, '0')}.json`);
     writeCache(key, data, activeCourseRevision);
     return data;
   } catch (error) {
@@ -85,14 +90,17 @@ export async function getModuleContent(moduleId) {
 }
 
 export async function getLabs() {
-  const cached = readCache('labs', { revision: activeCourseRevision });
+  const lang = getLanguage();
+  const key = lang === 'ru' ? 'labs' : `labs.${lang}`;
+  const cached = readCache(key, { revision: activeCourseRevision });
   if (cached) return cached;
+  const pathPrefix = lang === 'ru' ? '/data' : `/data/i18n/${lang}`;
   try {
-    const data = await requestJson('/data/labs.json');
-    writeCache('labs', data.labs, activeCourseRevision);
+    const data = await requestJson(`${pathPrefix}/labs.json`);
+    writeCache(key, data.labs, activeCourseRevision);
     return data.labs;
   } catch (error) {
-    const stale = readCache('labs', { allowStale: true });
+    const stale = readCache(key, { allowStale: true });
     if (stale) return stale;
     throw error;
   }

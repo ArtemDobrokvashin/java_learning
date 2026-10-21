@@ -1,0 +1,1115 @@
+{
+  "id": 9,
+  "title": "Java 集合框架",
+  "lessons": [
+    {
+      "id": "m09-l01",
+      "title": "集合框架简介",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Java Collections Framework объединяет интерфейсы и реализации для групп данных. Collection — базовый интерфейс для наборов элементов, а Collections — утилитарный класс со статическими алгоритмами вроде sort.",
+          "请使用 интерфейс в типе переменной и конкретную реализацию при создании: List<String> names = new ArrayList<>(); Угловые скобки ограничивают тип элементов и предотвращают ошибки приведения."
+        ],
+        "code": "java.util.List<String> names = new java.util.ArrayList<>();\nnames.add(\"Лена\");\nSystem.out.println(names.size());",
+        "caption": "Интерфейс описывает контракт, класс — реализацию.",
+        "language": "java",
+        "objective": "【学习目标】Выбрать интерфейс коллекции и отличить его от конкретной реализации.",
+        "walkthrough": "【代码走读】List<String> объявляет контракт упорядоченного набора, ArrayList<> создаёт реализацию. После names.add(\"Лена\") size() вернёт 1.",
+        "pitfall": "【常见陷阱】Collection и Collections — не одно и то же: первое интерфейс, второе вспомогательный класс с методами.",
+        "deepDive": "【深入解析】Выбор коллекции начинается с нужного поведения: порядок, повторы, поиск по ключу или уникальность. List, Set и Map задают разные контракты; имя Collections относится к вспомогательным алгоритмам, а не к любому контейнеру.",
+        "useCase": "【实际应用】Для очереди зарегистрированных имён с возможными дублями подойдёт List, для уникальных тегов — Set, для поиска пользователя по ID — Map. Выберите тип по операциям, а не по знакомому конструктору ArrayList.",
+        "guide": {
+          "why": "【分步指南】Коллекции удобны, когда количество элементов заранее неизвестно. Интерфейс List задаёт доступные операции, а ArrayList реализует их хранение.",
+          "steps": [
+            "声明变量 типа List<String> и создайте new ArrayList<>; угловые скобки защищают от случайного добавления числа в список строк.",
+            "Добавьте пару элементов методом add(), а size() прочитает их количество. Чтобы увидеть ответ, оберните size() в println."
+          ],
+          "example": {
+            "code": "java.util.List<String> tags = new java.util.ArrayList<>();\ntags.add(\"Java\");\ntags.add(\"SQL\");\nSystem.out.println(tags.size());",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри метода main"
+          },
+          "result": "Вывод 2. Тип List<String> показывает, какие значения допустимы, не привязывая остальной код к ArrayList.",
+          "bridge": "В мини-задании выберите интерфейс для объявления переменной. Для практики вспомните цикл по List<Integer> и считайте подходящие элементы."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m09-l01-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "java.util.List<String> tags = new java.util.ArrayList<>();\ntags.add(\"Java\");\ntags.add(\"SQL\");\nSystem.out.println(tags.size());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Вывод 2. Тип List<String> показывает, какие значения допустимы, не привязывая остальной код к ArrayList."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что лучше указать как тип переменной для ArrayList<String>?",
+          "options": [
+            {
+              "id": "a",
+              "label": "ArrayList<String> всегда"
+            },
+            {
+              "id": "b",
+              "label": "List<String>"
+            },
+            {
+              "id": "c",
+              "label": "Collections<String>"
+            },
+            {
+              "id": "d",
+              "label": "String[] только"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Программируйте через интерфейс коллекции.",
+          "explanation": "【解析】List<String> сохраняет свободу заменить реализацию.",
+          "id": "m09-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "请创建 список строк.",
+          "template": [
+            "java.util.List<String> items = new java.util.",
+            "<>();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "ArrayList",
+              "options": [
+                "ArrayList",
+                "HashSet",
+                "HashMap"
+              ]
+            }
+          ],
+          "hint": "【提示】Нужна реализация интерфейса List.",
+          "explanation": "【解析】ArrayList — изменяемый список.",
+          "id": "m09-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m09-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Список чисел [4, 7, 9, 12]. Сколько элементов строго больше 7?",
+          "options": [
+            {
+              "id": "a",
+              "label": "1"
+            },
+            {
+              "id": "b",
+              "label": "2"
+            },
+            {
+              "id": "c",
+              "label": "3"
+            },
+            {
+              "id": "d",
+              "label": "4"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Под условие > 7 подходят 9 и 12, но не 7.",
+          "explanation": "【解析】Верно: 2. Под условие > 7 подходят 9 и 12, но не 7."
+        },
+        {
+          "id": "m09-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m09-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 List<Integer> с числами 4, 7, 9, 12. В цикле посчитайте, сколько значений не меньше 8, и выведите только число подходящих элементов.",
+          "expectedOutput": "2",
+          "hint": "【提示】Инициализируйте счётчик до цикла и увеличивайте его только при выполнении условия.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '2'. Инициализируйте счётчик до цикла и увеличивайте его только при выполнении условия."
+        }
+      ]
+    },
+    {
+      "id": "m09-l02",
+      "title": "List 接口及其实现",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】List хранит элементы по порядку и допускает повторы. ArrayList обеспечивает быстрый доступ по индексу; вставка в середину может сдвигать элементы. LinkedList хранит узлы и имеет другие компромиссы.",
+          "【核心理论】Индекс списка начинается с нуля. Вызов get(index) читает элемент, add(value) добавляет в конец, size() возвращает число элементов. Не путайте List.size() с array.length у массива."
+        ],
+        "code": "java.util.List<String> items = new java.util.ArrayList<>();\nitems.add(\"A\"); items.add(\"A\");\nSystem.out.println(items.get(1)); // A",
+        "caption": "List сохраняет порядок добавления.",
+        "language": "java",
+        "objective": "【学习目标】Предсказать порядок, дубликаты и доступ по индексу у List.",
+        "walkthrough": "【代码走读】В items два раза добавлена строка «A». List не удаляет повторы, поэтому items.get(1) вернёт второе «A», а size() равен 2.",
+        "pitfall": "【常见陷阱】get(2) здесь вызовет IndexOutOfBoundsException: индексы двух элементов — только 0 и 1.",
+        "deepDive": "【深入解析】ArrayList хранит элементы с доступом по индексу; вставка в середину обычно сдвигает хвост. LinkedList требует прохода до произвольного индекса и дополнительных узлов, поэтому не ускоряет любую вставку автоматически.",
+        "useCase": "【实际应用】Если часто получаете item по номеру, начните с ArrayList. Для массовых вставок измерьте нагрузку и способ доступа; не выбирайте LinkedList только из-за его названия.",
+        "guide": {
+          "why": "【分步指南】Список сохраняет порядок вставки и может содержать повторы; индекс позволяет обратиться к конкретной позиции, начиная с нуля.",
+          "steps": [
+            "Добавьте два одинаковых значения через add(): List не удаляет дубликаты автоматически.",
+            "Метод get(0) вернёт первый элемент, get(1) — второй. size() возвращает число элементов, а не индекс последнего."
+          ],
+          "example": {
+            "code": "java.util.List<String> names = new java.util.ArrayList<>();\nnames.add(\"Аня\");\nnames.add(\"Аня\");\nSystem.out.println(names.get(0) + \":\" + names.size());",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри метода main"
+          },
+          "result": "Появится «Аня:2»: один текст хранится в двух ячейках, а первый элемент доступен под индексом 0.",
+          "bridge": "Задание о первом элементе решается вызовом get(0). В практике переходите от чисел списка к счётчику внутри цикла."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m09-l02-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "java.util.List<String> names = new java.util.ArrayList<>();\nnames.add(\"Аня\");\nnames.add(\"Аня\");\nSystem.out.println(names.get(0) + \":\" + names.size());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Появится «Аня:2»: один текст хранится в двух ячейках, а первый элемент доступен под индексом 0."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Может ли List содержать два одинаковых элемента?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Да, порядок и повторы сохраняются"
+            },
+            {
+              "id": "b",
+              "label": "Нет, повторы запрещены"
+            },
+            {
+              "id": "c",
+              "label": "Только при size() == 0"
+            },
+            {
+              "id": "d",
+              "label": "Только если это массив"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】List не удаляет дубликаты автоматически.",
+          "explanation": "【解析】Оба добавления \"A\" останутся в списке.",
+          "id": "m09-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Получите первый элемент списка.",
+          "template": [
+            "String first = items.",
+            "(0);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "get",
+              "options": [
+                "get",
+                "put",
+                "containsKey"
+              ]
+            }
+          ],
+          "hint": "【提示】Индекс передаётся методу чтения элемента.",
+          "explanation": "【解析】get(0) возвращает первый элемент List.",
+          "id": "m09-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m09-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】После добавления «А», «Б», «А» в ArrayList чему равны size() и get(2)?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2 и «А»"
+            },
+            {
+              "id": "b",
+              "label": "3 и «А»"
+            },
+            {
+              "id": "c",
+              "label": "3 и «Б»"
+            },
+            {
+              "id": "d",
+              "label": "2 и ошибка"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】ArrayList сохраняет повторы и позиции вставки.",
+          "explanation": "【解析】Верно: 3 и «А». ArrayList сохраняет повторы и позиции вставки."
+        },
+        {
+          "id": "m09-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m09-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 изменяемый ArrayList<String>, добавьте «А», «Б», «А» в этом порядке. 请输出 размер, первый и последний элементы через двоеточие.",
+          "expectedOutput": "3:А:А",
+          "hint": "【提示】List хранит повторы и порядок. Первый индекс 0, последний size() - 1.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '3:А:А'. List хранит повторы и порядок. Первый индекс 0, последний size() - 1."
+        }
+      ]
+    },
+    {
+      "id": "m09-l03",
+      "title": "Set 集合",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Set описывает множество без повторов. HashSet обычно даёт быстрые операции добавления и поиска, но не гарантирует порядок перебора; LinkedHashSet сохраняет порядок вставки, TreeSet сортирует.",
+          "【核心理论】Метод add(value) возвращает false, если такой элемент уже есть. Для объектов корректность HashSet зависит от согласованных equals и hashCode. Не делайте вывод о порядке HashSet по одному запуску."
+        ],
+        "code": "java.util.Set<Integer> ids = new java.util.HashSet<>();\nids.add(4); ids.add(4);\nSystem.out.println(ids.size()); // 1",
+        "caption": "Разные реализации Set дают разные гарантии порядка.",
+        "language": "java",
+        "objective": "【学习目标】Убрать повторы с Set, не полагаясь на порядок HashSet.",
+        "walkthrough": "【代码走读】HashSet получает число 4 два раза, но хранит один уникальный элемент: ids.size() равно 1. Добавление уже имеющегося значения не меняет размер.",
+        "pitfall": "【常见陷阱】HashSet не гарантирует порядок перебора; если он важен, рассмотрите LinkedHashSet либо отсортированный TreeSet.",
+        "deepDive": "【深入解析】Уникальность Set опирается на сравнение элементов. HashSet размещает элементы по hashCode и проверяет equals внутри нужной группы; TreeSet использует порядок сравнения, который должен согласовываться с понятием равенства.",
+        "useCase": "【实际应用】Соберите уникальные email-адреса и решите, нужна ли стабильная последовательность отображения. Для HashSet возьмите LinkedHashSet при требовании порядка вставки, а не надейтесь на случайный порядок хеш-таблицы.",
+        "guide": {
+          "why": "【分步指南】Set нужен для уникальных значений. HashSet не обещает порядок вывода, зато повторный add того же элемента не меняет множество.",
+          "steps": [
+            "请创建 Set<Integer> с реализацией HashSet и добавьте два одинаковых ID.",
+            "size() считает уникальные элементы; add(9) второй раз вернёт false. Для показа результата вызывайте println(size())."
+          ],
+          "example": {
+            "code": "java.util.Set<Integer> ids = new java.util.HashSet<>();\nids.add(9);\nids.add(9);\nSystem.out.println(ids.size());",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри метода main"
+          },
+          "result": "Вывод 1. Не полагайтесь на порядок обхода HashSet, даже если при небольшом наборе он выглядит постоянным.",
+          "bridge": "В мини-задании определите размер после повтора; в практике выбирайте Set, если хотите удалить дубли, а не получить элемент по индексу."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m09-l03-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "java.util.Set<Integer> ids = new java.util.HashSet<>();\nids.add(9);\nids.add(9);\nSystem.out.println(ids.size());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Вывод 1. Не полагайтесь на порядок обхода HashSet, даже если при небольшом наборе он выглядит постоянным."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какой размер у Set после add(4) дважды?",
+          "options": [
+            {
+              "id": "a",
+              "label": "0"
+            },
+            {
+              "id": "b",
+              "label": "1"
+            },
+            {
+              "id": "c",
+              "label": "2"
+            },
+            {
+              "id": "d",
+              "label": "Непредсказуем"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Множество исключает дублирующиеся значения.",
+          "explanation": "【解析】Повторное добавление 4 не увеличивает размер.",
+          "id": "m09-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "请创建 множество без гарантии порядка.",
+          "template": [
+            "java.util.Set<Integer> ids = new java.util.",
+            "<>();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "HashSet",
+              "options": [
+                "HashSet",
+                "ArrayList",
+                "HashMap"
+              ]
+            }
+          ],
+          "hint": "【提示】Нужна реализация Set.",
+          "explanation": "【解析】HashSet реализует Set и не обещает порядок.",
+          "id": "m09-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m09-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】После add(4), add(4), add(7) у HashSet что покажет size()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "1"
+            },
+            {
+              "id": "b",
+              "label": "2"
+            },
+            {
+              "id": "c",
+              "label": "3"
+            },
+            {
+              "id": "d",
+              "label": "0"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Равный элемент добавляется только один раз.",
+          "explanation": "【解析】Верно: 2. Равный элемент добавляется только один раз."
+        },
+        {
+          "id": "m09-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m09-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 HashSet<Integer> и добавьте 4, 4, 7, 7, 9. 请输出 число уникальных элементов; порядок обхода Set не используйте.",
+          "expectedOutput": "3",
+          "hint": "【提示】Повторный add не создаёт второй элемент; size() возвращает число уникальных значений.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '3'. Повторный add не создаёт второй элемент; size() возвращает число уникальных значений."
+        }
+      ]
+    },
+    {
+      "id": "m09-l04",
+      "title": "toString、equals 与 hashCode 方法",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】toString задаёт текстовое представление, equals — логическое равенство объектов, а hashCode — числовой код для хеш-структур. Если два объекта равны по equals, их hashCode обязаны совпадать.",
+          "【核心理论】При переопределении equals обычно переопределяют и hashCode: иначе HashSet и HashMap могут вести себя неожиданно. Равный hashCode не доказывает равенство — коллизии возможны."
+        ],
+        "code": "record User(int id, String name) { }\nUser a = new User(1, \"Лена\");\nUser b = new User(1, \"Лена\");\nSystem.out.println(a.equals(b)); // true",
+        "caption": "record автоматически создаёт согласованные equals и hashCode.",
+        "language": "java",
+        "objective": "【学习目标】Объяснить связь equals и hashCode при использовании объектов как ключей.",
+        "walkthrough": "【代码走读】Две записи User с одинаковыми id и name считаются равными: record генерирует equals и hashCode по компонентам, поэтому a.equals(b) вернёт true.",
+        "pitfall": "【常见陷阱】Если equals переопределён вручную, обязательно согласуйте hashCode: равные ключи должны иметь одинаковый хеш.",
+        "deepDive": "【深入解析】Контракт equals требует рефлексивности, симметричности, транзитивности и согласованности. Равные объекты обязаны иметь одинаковый hashCode; разные объекты могут совпасть по хешу, поэтому одной проверки хеша недостаточно.",
+        "useCase": "【实际应用】Поместите два логически одинаковых ключа в HashSet и проверьте, что второй не добавился. Не меняйте поля, участвующие в equals/hashCode, пока объект служит ключом HashMap: поиск может перестать его находить.",
+        "guide": {
+          "why": "【分步指南】Хеш-коллекции сравнивают объекты по equals и используют hashCode, чтобы быстро найти место поиска. Одинаковый хеш не означает одинаковые объекты.",
+          "steps": [
+            "record Point автоматически создаёт согласованные equals и hashCode для своих полей. Две записи с одинаковыми координатами логически равны.",
+            "HashSet добавит первую Point, а вторую сочтёт повтором; size() покажет 1. Если поля объекта-ключа меняются, поиск может нарушиться."
+          ],
+          "example": {
+            "code": "record Point(int x, int y) { }\n// внутри main:\njava.util.Set<Point> points = new java.util.HashSet<>();\npoints.add(new Point(1, 2));\npoints.add(new Point(1, 2));\nSystem.out.println(points.size());",
+            "language": "java",
+            "runnable": false,
+            "label": "Record рядом с Main и код внутри main"
+          },
+          "result": "Результат 1. Без правильных equals/hashCode два разных экземпляра могли бы рассматриваться как разные ключи.",
+          "bridge": "В мини-задании определите, почему равные объекты обязаны иметь один hashCode. В практике применяйте Map с простыми строковыми ключами."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m09-l04-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "record Point(int x, int y) { }\n// внутри main:\njava.util.Set<Point> points = new java.util.HashSet<>();\npoints.add(new Point(1, 2));\npoints.add(new Point(1, 2));\nSystem.out.println(points.size());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Результат 1. Без правильных equals/hashCode два разных экземпляра могли бы рассматриваться как разные ключи."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что обязано выполняться при a.equals(b) == true?",
+          "options": [
+            {
+              "id": "a",
+              "label": "a и b — один объект"
+            },
+            {
+              "id": "b",
+              "label": "a.hashCode() == b.hashCode()"
+            },
+            {
+              "id": "c",
+              "label": "a.toString() == b.toString()"
+            },
+            {
+              "id": "d",
+              "label": "hashCode всегда уникален"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Это ключевой контракт для хеш-коллекций.",
+          "explanation": "【解析】Равные объекты обязаны иметь равные хеш-коды.",
+          "id": "m09-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Какой метод определяет логическое равенство?",
+          "template": [
+            "boolean same = a.",
+            "(b);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "equals",
+              "options": [
+                "hashCode",
+                "equals",
+                "toString"
+              ]
+            }
+          ],
+          "hint": "【提示】Оператор == сравнивает ссылки; нужен метод сравнения содержимого.",
+          "explanation": "【解析】equals сравнивает объекты по определённому ими правилу.",
+          "id": "m09-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m09-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Два record Point(1,2) в HashSet. Почему размер равен единице?",
+          "options": [
+            {
+              "id": "a",
+              "label": "record сравнивает компоненты через equals/hashCode"
+            },
+            {
+              "id": "b",
+              "label": "Set хранит только первый объект любого типа"
+            },
+            {
+              "id": "c",
+              "label": "память у объектов всегда общая"
+            },
+            {
+              "id": "d",
+              "label": "точки сравниваются только по x"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】record предоставляет сравнение компонентов по значениям.",
+          "explanation": "【解析】Верно: record сравнивает компоненты через equals/hashCode. record предоставляет сравнение компонентов по значениям."
+        },
+        {
+          "id": "m09-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m09-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Опишите record Point(int x,int y). Положите в HashSet две точки (1,2) и точку (2,1); выведите размер множества.",
+          "expectedOutput": "2",
+          "hint": "【提示】record автоматически создаёт согласованные equals и hashCode по значениям компонентов.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '2'. record автоматически создаёт согласованные equals и hashCode по значениям компонентов."
+        }
+      ]
+    },
+    {
+      "id": "m09-l05",
+      "title": "映射表 Map",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Map связывает уникальные ключи со значениями. put(key, value) добавляет или заменяет значение, get(key) читает его, getOrDefault(key, fallback) возвращает запасное значение при отсутствии ключа.",
+          "【核心理论】HashMap не гарантирует порядок; LinkedHashMap сохраняет порядок вставки. При переборе учитывайте, что ключи уникальны, но значения могут повторяться. Ключи пользовательских классов требуют корректных equals/hashCode."
+        ],
+        "code": "java.util.Map<String, Integer> count = new java.util.HashMap<>();\ncount.put(\"Java\", 2);\nSystem.out.println(count.getOrDefault(\"Kotlin\", 0)); // 0",
+        "caption": "Map хранит пары ключ — значение.",
+        "language": "java",
+        "objective": "【学习目标】Получить значение по ключу Map и задать запасное значение для отсутствующего.",
+        "walkthrough": "【代码走读】После put(\"Java\", 2) карта знает один ключ. Ключа «Kotlin» нет, поэтому getOrDefault(\"Kotlin\", 0) печатает 0 и не добавляет его в карту.",
+        "pitfall": "【常见陷阱】get отсутствующего ключа обычно возвращает null. Не вызывайте методы на таком результате без проверки или значения по умолчанию.",
+        "deepDive": "【深入解析】Map хранит одну запись на ключ; повторный put для того же ключа заменяет старое значение. get возвращает null и при отсутствующем ключе, и при сохранённом null, поэтому для различения этих случаев понадобится containsKey.",
+        "useCase": "Подсчитывайте частоты слов с getOrDefault(word, 0) + 1. 请检查 пустую строку и повторяющиеся слова; если порядок вывода важен, выберите подходящую реализацию Map заранее.",
+        "guide": {
+          "why": "【分步指南】Map связывает ключ со значением: по ключу можно прочитать счётчик, обновить его или подставить ноль, если записи пока нет.",
+          "steps": [
+            "请声明 Map<String,Integer>. put добавляет новую запись или заменяет значение существующего ключа.",
+            "Для отсутствующего ключа getOrDefault(\"Python\", 0) возвращает 0; прибавив 1, положите результат в Map и выведите get."
+          ],
+          "example": {
+            "code": "java.util.Map<String, Integer> count = new java.util.HashMap<>();\ncount.put(\"Python\", count.getOrDefault(\"Python\", 0) + 1);\nSystem.out.println(count.get(\"Python\"));",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри метода main"
+          },
+          "result": "Программа печатает 1. Ещё один вызов put с тем же расчётом повысит частоту, не создавая второго ключа.",
+          "bridge": "Мини-задание про getOrDefault проверяет запасное значение. В практике повторите этот шаблон на другом наборе слов."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m09-l05-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "java.util.Map<String, Integer> count = new java.util.HashMap<>();\ncount.put(\"Python\", count.getOrDefault(\"Python\", 0) + 1);\nSystem.out.println(count.get(\"Python\"));",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Программа печатает 1. Ещё один вызов put с тем же расчётом повысит частоту, не создавая второго ключа."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что произойдёт при put с уже существующим ключом?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Появится второй такой же ключ"
+            },
+            {
+              "id": "b",
+              "label": "Значение для ключа заменится"
+            },
+            {
+              "id": "c",
+              "label": "Map станет List"
+            },
+            {
+              "id": "d",
+              "label": "Скомпилируется с ошибкой"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Ключ в Map уникален.",
+          "explanation": "【解析】Повторный put заменяет связанное с ключом значение.",
+          "id": "m09-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Получите 0 при отсутствии ключа.",
+          "template": [
+            "int n = count.",
+            "(\"Java\", 0);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "getOrDefault",
+              "options": [
+                "getOrDefault",
+                "add",
+                "size"
+              ]
+            }
+          ],
+          "hint": "【提示】Метод принимает ключ и запасное значение.",
+          "explanation": "【解析】getOrDefault возвращает fallback, если ключа нет.",
+          "id": "m09-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m09-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】У Map<String,Integer> для отсутствующего ключа red вызван getOrDefault(\"red\",0). Что он вернёт?",
+          "options": [
+            {
+              "id": "a",
+              "label": "null"
+            },
+            {
+              "id": "b",
+              "label": "0"
+            },
+            {
+              "id": "c",
+              "label": "1"
+            },
+            {
+              "id": "d",
+              "label": "исключение"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Второй аргумент — значение по умолчанию при отсутствии ключа.",
+          "explanation": "【解析】Верно: 0. Второй аргумент — значение по умолчанию при отсутствии ключа."
+        },
+        {
+          "id": "m09-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m09-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Посчитайте частоту строк «red», «blue», «red», «red» через Map<String,Integer> и getOrDefault. 请输出 частоту red и blue через двоеточие.",
+          "expectedOutput": "3:1",
+          "hint": "【提示】Для неизвестного слова берите ноль; после увеличения сохраните счётчик обратно через put.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '3:1'. Для неизвестного слова берите ноль; после увеличения сохраните счётчик обратно через put."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "第 9 模块综合实战",
+    "description": "Подберите подходящие структуры и напишите код с List и Map.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Какая структура допускает повторы и хранит порядок элементов?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Set"
+          },
+          {
+            "id": "b",
+            "label": "List"
+          },
+          {
+            "id": "c",
+            "label": "Map"
+          },
+          {
+            "id": "d",
+            "label": "Optional"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Нужна последовательность с индексами.",
+        "explanation": "【解析】List сохраняет порядок и допускает дубликаты.",
+        "id": "m09-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Подсчитайте значение ключа с запасным нулём.",
+        "template": [
+          "int n = map.",
+          "(\"java\", 0);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "getOrDefault",
+            "options": [
+              "getOrDefault",
+              "getKey",
+              "add"
+            ]
+          }
+        ],
+        "hint": "【提示】Метод принимает два аргумента: ключ и запасной ответ.",
+        "explanation": "【解析】getOrDefault помогает при подсчёте частот.",
+        "id": "m09-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Соедините структуру и свойство.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "List",
+            "right": "Интерфейс с порядком и повторами элементов"
+          },
+          {
+            "id": "2",
+            "left": "Set",
+            "right": "Интерфейс без повторов элементов"
+          },
+          {
+            "id": "3",
+            "left": "Map",
+            "right": "Уникальные ключи; значения могут повторяться"
+          },
+          {
+            "id": "4",
+            "left": "HashSet",
+            "right": "Хеш-реализация Set без гарантии порядка"
+          }
+        ],
+        "hint": "【提示】Отличите интерфейсы от реализации HashSet; у Map повторяются значения, но не ключи.",
+        "explanation": "【解析】List допускает повторы, Set — нет; Map имеет уникальные ключи, а HashSet не гарантирует порядок.",
+        "id": "m09-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите цикл подсчёта положительных чисел.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int count = 0;"
+          },
+          {
+            "id": "b",
+            "text": "for (int n : numbers) {"
+          },
+          {
+            "id": "c",
+            "text": "if (n > 0) {"
+          },
+          {
+            "id": "d",
+            "text": "count++;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Сначала счётчик, внутри цикла проверка числа.",
+        "explanation": "【解析】count растёт только для n > 0.",
+        "id": "m09-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "HashSet не гарантирует порядок"
+          },
+          {
+            "id": "b",
+            "label": "Map разрешает одинаковые ключи дважды"
+          },
+          {
+            "id": "c",
+            "label": "Равные по equals объекты обязаны иметь равный hashCode"
+          },
+          {
+            "id": "d",
+            "label": "ArrayList поддерживает get(index)"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "【提示】Повторный ключ Map заменяет старое значение.",
+        "explanation": "【解析】Порядок HashSet не гарантирован, а контракт equals/hashCode обязателен.",
+        "id": "m09-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "请创建 List<Integer> из чисел 1, 2, 3, 4 и циклом подсчитайте чётные числа. 请输出 их количество.",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> values = Arrays.asList(1, 2, 3, 4);\n        // Подсчитайте и выведите число чётных элементов\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "2",
+        "hint": "请使用 n % 2 == 0 и отдельный счётчик.",
+        "explanation": "【解析】Чётные числа: 2 и 4, всего два.",
+        "id": "m09-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Для слов \"java\", \"code\", \"java\" подсчитайте частоту каждого слова с помощью Map<String,Integer>. 请输出 частоту слова \"java\".",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        String[] words = {\"java\", \"code\", \"java\"};\n        Map<String, Integer> counts = new HashMap<>();\n        // Подсчитайте частоты и выведите counts.get(\"java\")\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "2",
+        "hint": "【提示】Для каждого слова: map.put(word, map.getOrDefault(word, 0) + 1);.",
+        "explanation": "【解析】Ключ java встретился два раза.",
+        "id": "m09-p07"
+      }
+    ],
+    "id": "m09-practice",
+    "primer": {
+      "why": "Для задач с неизвестным количеством элементов выбирайте коллекции. List хранит порядок и повторы; Map<String,Integer> хранит один счётчик на ключ.",
+      "steps": [
+        "При подсчёте подходящих значений заведите int count = 0 и проходите List циклом; меняйте count только после проверки условия.",
+        "Для частот берите текущее значение map.getOrDefault(word, 0), прибавляйте 1 и кладите назад через put. println(map.get(...)) покажет число."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        java.util.List<Integer> ages = java.util.List.of(12, 20, 15);\n        int adults = 0;\n        for (int age : ages) if (age >= 18) adults++;\n        java.util.Map<String, Integer> seen = new java.util.HashMap<>();\n        for (String word : new String[]{\"cat\", \"cat\", \"dog\"}) {\n            seen.put(word, seen.getOrDefault(word, 0) + 1);\n        }\n        System.out.println(adults);\n        System.out.println(seen.get(\"cat\"));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "1\n2"
+      },
+      "result": "Будут выведены 1 и 2. List подходит для порядка, Map — чтобы быстро находить уже имеющийся счётчик.",
+      "hints": [
+        {
+          "taskId": "m09-p06",
+          "text": "В задаче с чётными числами измените правило в if на проверку остатка от деления на 2; счётчик создайте до цикла."
+        },
+        {
+          "taskId": "m09-p07",
+          "text": "В задаче о словах меняйте значения Map только по соответствующему ключу; для отсутствующего слова начинайте с нуля."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m09-exam",
+    "title": "模块小测验",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 390,
+    "tasks": [
+      {
+        "id": "m-exam-09-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "【任务】У Map<String,Integer> для отсутствующего ключа red вызван getOrDefault(\"red\",0). Что он вернёт?",
+        "options": [
+          {
+            "id": "a",
+            "label": "null"
+          },
+          {
+            "id": "b",
+            "label": "0"
+          },
+          {
+            "id": "c",
+            "label": "1"
+          },
+          {
+            "id": "d",
+            "label": "исключение"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Второй аргумент — значение по умолчанию при отсутствии ключа.",
+        "explanation": "【解析】Верно: 0. Второй аргумент — значение по умолчанию при отсутствии ключа."
+      },
+      {
+        "type": "fill",
+        "prompt": "请创建 список строк.",
+        "template": [
+          "java.util.List<String> items = new java.util.",
+          "<>();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "ArrayList",
+            "options": [
+              "ArrayList",
+              "HashSet",
+              "HashMap"
+            ]
+          }
+        ],
+        "hint": "【提示】Нужна реализация интерфейса List.",
+        "explanation": "【解析】ArrayList — изменяемый список.",
+        "id": "m-exam-09-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Соедините структуру и свойство.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "List",
+            "right": "Интерфейс с порядком и повторами элементов"
+          },
+          {
+            "id": "2",
+            "left": "Set",
+            "right": "Интерфейс без повторов элементов"
+          },
+          {
+            "id": "3",
+            "left": "Map",
+            "right": "Уникальные ключи; значения могут повторяться"
+          },
+          {
+            "id": "4",
+            "left": "HashSet",
+            "right": "Хеш-реализация Set без гарантии порядка"
+          }
+        ],
+        "hint": "【提示】Отличите интерфейсы от реализации HashSet; у Map повторяются значения, но не ключи.",
+        "explanation": "【解析】List допускает повторы, Set — нет; Map имеет уникальные ключи, а HashSet не гарантирует порядок.",
+        "id": "m-exam-09-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите цикл подсчёта положительных чисел.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int count = 0;"
+          },
+          {
+            "id": "b",
+            "text": "for (int n : numbers) {"
+          },
+          {
+            "id": "c",
+            "text": "if (n > 0) {"
+          },
+          {
+            "id": "d",
+            "text": "count++;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Сначала счётчик, внутри цикла проверка числа.",
+        "explanation": "【解析】count растёт только для n > 0.",
+        "id": "m-exam-09-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Обработайте List<String> со словами \"java\", \"code\", \"java\", \"1\" (1 — число в строке).\nПостройте TreeMap<String,Integer> частот и HashSet уникальных слов. 请输出 каждую пару\nиз TreeMap как слово:частота в порядке ключей, затем размер множества. Используйте\ngetOrDefault, а не заранее вычисленные частоты. Отдельный класс WordReport хранит map\nи set, метод add(String) добавляет слово, print() печатает отчёт.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "1:1\ncode:1\njava:2\n3",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n1:1\ncode:1\njava:2\n3",
+        "id": "m-exam-09-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nОбработайте List<String> со словами \"java\", \"code\", \"java\", \"2\" (2 — число в строке).\nПостройте TreeMap<String,Integer> частот и HashSet уникальных слов. 请输出 каждую пару\nиз TreeMap как слово:частота в порядке ключей, затем размер множества. Используйте\ngetOrDefault, а не заранее вычисленные частоты. Отдельный класс WordReport хранит map\nи set, метод add(String) добавляет слово, print() печатает отчёт.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "2:1\ncode:1\njava:2\n3",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n2:1\ncode:1\njava:2\n3",
+        "id": "m-exam-09-06"
+      }
+    ]
+  }
+}

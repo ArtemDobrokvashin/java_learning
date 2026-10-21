@@ -10,6 +10,11 @@ node_modules/
 idea-plugin/build/
 idea-plugin/.gradle/
 idea-plugin/.idea/
+android-app/build/
+android-app/app/build/
+android-app/.gradle/
+android-app/.idea/
+android-app/local.properties
 .scratch/
 .pytest_cache/
 .DS_Store

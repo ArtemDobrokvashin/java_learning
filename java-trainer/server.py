@@ -292,11 +292,24 @@ def parse_id_set(value: str, valid_ids: set[int]) -> set[int]:
     return result
 
 
-def modules_with_status(completed: set[int], boss_passed: set[int], exam_passed: set[int] | None = None) -> list[dict]:
+SUPPORTED_LANGS = {"ru", "en", "es", "de", "zh"}
+
+
+def course_index_for_lang(lang: str | None = None) -> dict:
+    if lang and lang in SUPPORTED_LANGS and lang != "ru":
+        localized = DATA / "i18n" / lang / "modules.json"
+        if localized.exists():
+            with localized.open(encoding="utf-8") as source:
+                return json.load(source)
+    return course_index()
+
+
+def modules_with_status(completed: set[int], boss_passed: set[int],
+                        exam_passed: set[int] | None = None, lang: str | None = None) -> list[dict]:
     """Statuses use query parameters; personal data lives in a separate local profile."""
     unlocked = True
     result = []
-    for module in course_index()["modules"]:
+    for module in course_index_for_lang(lang)["modules"]:
         number = module["id"]
         finished = (number in completed and (not module.get("boss") or number in boss_passed)
                     and (not module.get("exam") or number in (exam_passed or set())))
@@ -570,7 +583,8 @@ def create_app() -> Flask:
 
     @app.get("/api/modules")
     def modules():
-        all_modules = course_index()["modules"]
+        lang = request.args.get("lang", "ru")
+        all_modules = course_index_for_lang(lang)["modules"]
         valid = {module["id"] for module in all_modules}
         try:
             completed = parse_id_set(request.args.get("completed", ""), valid)
@@ -578,7 +592,7 @@ def create_app() -> Flask:
             exam_passed = parse_id_set(request.args.get("examPassed", ""), valid)
         except ValueError as error:
             return jsonify(error=str(error)), 400
-        return jsonify(modules=modules_with_status(completed, boss_passed, exam_passed), total=len(all_modules),
+        return jsonify(modules=modules_with_status(completed, boss_passed, exam_passed, lang=lang), total=len(all_modules),
                        revision=course_revision(),
                        progressSource="browser-query")
 

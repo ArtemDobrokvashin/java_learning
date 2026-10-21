@@ -1,0 +1,1115 @@
+{
+  "id": 6,
+  "title": "继承",
+  "lessons": [
+    {
+      "id": "m06-l01",
+      "title": "Java 继承简介",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Наследование позволяет описать специализированный класс через существующий: Dog extends Animal. Подкласс получает доступные поля и методы родителя, а отношение «является» позволяет рассматривать Dog как Animal.",
+          "【核心理论】Наследование не заменяет композицию. Применяйте extends, если действительно выполняется отношение «является», и помните, что Java поддерживает только один непосредственный родительский класс."
+        ],
+        "code": "class Animal { void move() { } }\nclass Dog extends Animal { }\nAnimal pet = new Dog();",
+        "caption": "Подкласс расширяет поведение родителя.",
+        "language": "java",
+        "objective": "【学习目标】Объяснить отношение «является» и присвоить подкласс ссылке родителя.",
+        "walkthrough": "【代码走读】Dog extends Animal наследует доступный move(). Animal pet = new Dog() допустимо: любой Dog также Animal, но не любой Animal — Dog.",
+        "pitfall": "【常见陷阱】Наследование «ради повторного использования кода» может связать несвязанные сущности; когда отношение «содержит», используйте композицию.",
+        "deepDive": "【深入解析】Приведение Dog к Animal безопасно, потому что объект сохраняет все возможности родительского типа. Обратное приведение допустимо лишь когда за ссылкой действительно стоит Dog; само имя переменной не меняет реальный тип объекта.",
+        "useCase": "【实际应用】Метод, принимающий Animal, может работать и с Dog, и с Cat через общий контракт. Если приходится постоянно проверять instanceof ради разного поведения, подумайте о переопределяемом методе.",
+        "guide": {
+          "why": "【分步指南】Наследование выражает «Dog является Animal»: общий код живёт в родителе, а Dog при необходимости уточняет поведение. Его не стоит использовать для связи «у заказа есть клиент».",
+          "steps": [
+            "Сначала объявите Animal с методом move(), затем Dog extends Animal — Dog получает доступный метод.",
+            "Ссылке типа Animal можно присвоить new Dog(): это безопасное повышение типа. Через такую ссылку доступны только методы, обещанные Animal."
+          ],
+          "example": {
+            "code": "class Animal { String move() { return \"идёт\"; } }\nclass Dog extends Animal { }\n// внутри main:\nAnimal pet = new Dog();\nSystem.out.println(pet.move());",
+            "language": "java",
+            "runnable": false,
+            "label": "Классы родителя и потомка, вызов из main"
+          },
+          "result": "Получится «идёт». Не нужно копировать move() в Dog, если у него нет другой реализации.",
+          "bridge": "В упражнении выбирайте extends только для отношения «является». В следующих уроках Dog изменит поведение унаследованного метода через @Override."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m06-l01-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "class Animal { String move() { return \"идёт\"; } }\nclass Dog extends Animal { }\n// внутри main:\nAnimal pet = new Dog();\nSystem.out.println(pet.move());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Получится «идёт». Не нужно копировать move() в Dog, если у него нет другой реализации."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какое отношение лучше подходит для наследования?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Автомобиль имеет двигатель"
+            },
+            {
+              "id": "b",
+              "label": "Собака является животным"
+            },
+            {
+              "id": "c",
+              "label": "Заказ содержит товары"
+            },
+            {
+              "id": "d",
+              "label": "Класс вызывает метод"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Подкласс должен быть разновидностью базового класса.",
+          "explanation": "【解析】Dog является Animal; «имеет» обычно выражают композицией.",
+          "id": "m06-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Укажите базовый класс для Dog.",
+          "template": [
+            "class Dog ",
+            " Animal { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "extends",
+              "options": [
+                "implements",
+                "extends",
+                "new"
+              ]
+            }
+          ],
+          "hint": "【提示】От класса наследуются через ключевое слово.",
+          "explanation": "【解析】extends устанавливает наследование классов.",
+          "id": "m06-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m06-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Если Dog extends Animal и не переопределяет move(), откуда вызов dog.move() получит реализацию?",
+          "options": [
+            {
+              "id": "a",
+              "label": "из класса Animal"
+            },
+            {
+              "id": "b",
+              "label": "из Object безусловно"
+            },
+            {
+              "id": "c",
+              "label": "только из main"
+            },
+            {
+              "id": "d",
+              "label": "будет ошибка"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Потомок наследует доступный метод родителя.",
+          "explanation": "【解析】Верно: из класса Animal. Потомок наследует доступный метод родителя."
+        },
+        {
+          "id": "m06-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m06-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите Animal с move(), возвращающим «идёт». 请创建 Dog extends Animal и в main вызовите move() через ссылку типа Animal, указывающую на Dog.",
+          "expectedOutput": "идёт",
+          "hint": "【提示】Метод доступен потомку без копирования тела из родителя; ссылка базового типа подходит.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'идёт'. Метод доступен потомку без копирования тела из родителя; ссылка базового типа подходит."
+        }
+      ]
+    },
+    {
+      "id": "m06-l02",
+      "title": "在 Java 中实现继承",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "Конструктор подкласса обязан вызвать конструктор родителя: явно через super(...) или неявно без аргументов. 在 Java 中，17 вызов super(...) должен быть первым оператором конструктора; начиная с Java 25 разрешены некоторые подготовительные действия до него без обращения к ещё не инициализированному this.",
+          "【核心理论】private-поля родителя напрямую недоступны подклассу. Лучше обращаться к ним через методы родителя, чем делать все поля protected: так сохраняются инварианты и границы ответственности."
+        ],
+        "code": "class Person { Person(String name) { } }\nclass Student extends Person {\n    Student(String name) { super(name); }\n}",
+        "caption": "Сначала создаётся часть базового класса.",
+        "language": "java",
+        "objective": "【学习目标】Вызвать подходящий конструктор родителя и объяснить порядок инициализации.",
+        "walkthrough": "【代码走读】new Student(\"Лена\") начинает с super(name): сначала выполнится конструктор Person(String), затем тело конструктора Student.",
+        "pitfall": "【常见陷阱】Если у Person нет конструктора без аргументов, отсутствие явного super(name) приведёт к ошибке компиляции.",
+        "deepDive": "【深入解析】Перед инициализацией части Student конструируется его часть Person; поэтому вызов родительского конструктора предшествует использованию полей подкласса. Если конструктор без аргументов отсутствует, компилятор не сможет подставить super() автоматически.",
+        "useCase": "【实际应用】Требуйте имя человека в Person(String name), затем передайте его из Student через super(name). Попробуйте удалить этот вызов и прочитайте ошибку javac: это способ понять обязательную цепочку конструкторов.",
+        "guide": {
+          "why": "Конструктор подкласса не отменяет конструктор родителя: прежде чем работать с Student, Java должна создать его часть Person. 在 Java 中，17 вызов super(...) пишут первым.",
+          "steps": [
+            "Person принимает name и записывает его в поле. Автоматический super() без аргументов здесь невозможен, потому что такого конструктора нет.",
+            "Student(String name) вызывает super(name); до своих команд. Затем метод getName() может читать состояние, инициализированное родителем."
+          ],
+          "example": {
+            "code": "class Person {\n    private String name;\n    Person(String name) { this.name = name; }\n    String getName() { return name; }\n}\nclass Student extends Person {\n    Student(String name) { super(name); }\n}\n// внутри main:\nSystem.out.println(new Student(\"Мира\").getName());",
+            "language": "java",
+            "runnable": false,
+            "label": "Оба конструктора и пример вызова из main"
+          },
+          "result": "Увидим «Мира». Уберите super(name) и прочтите сообщение компилятора: Person не имеет конструктора без аргументов.",
+          "bridge": "В мини-задании правильно передайте аргумент родителю. Обратите внимание, что private-поле читается через доступный метод, а не напрямую из Student."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m06-l02-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "class Person {\n    private String name;\n    Person(String name) { this.name = name; }\n    String getName() { return name; }\n}\nclass Student extends Person {\n    Student(String name) { super(name); }\n}\n// внутри main:\nSystem.out.println(new Student(\"Мира\").getName());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Увидим «Мира». Уберите super(name) и прочтите сообщение компилятора: Person не имеет конструктора без аргументов."
+        },
+        {
+          "type": "choice",
+          "prompt": "在 Java 中，17 где должен стоять вызов super(name) в конструкторе?",
+          "options": [
+            {
+              "id": "a",
+              "label": "После любого вывода"
+            },
+            {
+              "id": "b",
+              "label": "Первой командой"
+            },
+            {
+              "id": "c",
+              "label": "Только в методе main"
+            },
+            {
+              "id": "d",
+              "label": "В статическом блоке"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "在 Java 中，17 инициализация родителя идёт раньше подкласса.",
+          "explanation": "在 Java 中，17 super(...) — первый оператор. Начиная с Java 25 возможна подготовка до него без обращения к this.",
+          "id": "m06-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Вызовите конструктор родителя.",
+          "template": [
+            "Student(String name) { ",
+            "(name); }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "super",
+              "options": [
+                "this",
+                "super",
+                "extends"
+              ]
+            }
+          ],
+          "hint": "【提示】Нужно обратиться к конструктору базового класса.",
+          "explanation": "【解析】super(name) передаёт параметр родителю.",
+          "id": "m06-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m06-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】В конструкторе Student(String name) родитель Person требует строку. Что обязательно вызвать первым?",
+          "options": [
+            {
+              "id": "a",
+              "label": "this()"
+            },
+            {
+              "id": "b",
+              "label": "super(name)"
+            },
+            {
+              "id": "c",
+              "label": "return name"
+            },
+            {
+              "id": "d",
+              "label": "Person(name) без super"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Конструктор родителя инициализирует свою часть объекта до тела потомка.",
+          "explanation": "【解析】Верно: super(name). Конструктор родителя инициализирует свою часть объекта до тела потомка."
+        },
+        {
+          "id": "m06-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m06-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Пусть Person(String name) хранит имя, а Student extends Person вызывает super(name). 请创建 Student(\"Лена\") и выведите имя через геттер родителя.",
+          "expectedOutput": "Лена",
+          "hint": "在 Java 中，17 super(name) должен идти первым в конструкторе потомка; private-поле читайте через метод.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'Лена'. 在 Java 中，17 super(name) должен идти первым в конструкторе потомка; private-поле читайте через метод."
+        }
+      ]
+    },
+    {
+      "id": "m06-l03",
+      "title": "方法重写 (@Override)",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Переопределение меняет реализацию унаследованного метода в подклассе. Аннотация @Override просит компилятор проверить, что метод действительно переопределён, а не случайно создан с другим именем.",
+          "【核心理论】При вызове через ссылку базового типа исполняется реализация реального объекта. Это динамическая диспетчеризация: Animal a = new Dog(); a.sound() вызовет Dog.sound(). Статические методы не переопределяются таким образом."
+        ],
+        "code": "class Animal { String sound() { return \"?\"; } }\nclass Dog extends Animal {\n    @Override String sound() { return \"Гав\"; }\n}",
+        "caption": "Реальный тип объекта определяет реализацию.",
+        "language": "java",
+        "objective": "【学习目标】Переопределить метод и предсказать результат вызова через базовый тип.",
+        "walkthrough": "【代码走读】В Dog метод sound() переопределён и возвращает «Гав». Для Animal pet = new Dog() вызов pet.sound() выберет реализацию Dog по типу объекта.",
+        "pitfall": "【常见陷阱】Если случайно изменить параметры или написать static, получится не переопределение; @Override поможет заметить ошибку.",
+        "deepDive": "【深入解析】Выбор переопределённого экземплярного метода происходит по реальному объекту во время выполнения, даже когда переменная объявлена как Animal. Доступные имена методов при этом ограничены типом самой переменной.",
+        "useCase": "【实际应用】Храните разные реализации Animal в одном списке и вызывайте sound() в цикле без ветвления по типу. Если после изменения сигнатуры пропала аннотация @Override, проверьте, не создали ли вы случайную перегрузку.",
+        "guide": {
+          "why": "【分步指南】Переопределение позволяет одному вызову вести себя по-разному у разных потомков. Решает реальный объект, а не написанный слева тип переменной.",
+          "steps": [
+            "У Animal определите метод sound() с базовым ответом. У Cat объявите тот же набор параметров и возвращаемый тип и поставьте @Override.",
+            "Присвойте new Cat() переменной Animal pet. Вызов pet.sound() найдёт реализацию Cat во время выполнения."
+          ],
+          "example": {
+            "code": "class Animal { String sound() { return \"?\"; } }\nclass Cat extends Animal {\n    @Override String sound() { return \"Мяу\"; }\n}\n// внутри main:\nAnimal pet = new Cat();\nSystem.out.println(pet.sound());",
+            "language": "java",
+            "runnable": false,
+            "label": "Переопределение и вызов из main"
+          },
+          "result": "На экран попадёт «Мяу», хотя переменная объявлена как Animal. Изменённое имя метода @Override не пропустит при компиляции.",
+          "bridge": "Задание про Dog решается тем же приёмом: сохраните сигнатуру sound() и аннотацию, а в main вызовите метод через ссылку базового типа."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m06-l03-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "class Animal { String sound() { return \"?\"; } }\nclass Cat extends Animal {\n    @Override String sound() { return \"Мяу\"; }\n}\n// внутри main:\nAnimal pet = new Cat();\nSystem.out.println(pet.sound());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 На экран попадёт «Мяу», хотя переменная объявлена как Animal. Изменённое имя метода @Override не пропустит при компиляции."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что вернёт a.sound(), если Animal a = new Dog()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Всегда ? из Animal"
+            },
+            {
+              "id": "b",
+              "label": "Гав из Dog"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "Ошибка компиляции"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Смотрите на реальный тип объекта, не только на тип ссылки.",
+          "explanation": "【解析】Динамический вызов выбирает Dog.sound().",
+          "id": "m06-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Пометьте метод как переопределённый.",
+          "template": [
+            "",
+            " String sound() { return \"Гав\"; }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@Override",
+              "options": [
+                "@Override",
+                "@Static",
+                "extends"
+              ]
+            }
+          ],
+          "hint": "【提示】Аннотация начинается с @ и проверяет сигнатуру.",
+          "explanation": "【解析】@Override защищает от ошибки в имени или параметрах.",
+          "id": "m06-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m06-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Animal a = new Cat(); Cat переопределяет sound(). Какой метод вызовется при a.sound()?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Animal.sound()"
+            },
+            {
+              "id": "b",
+              "label": "Cat.sound()"
+            },
+            {
+              "id": "c",
+              "label": "оба подряд"
+            },
+            {
+              "id": "d",
+              "label": "никакой"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Динамический вызов зависит от реального типа объекта.",
+          "explanation": "【解析】Верно: Cat.sound(). Динамический вызов зависит от реального типа объекта."
+        },
+        {
+          "id": "m06-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m06-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Опишите Animal.sound() с ответом «?», а Cat.sound() переопределите на «Мяу» через @Override. Вызовите sound() через переменную Animal со значением new Cat().",
+          "expectedOutput": "Мяу",
+          "hint": "【提示】Сохраняйте сигнатуру метода; реализация выбирается по реальному типу созданного объекта.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'Мяу'. Сохраняйте сигнатуру метода; реализация выбирается по реальному типу созданного объекта."
+        }
+      ]
+    },
+    {
+      "id": "m06-l04",
+      "title": "抽象类 (abstract)",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Абстрактный класс может содержать общую реализацию и абстрактные методы без тела. Создать экземпляр абстрактного класса нельзя; конкретный подкласс реализует его абстрактные методы.",
+          "请使用 abstract, когда у семейства классов есть общее состояние или поведение, но базовая операция требует специализации. Абстрактный класс допускает поля, конструкторы и обычные методы."
+        ],
+        "code": "abstract class Shape {\n    abstract int area();\n}\nclass Square extends Shape {\n    int area() { return 4; }\n}",
+        "caption": "Абстрактный класс задаёт основу семейства.",
+        "language": "java",
+        "objective": "【学习目标】Отличить абстрактный класс от экземпляра и реализовать обязательный метод.",
+        "walkthrough": "【代码走读】Shape требует area(), но не знает её значение. Square extends Shape реализует area() и возвращает 4; объект Square создать можно, Shape — нельзя.",
+        "pitfall": "【常见陷阱】Нельзя оставить Square конкретным классом без реализации area(): компилятор потребует метод или abstract у Square.",
+        "deepDive": "【深入解析】Абстрактный класс задаёт общую часть реализации и требует от подклассов заполнить неизвестные шаги. Конструктор абстрактного класса всё равно выполняется при создании конкретного потомка и может настроить общие поля.",
+        "useCase": "【实际应用】Для фигур храните единицу измерения или название в Shape, а вычисление площади поручите Square и Circle. Вызов area() через Shape останется единым; самого «объекта-фигуры вообще» создавать не нужно.",
+        "guide": {
+          "why": "【分步指南】Абстрактный класс запрещает создавать объект с неопределённым поведением, но позволяет описать общий контракт для конкретных фигур.",
+          "steps": [
+            "Запишите abstract class Shape и метод abstract int area(); без тела: площадь зависит от вида фигуры.",
+            "Конкретный Rectangle extends Shape обязан реализовать area(). После этого его можно создать и вызвать area() через переменную Shape."
+          ],
+          "example": {
+            "code": "abstract class Shape { abstract int area(); }\nclass Rectangle extends Shape {\n    @Override int area() { return 2 * 3; }\n}\n// внутри main:\nShape shape = new Rectangle();\nSystem.out.println(shape.area());",
+            "language": "java",
+            "runnable": false,
+            "label": "Абстрактный контракт и конкретная фигура"
+          },
+          "result": "Вывод 6. Выражение new Shape() не скомпилируется, пока Shape остаётся abstract.",
+          "bridge": "В упражнении различайте объявление метода без тела и его реализацию у потомка. В практике не забывайте, что конкретная фигура должна вернуть int."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m06-l04-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "abstract class Shape { abstract int area(); }\nclass Rectangle extends Shape {\n    @Override int area() { return 2 * 3; }\n}\n// внутри main:\nShape shape = new Rectangle();\nSystem.out.println(shape.area());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Вывод 6. Выражение new Shape() не скомпилируется, пока Shape остаётся abstract."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Можно ли выполнить new Shape(), если Shape объявлен abstract?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Да, всегда"
+            },
+            {
+              "id": "b",
+              "label": "Нет, нужен конкретный подкласс"
+            },
+            {
+              "id": "c",
+              "label": "Только внутри main"
+            },
+            {
+              "id": "d",
+              "label": "Да, если есть поле"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Абстрактный тип не имеет полной реализации.",
+          "explanation": "【解析】Экземпляры создают от конкретного подкласса.",
+          "id": "m06-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "请声明 метод без реализации в абстрактном классе.",
+          "template": [
+            "",
+            " int area();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "abstract",
+              "options": [
+                "abstract",
+                "final",
+                "static"
+              ]
+            }
+          ],
+          "hint": "【提示】У метода нет тела, лишь сигнатура и ;.",
+          "explanation": "【解析】abstract int area(); требует реализации в конкретном подклассе.",
+          "id": "m06-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m06-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Какое выражение не компилируется, если Shape объявлен abstract, а Circle реализует все методы?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Shape s = new Circle();"
+            },
+            {
+              "id": "b",
+              "label": "Circle c = new Circle();"
+            },
+            {
+              "id": "c",
+              "label": "Shape s = new Shape();"
+            },
+            {
+              "id": "d",
+              "label": "s.area() через Shape-ссылку"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "【提示】Нельзя создать экземпляр абстрактного класса напрямую.",
+          "explanation": "【解析】Верно: Shape s = new Shape();. Нельзя создать экземпляр абстрактного класса напрямую."
+        },
+        {
+          "id": "m06-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m06-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите abstract Shape с методом area(), а Rectangle реализуйте для сторон 3 и 4. 请创建 Rectangle через ссылку Shape и напечатайте площадь.",
+          "expectedOutput": "12",
+          "hint": "【提示】Нельзя создать new Shape(): конкретный наследник обязан реализовать area() с возвращаемым int.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '12'. Нельзя создать new Shape(): конкретный наследник обязан реализовать area() с возвращаемым int."
+        }
+      ]
+    },
+    {
+      "id": "m06-l05",
+      "title": "接口与默认方法",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Интерфейс задаёт контракт: class FilePrinter implements Printer. Класс может реализовать несколько интерфейсов, в отличие от наследования классов. Методы интерфейса по умолчанию public.",
+          "【核心理论】default-метод интерфейса имеет реализацию и помогает расширять контракт без обязательной правки каждой реализации. Если два интерфейса дают одинаковый default-метод, класс должен разрешить конфликт явно."
+        ],
+        "code": "interface Greeter {\n    default String hello() { return \"Привет\"; }\n}\nclass User implements Greeter { }",
+        "caption": "Контракт отделяет использование от реализации.",
+        "language": "java",
+        "objective": "【学习目标】Реализовать контракт интерфейса и понять наследуемый default-метод.",
+        "walkthrough": "【代码走读】User implements Greeter без собственного hello() получает default-реализацию: new User().hello() вернёт «Привет».",
+        "pitfall": "【常见陷阱】Метод интерфейса, реализованный классом, должен быть public; нельзя сузить видимость унаследованного контракта.",
+        "deepDive": "【深入解析】Интерфейс описывает набор действий, которые можно потребовать от разных классов. default даёт совместимое поведение по умолчанию, но класс вправе его переопределить; одинаковые default-методы двух интерфейсов требуют явного разрешения.",
+        "useCase": "【实际应用】Сервис уведомлений может принимать Greeter без знания конкретного User. Добавляя новую реализацию, проверьте контракт публичных методов и решите, подходит ли ей действие по умолчанию.",
+        "guide": {
+          "why": "【分步指南】Интерфейс обещает вызывающему набор действий независимо от класса объекта. default даёт готовый вариант поведения, который реализация может переопределить.",
+          "steps": [
+            "Внутри интерфейса назовите метод default и напишите тело в фигурных скобках. Без default метод интерфейса потребует реализацию в классе.",
+            "Класс Member implements Labeled и наследует готовый label(). Через переменную интерфейса можно вызвать метод, не узнавая реальный класс."
+          ],
+          "example": {
+            "code": "interface Labeled {\n    default String label() { return \"Гость\"; }\n}\nclass Member implements Labeled { }\n// внутри main:\nLabeled entry = new Member();\nSystem.out.println(entry.label());",
+            "language": "java",
+            "runnable": false,
+            "label": "Интерфейс с default-методом и вызов"
+          },
+          "result": "Консоль покажет «Гость». Если Member определит свой public label(), будет вызвана его версия.",
+          "bridge": "В мини-задании поставьте default перед методом интерфейса. В практике примените такую реализацию к другому классу и вызовите метод через объект."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m06-l05-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "interface Labeled {\n    default String label() { return \"Гость\"; }\n}\nclass Member implements Labeled { }\n// внутри main:\nLabeled entry = new Member();\nSystem.out.println(entry.label());",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Консоль покажет «Гость». Если Member определит свой public label(), будет вызвана его версия."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какое ключевое слово связывает класс и интерфейс?",
+          "options": [
+            {
+              "id": "a",
+              "label": "extends для класса"
+            },
+            {
+              "id": "b",
+              "label": "implements"
+            },
+            {
+              "id": "c",
+              "label": "new"
+            },
+            {
+              "id": "d",
+              "label": "instanceof"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Класс реализует контракт интерфейса.",
+          "explanation": "【解析】implements объявляет реализацию интерфейса.",
+          "id": "m06-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Добавьте реализацию по умолчанию в интерфейс.",
+          "template": [
+            "",
+            " String hello() { return \"Привет\"; }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "default",
+              "options": [
+                "default",
+                "abstract",
+                "private"
+              ]
+            }
+          ],
+          "hint": "【提示】Нужен модификатор метода с телом в интерфейсе.",
+          "explanation": "【解析】default позволяет определить тело метода интерфейса.",
+          "id": "m06-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m06-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Когда класс Member implements Labeled обязан написать метод label(), если он объявлен default?",
+          "options": [
+            {
+              "id": "a",
+              "label": "всегда"
+            },
+            {
+              "id": "b",
+              "label": "никогда, но может переопределить"
+            },
+            {
+              "id": "c",
+              "label": "только после new Member()"
+            },
+            {
+              "id": "d",
+              "label": "только внутри main"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】default-реализация уже находится в интерфейсе.",
+          "explanation": "【解析】Верно: никогда, но может переопределить. default-реализация уже находится в интерфейсе."
+        },
+        {
+          "id": "m06-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m06-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 интерфейс Labeled с default String label(), возвращающим «Гость». Класс Member implements Labeled. Напечатайте label() объекта Member без копирования метода.",
+          "expectedOutput": "Гость",
+          "hint": "【提示】Тело default-метода размещено в интерфейсе; класс может использовать его без переопределения.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'Гость'. Тело default-метода размещено в интерфейсе; класс может использовать его без переопределения."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "第 6 模块综合实战",
+    "description": "请检查 наследование, переопределение и интерфейсы.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Что выполняется при вызове метода через ссылку родительского типа?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Всегда метод родителя"
+          },
+          {
+            "id": "b",
+            "label": "Метод реального объекта"
+          },
+          {
+            "id": "c",
+            "label": "Только static-метод"
+          },
+          {
+            "id": "d",
+            "label": "Ни один метод"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Различайте тип ссылки и тип объекта.",
+        "explanation": "【解析】Переопределённый метод выбирается по реальному классу объекта.",
+        "id": "m06-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Укажите интерфейс класса Report.",
+        "template": [
+          "class Report ",
+          " Printable { }"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "implements",
+            "options": [
+              "extends",
+              "implements",
+              "super"
+            ]
+          }
+        ],
+        "hint": "【提示】Для интерфейса используется не extends у класса.",
+        "explanation": "【解析】implements объявляет реализацию контракта.",
+        "id": "m06-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте понятие наследования.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "extends",
+            "right": "Наследование от класса"
+          },
+          {
+            "id": "2",
+            "left": "implements",
+            "right": "Реализация интерфейса"
+          },
+          {
+            "id": "3",
+            "left": "super(...)",
+            "right": "Конструктор родителя"
+          },
+          {
+            "id": "4",
+            "left": "@Override",
+            "right": "Проверка переопределения"
+          }
+        ],
+        "hint": "【提示】Вспомните различие класса и интерфейса.",
+        "explanation": "【解析】Каждое ключевое слово управляет отдельной связью.",
+        "id": "m06-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите переопределённый метод sound.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Dog extends Animal {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "String sound() {"
+          },
+          {
+            "id": "d",
+            "text": "return \"Гав\";"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Аннотация располагается перед методом, а return внутри тела.",
+        "explanation": "【解析】Метод подкласса возвращает «Гав». ",
+        "id": "m06-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Класс может реализовать несколько интерфейсов"
+          },
+          {
+            "id": "b",
+            "label": "Java-класс может наследоваться от двух классов"
+          },
+          {
+            "id": "c",
+            "label": "abstract-класс нельзя создать через new напрямую"
+          },
+          {
+            "id": "d",
+            "label": "default-метод может иметь тело"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "【提示】Множественное наследование классов Java не поддерживает.",
+        "explanation": "【解析】Интерфейсов может быть несколько, abstract нельзя инстанцировать, default имеет тело.",
+        "id": "m06-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "请创建 Animal.sound() со значением \"?\" и Dog extends Animal, переопределяющий sound() значением \"Гав\". В main выведите new Dog().sound() через ссылку Animal.",
+        "starterCode": "class Animal { String sound() { return \"?\"; } }\nclass Dog extends Animal {\n    // Переопределите sound()\n}\npublic class Main {\n    public static void main(String[] args) {\n        Animal pet = new Dog();\n        System.out.println(pet.sound());\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Гав",
+        "hint": "请声明 @Override String sound() в Dog и создайте Animal pet = new Dog();.",
+        "explanation": "【解析】Вызвался метод класса Dog.",
+        "id": "m06-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "请创建 интерфейс Named с default String label(), возвращающим \"User\". Класс User реализует Named. 请输出 new User().label().",
+        "starterCode": "interface Named {\n    // Добавьте default-метод label()\n}\nclass User implements Named { }\npublic class Main {\n    public static void main(String[] args) {\n        // Выведите метку пользователя\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "User",
+        "hint": "【提示】Внутри interface Named объявите default String label() { return \"User\"; }.",
+        "explanation": "【解析】default-метод интерфейса унаследован классом User.",
+        "id": "m06-p07"
+      }
+    ],
+    "id": "m06-practice",
+    "primer": {
+      "why": "Полиморфизм означает: один и тот же вызов выбирает реализацию конкретного объекта. В наследовании сохраняют сигнатуру метода, а в интерфейсе default даёт готовое тело.",
+      "steps": [
+        "Описывая Bird extends Animal, поставьте @Override над sound() с тем же возвращаемым типом. Ссылка Animal bird = new Bird() допустима.",
+        "Для интерфейса поместите default-метод в его объявление и реализуйте интерфейс через implements. Тело default используется, пока класс не переопределил метод."
+      ],
+      "example": {
+        "code": "class Animal { String sound() { return \"?\"; } }\nclass Bird extends Animal { @Override String sound() { return \"Чирик\"; } }\ninterface Labeled { default String label() { return \"Гость\"; } }\nclass Member implements Labeled { }\npublic class Main {\n    public static void main(String[] args) {\n        Animal pet = new Bird();\n        System.out.println(pet.sound());\n        System.out.println(new Member().label());\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "Чирик\nГость"
+      },
+      "result": "Появятся «Чирик» и «Гость». Выбор первой строки зависит от класса Bird, а вторая приходит из интерфейса.",
+      "hints": [
+        {
+          "taskId": "m06-p06",
+          "text": "Для Dog сохраните ту же сигнатуру sound() и вызовите его через переменную типа Animal, не приводя ссылку к Dog."
+        },
+        {
+          "taskId": "m06-p07",
+          "text": "Для Named объявите тело метода с default внутри интерфейса, а в классе укажите implements Named: копировать метод необязательно."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m06-exam",
+    "title": "模块小测验",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 360,
+    "tasks": [
+      {
+        "id": "m-exam-06-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "【任务】Когда класс Member implements Labeled обязан написать метод label(), если он объявлен default?",
+        "options": [
+          {
+            "id": "a",
+            "label": "всегда"
+          },
+          {
+            "id": "b",
+            "label": "никогда, но может переопределить"
+          },
+          {
+            "id": "c",
+            "label": "только после new Member()"
+          },
+          {
+            "id": "d",
+            "label": "только внутри main"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】default-реализация уже находится в интерфейсе.",
+        "explanation": "【解析】Верно: никогда, но может переопределить. default-реализация уже находится в интерфейсе."
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Укажите базовый класс для Dog.",
+        "template": [
+          "class Dog ",
+          " Animal { }"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "extends",
+            "options": [
+              "implements",
+              "extends",
+              "new"
+            ]
+          }
+        ],
+        "hint": "【提示】От класса наследуются через ключевое слово.",
+        "explanation": "【解析】extends устанавливает наследование классов.",
+        "id": "m-exam-06-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте понятие наследования.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "extends",
+            "right": "Наследование от класса"
+          },
+          {
+            "id": "2",
+            "left": "implements",
+            "right": "Реализация интерфейса"
+          },
+          {
+            "id": "3",
+            "left": "super(...)",
+            "right": "Конструктор родителя"
+          },
+          {
+            "id": "4",
+            "left": "@Override",
+            "right": "Проверка переопределения"
+          }
+        ],
+        "hint": "【提示】Вспомните различие класса и интерфейса.",
+        "explanation": "【解析】Каждое ключевое слово управляет отдельной связью.",
+        "id": "m-exam-06-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите переопределённый метод sound.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Dog extends Animal {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "String sound() {"
+          },
+          {
+            "id": "d",
+            "text": "return \"Гав\";"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Аннотация располагается перед методом, а return внутри тела.",
+        "explanation": "【解析】Метод подкласса возвращает «Гав». ",
+        "id": "m-exam-06-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "请创建 абстрактный класс Employee с полем base, конструктором и абстрактным pay().\nDeveloper наследует Employee, возвращает base + 200, Designer — base + 100.\nИнтерфейс Named имеет default label(), возвращающий «Сотрудник»; Employee реализует Named.\nВ массиве Employee[] сохраните Developer(1 * 100) и Designer(300).\nЧерез ссылки Employee выведите label() и pay() каждого сотрудника (четыре строки).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Сотрудник\n300\nСотрудник\n400",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nСотрудник\n300\nСотрудник\n400",
+        "id": "m-exam-06-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\n请创建 абстрактный класс Employee с полем base, конструктором и абстрактным pay().\nDeveloper наследует Employee, возвращает base + 200, Designer — base + 100.\nИнтерфейс Named имеет default label(), возвращающий «Сотрудник»; Employee реализует Named.\nВ массиве Employee[] сохраните Developer(2 * 100) и Designer(300).\nЧерез ссылки Employee выведите label() и pay() каждого сотрудника (четыре строки).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Сотрудник\n400\nСотрудник\n400",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nСотрудник\n400\nСотрудник\n400",
+        "id": "m-exam-06-06"
+      }
+    ]
+  }
+}

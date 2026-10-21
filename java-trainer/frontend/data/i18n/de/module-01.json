@@ -1,0 +1,1009 @@
+{
+  "id": 1,
+  "title": "Datentypen, Variablen und Konstanten",
+  "lessons": [
+    {
+      "id": "m01-l01",
+      "title": "Einführung",
+      "duration": 5,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Java — строго типизированный язык: у каждой переменной есть тип, известный компилятору. Тип определяет допустимые значения и операции. Ошибку несовместимых типов Java обнаружит ещё до запуска программы.",
+          "[Theorie] Примитивные типы (например, int, double, boolean, char) хранят значения. String — ссылочный тип для текста: значение переменной String указывает на объект. Пока не нужно запоминать все типы — начните с тех, что описывают вашу задачу."
+        ],
+        "code": "int age = 25;\ndouble price = 19.99;\nString name = \"Лена\";\nboolean isActive = true;",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Объявить int, String и boolean внутри main и вывести значения через println, отличая имя переменной от текста в кавычках.",
+        "walkthrough": "[Durchgang] В коротком фрагменте age хранит целое 25, price — дробное 19.99, isActive — true, name — строку «Лена». Положите объявления в main, затем вызовите System.out.println(age) или System.out.println(name): без кавычек выводится сохранённое значение.",
+        "pitfall": "[Typischer Fehler] Не объявляйте текст как char: char хранит одну кодовую единицу в одинарных кавычках, String — строку в двойных.",
+        "deepDive": "[Vertiefung] Тип — не украшение имени: компилятор проверяет присваивания и выбирает допустимые операции ещё до запуска. Примитив хранит само значение, а переменная String — ссылку на объект; null возможен только у ссылочного типа.",
+        "useCase": "[Praxisfall] Составьте модель анкеты: возрасту подойдёт int, согласию на рассылку — boolean, имени — String. Если поле пока неизвестно, продумайте, может ли оно быть null, вместо того чтобы бездумно подставлять ноль.",
+        "guide": {
+          "why": "Переменная хранит данные, а println показывает их человеку. В задании вам понадобится не только объявить возраст и имя, но и вывести каждое значение in einer eigenen Zeile.",
+          "steps": [
+            "In Java выполняемые команды размещают внутри main, а сам main — внутри класса Main. Фигурные скобки открывают и закрывают эти два блока.",
+            "int age = 16; сохраняет целое число, String name = \"Мира\"; — текст. Кавычки нужны значению строки; имя переменной age или name пишется без кавычек.",
+            "System.out.println(age); печатает содержимое age и переводит строку. Если написать println(\"age\"), на экран попадёт слово age, а не число.",
+            "Сохраните полный пример в Main.java: в терминале с JDK выполните javac Main.java, затем java Main. В редакторе практики пишите собственный вариант из условия, не копируйте чужой вывод."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int age = 16;\n        String name = \"Мира\";\n        boolean isOpen = true;\n        System.out.println(age);\n        System.out.println(name);\n        System.out.println(isOpen);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "16\nМира\ntrue"
+          },
+          "result": "Das Programm gibt aus три строки: 16, затем Мира, затем true. println не добавляет кавычки к строке и не печатает имя переменной.",
+          "bridge": "В мини-задании выберите тип для возраста; в практике объявите свои age, name и isStudent внутри уже подготовленного main и напечатайте переменные в требуемом порядке."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m01-l01-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int age = 16;\n        String name = \"Мира\";\n        boolean isOpen = true;\n        System.out.println(age);\n        System.out.println(name);\n        System.out.println(isOpen);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Das Programm gibt aus три строки: 16, затем Мира, затем true. println не добавляет кавычки к строке и не печатает имя переменной."
+        },
+        {
+          "id": "m01-l01-q1",
+          "type": "choice",
+          "prompt": "Welcher Typ wird für ganze Zahlen verwendet?",
+          "options": [
+            {
+              "id": "a",
+              "label": "String"
+            },
+            {
+              "id": "b",
+              "label": "int"
+            },
+            {
+              "id": "c",
+              "label": "boolean"
+            },
+            {
+              "id": "d",
+              "label": "double"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "Wählen Sie den primitiven Typ ohne Nachkommastellen.",
+          "explanation": "int speichert ganze Zahlen, zum Beispiel 25.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m01-l01-q2",
+          "type": "fill",
+          "prompt": "Wählen Sie den Typ und geben Sie ein Alter von 0 bis 120 als Dezimalzahl ein.",
+          "template": [
+            "",
+            " age = ",
+            ";"
+          ],
+          "blanks": [
+            {
+              "id": "type",
+              "kind": "select",
+              "options": [
+                "String",
+                "boolean",
+                "int"
+              ],
+              "answer": "int"
+            },
+            {
+              "id": "value",
+              "kind": "text",
+              "answer": "25",
+              "validation": {
+                "kind": "integerRange",
+                "min": 0,
+                "max": 120
+              }
+            }
+          ],
+          "hint": "Erforderlich ist der Typ int und eine ganze Zahl von 0 bis 120 ohne Anführungszeichen, z. B. 3 oder 25.",
+          "explanation": "[Erklärung] int age = 3; и int age = 25; одинаково корректны: int хранит целое значение возраста.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m01-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] После String name = \"Мира\" и int age = 16 выполняются println(name); затем println(age). Что будет выведено?",
+          "options": [
+            {
+              "id": "a",
+              "label": "name и age"
+            },
+            {
+              "id": "b",
+              "label": "Мира и 16 на разных строках"
+            },
+            {
+              "id": "c",
+              "label": "Мира16 на одной строке"
+            },
+            {
+              "id": "d",
+              "label": "Ошибка типов"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] println печатает значения переменных; каждый вызов завершает отдельную строку.",
+          "explanation": "[Erklärung] Верно: Мира и 16 на разных строках. println печатает значения переменных; каждый вызов завершает отдельную строку."
+        },
+        {
+          "id": "m01-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m01-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Deklarieren Sie int units = 7, String item = \"Мяч\" и boolean inStock = true. Geben Sie aus: item, units и inStock на трёх отдельных строках в указанном порядке, используя переменные.",
+          "expectedOutput": "Мяч\n7\ntrue",
+          "hint": "[Hinweis] Разместите объявления и три println внутри main; имена переменных не заключайте в кавычки.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'Мяч\\n7\\ntrue'. Разместите объявления и три println внутри main; имена переменных не заключайте в кавычки."
+        }
+      ]
+    },
+    {
+      "id": "m01-l02",
+      "title": "Aufbau eines Computers",
+      "duration": 6,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Компьютер хранит данные битами — нулями и единицами. Восемь бит образуют байт. Для целых чисел Java задаёт точные размеры: byte — 1 байт, short — 2, int — 4, long — 8.",
+          "[Theorie] Когда число больше диапазона выбранного типа, возникает переполнение. Например, максимальный byte равен 127. Размер boolean в памяти спецификация Java не фиксирует: не стоит считать его «ровно одним байтом». Выбирайте тип по диапазону, а не по догадке о памяти."
+        ],
+        "code": "byte small = 127;\nint visitors = 120_000;\nlong stars = 9_000_000_000L;",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Сопоставить размер целочисленного типа с его диапазоном и выбрать тип для большого числа.",
+        "walkthrough": "[Durchgang] byte small = 127 использует верхнюю границу byte. Число 9 000 000 000 не помещается в int, поэтому для stars выбран long с суффиксом L.",
+        "pitfall": "[Typischer Fehler] byte не может напрямую хранить 128; явное приведение к byte переполнит диапазон и даст -128, а не 128.",
+        "deepDive": "[Vertiefung] Целые типы со знаком используют ограниченное число бит: у byte диапазон от -128 до 127, у int — гораздо шире. Литерал без суффикса обычно имеет тип int; для большого целого литерала нужен суффикс L, даже если переменная объявлена long.",
+        "useCase": "[Praxisfall] При подсчёте просмотров большого сервиса выбирайте long заранее: переполнение int не вызывает исключение и может превратить положительный счётчик в отрицательный. Для денег одного увеличения разрядности недостаточно — нужна точная десятичная арифметика.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Размер типа ограничивает множество значений. Когда число вырастет выше границы int, нужен long: иначе программа либо не скомпилируется, либо переполнит счётчик.",
+          "steps": [
+            "byte занимает один байт и вмещает от -128 до 127. int занимает четыре байта; long — восемь, поэтому сравнивать типы удобно по цепочке 1 → 2 → 4 → 8.",
+            "Литерал 4_000_000_000L обозначает число типа long. Подчёркивания только помогают читать число; буква L нужна, потому что число не помещается в int.",
+            "System.out.println(visitors) показывает само значение, а не запись с подчёркиваниями и суффиксом: эти символы относятся к синтаксису исходного кода."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        long visitors = 4_000_000_000L;\n        System.out.println(visitors);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "4000000000"
+          },
+          "result": "На экране будет 4000000000. Значение не изменилось: подчёркивания и L помогают компилятору, но не становятся частью числа.",
+          "bridge": "Для сопоставления размеров не нужно запускать код: восстановите последовательность byte, short, int, long, а затем проверьте, почему большой литерал требует L."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m01-l02-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        long visitors = 4_000_000_000L;\n        System.out.println(visitors);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. На экране будет 4000000000. Значение не изменилось: подчёркивания и L помогают компилятору, но не становятся частью числа."
+        },
+        {
+          "id": "m01-l02-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Сколько байт занимает int в Java?",
+          "options": [
+            {
+              "id": "a",
+              "label": "1 байт"
+            },
+            {
+              "id": "b",
+              "label": "2 байта"
+            },
+            {
+              "id": "c",
+              "label": "4 байта"
+            },
+            {
+              "id": "d",
+              "label": "8 байт"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Сравните: byte = 1, short = 2, int = ?, long = 8.",
+          "explanation": "[Erklärung] int всегда занимает 32 бита, то есть 4 байта.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m01-l02-q2",
+          "type": "matching",
+          "prompt": "[Aufgabe] Соедините целочисленный тип с его размером.",
+          "pairs": [
+            {
+              "id": "1",
+              "left": "byte",
+              "right": "1 байт"
+            },
+            {
+              "id": "2",
+              "left": "short",
+              "right": "2 байта"
+            },
+            {
+              "id": "3",
+              "left": "int",
+              "right": "4 байта"
+            },
+            {
+              "id": "4",
+              "left": "long",
+              "right": "8 байт"
+            }
+          ],
+          "hint": "[Hinweis] Идите по порядку: 1 → 2 → 4 → 8 байт.",
+          "explanation": "[Erklärung] Размеры целочисленных типов Java фиксированы спецификацией.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m01-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Как записать число 3 000 000 000 так, чтобы присваивание long big прошло без ошибки компиляции?",
+          "options": [
+            {
+              "id": "a",
+              "label": "long big = 3000000000;"
+            },
+            {
+              "id": "b",
+              "label": "long big = 3_000_000_000L;"
+            },
+            {
+              "id": "c",
+              "label": "int big = 3000000000L;"
+            },
+            {
+              "id": "d",
+              "label": "long big = \"3000000000\";"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Целочисленный литерал без суффикса сначала имеет тип int, даже если переменная long.",
+          "explanation": "[Erklärung] Верно: long big = 3_000_000_000L;. Целочисленный литерал без суффикса сначала имеет тип int, даже если переменная long."
+        },
+        {
+          "id": "m01-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m01-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Deklarieren Sie byte low = -128, short middle = 300 и long total = 3_000_000_000L. Geben Sie aus: значения всех трёх переменных в указанном порядке на разных строках.",
+          "expectedOutput": "-128\n300\n3000000000",
+          "hint": "[Hinweis] Большому целому нужен суффикс L. Подчёркивания в литерале не появляются в консоли.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '-128\\n300\\n3000000000'. Большому целому нужен суффикс L. Подчёркивания в литерале не появляются в консоли."
+        }
+      ]
+    },
+    {
+      "id": "m01-l03",
+      "title": "Datentypen und Operationen",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Для чисел доступны +, -, *, / и % (остаток от деления). Если оба операнда целые, результат деления тоже целый: 7 / 2 равно 3, а не 3.5. Скобки помогают явно задать порядок вычисления.",
+          "[Theorie] Чтобы получить дробный результат, хотя бы один операнд должен быть дробным: (double) 7 / 2 даст 3.5. char хранит одну кодовую единицу UTF-16 в одинарных кавычках, а String — текст в двойных кавычках."
+        ],
+        "code": "int whole = 7 / 2;          // 3\ndouble exact = (double) 7 / 2; // 3.5\nint remainder = 7 % 2;      // 1",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Предсказать результат целочисленного деления, приведения типа и остатка от деления.",
+        "walkthrough": "[Durchgang] Сначала 7 / 2 даёт 3, потому что оба операнда целые. (double) 7 / 2 превращает первый операнд в дробный и даёт 3.5; 7 % 2 возвращает остаток 1.",
+        "pitfall": "[Typischer Fehler] Приведение результата после целочисленного деления не вернёт дробную часть: (double) (7 / 2) равно 3.0.",
+        "deepDive": "[Vertiefung] Арифметика начинается с типов операндов, а не с типа переменной слева. В выражении double avg = 7 / 2 целочисленное деление уже отбросило дробную часть, поэтому avg будет 3.0; приведение примените до деления.",
+        "useCase": "[Praxisfall] Для среднего балла из целой суммы и количества сначала проверьте, что количество не равно нулю, затем вычислите (double) sum / count. Оператор % пригодится, например, чтобы определить чётность или чередовать действия через каждые N шагов.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] При вычислениях важно, когда именно теряется дробная часть. Если оба операнда целые, деление уже выполнено как целочисленное; присваивание результата в double этого не исправит.",
+          "steps": [
+            "Сначала посчитайте 11 / 4: целые числа дают 2, дробная часть отбрасывается до присваивания переменной.",
+            "Затем приведите левый операнд: (double) 11 / 4. Теперь Java делит дробное число на целое и сохраняет 2.75.",
+            "Оператор % отвечает на другой вопрос — сколько осталось после деления; 11 % 4 даёт 3, а не дробную часть."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(11 / 4);\n        System.out.println((double) 11 / 4);\n        System.out.println(11 % 4);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "2\n2.75\n3"
+          },
+          "result": "По одной строке выводятся 2, 2.75 и 3. Тип операнда меняет результат до того, как тот попадёт в println.",
+          "bridge": "В задании попробуйте сначала предсказать результат 9 / 4, затем поставьте (double) перед одним из операндов. Не приводите к double уже готовое целое частное."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m01-l03-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(11 / 4);\n        System.out.println((double) 11 / 4);\n        System.out.println(11 % 4);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. По одной строке выводятся 2, 2.75 и 3. Тип операнда меняет результат до того, как тот попадёт в println."
+        },
+        {
+          "id": "m01-l03-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Что получится в выражении 9 / 4, если оба числа имеют тип int?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2"
+            },
+            {
+              "id": "b",
+              "label": "2.25"
+            },
+            {
+              "id": "c",
+              "label": "3"
+            },
+            {
+              "id": "d",
+              "label": "Ошибка компиляции"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] При делении двух int дробная часть отбрасывается.",
+          "explanation": "[Erklärung] 9 / 4 равно 2 при целочисленном делении.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m01-l03-q2",
+          "type": "fill",
+          "prompt": "[Aufgabe] Сделайте результат деления дробным.",
+          "template": [
+            "double result = (",
+            ") 9 / 4;"
+          ],
+          "blanks": [
+            {
+              "id": "cast",
+              "kind": "select",
+              "options": [
+                "int",
+                "double",
+                "boolean"
+              ],
+              "answer": "double"
+            }
+          ],
+          "hint": "[Hinweis] Преобразуйте хотя бы один операнд к дробному типу.",
+          "explanation": "[Erklärung] (double) 9 / 4 равно 2.25.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m01-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Что выведет System.out.println((double)(7 / 2)), если 7 и 2 — целые литералы?",
+          "options": [
+            {
+              "id": "a",
+              "label": "3.5"
+            },
+            {
+              "id": "b",
+              "label": "3"
+            },
+            {
+              "id": "c",
+              "label": "3.0"
+            },
+            {
+              "id": "d",
+              "label": "2.0"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Приведение после деления не возвращает потерянную дробную часть.",
+          "explanation": "[Erklärung] Верно: 3.0. Приведение после деления не возвращает потерянную дробную часть."
+        },
+        {
+          "id": "m01-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m01-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Для int a = 17 и int b = 5 выведите целое частное a / b, остаток a % b и точное частное (double) a / b в этом порядке на отдельных строках.",
+          "expectedOutput": "3\n2\n3.4",
+          "hint": "[Hinweis] Сначала выполните целочисленное деление, а для точного приведите операнд ДО операции.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '3\\n2\\n3.4'. Сначала выполните целочисленное деление, а для точного приведите операнд ДО операции."
+        }
+      ]
+    },
+    {
+      "id": "m01-l04",
+      "title": "Variablen und Operationen",
+      "duration": 6,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Переменную можно изменить после объявления: count = count + 1; Сокращённые записи count += 1 и count++ делают то же самое для простого увеличения. Имя должно описывать назначение переменной; Java различает большие и маленькие буквы.",
+          "[Theorie] Ключевое слово final запрещает повторное присваивание. Константы принято записывать ПРОПИСНЫМИ_БУКВАМИ. Прежде чем использовать переменную, её нужно инициализировать значением."
+        ],
+        "code": "int count = 2;\ncount += 3;            // теперь 5\nfinal int MAX_USERS = 10;",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Отличить изменение переменной от объявления final-константы и вычислить новое значение.",
+        "walkthrough": "[Durchgang] count начинается с 2; count += 3 заменяет его значение на 5. MAX_USERS = 10 задано только один раз: после объявления final повторно присвоить ему другое число нельзя.",
+        "pitfall": "[Typischer Fehler] final для ссылки запрещает повторное присваивание самой ссылки, но не делает изменяемый объект неизменяемым.",
+        "deepDive": "[Vertiefung] Присваивание меняет значение переменной, а выражение справа вычисляется на основе её прежнего значения. final защищает саму переменную от нового присваивания; если в ней лежит ссылка на изменяемый объект, содержимое объекта этим не замораживается.",
+        "useCase": "[Praxisfall] Храните константу лимита отдельно от текущего счётчика: MAX_RETRIES не должен меняться, retries увеличивается после ошибки. Не используйте ++ внутри сложного условия, если порядок изменения трудно объяснить другому человеку.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Одни величины меняются в ходе работы программы, другие задают неизменное правило. Счётчик можно обновить, а константу final нельзя присвоить повторно.",
+          "steps": [
+            "tickets начинается с 2; запись tickets += 1 означает tickets = tickets + 1, поэтому дальше в программе хранится 3.",
+            "final int MAX_PER_TICKET = 5; создаёт константу. При умножении используется текущее значение tickets и неизменное значение MAX_PER_TICKET.",
+            "Выражение tickets * MAX_PER_TICKET вычисляет произведение, а println выводит его одной строкой. Звёздочка — оператор умножения."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int tickets = 2;\n        tickets += 1;\n        final int MAX_PER_TICKET = 5;\n        System.out.println(tickets * MAX_PER_TICKET);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "15"
+          },
+          "result": "После увеличения tickets равно 3, поэтому на экране 15. final не запрещает использовать константу в вычислениях — только изменять её.",
+          "bridge": "В мини-задании найдите все записи, увеличивающие count. В практике примените тот же оператор * к размерам прямоугольника и передайте результат в println."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m01-l04-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int tickets = 2;\n        tickets += 1;\n        final int MAX_PER_TICKET = 5;\n        System.out.println(tickets * MAX_PER_TICKET);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. После увеличения tickets равно 3, поэтому на экране 15. final не запрещает использовать константу в вычислениях — только изменять её."
+        },
+        {
+          "id": "m01-l04-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Какие записи увеличат int count на единицу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "count++;"
+            },
+            {
+              "id": "b",
+              "label": "count += 1;"
+            },
+            {
+              "id": "c",
+              "label": "count = count + 1;"
+            },
+            {
+              "id": "d",
+              "label": "count == count + 1;"
+            }
+          ],
+          "correct": [
+            "a",
+            "b",
+            "c"
+          ],
+          "multiple": true,
+          "hint": "[Hinweis] Оператор == сравнивает, но не меняет переменную.",
+          "explanation": "[Erklärung] Все три записи с присваиванием или ++ увеличивают count.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m01-l04-q2",
+          "type": "fill",
+          "prompt": "[Aufgabe] Дополните объявление неизменяемого значения.",
+          "template": [
+            "",
+            " int MAX_SPEED = 90;"
+          ],
+          "blanks": [
+            {
+              "id": "keyword",
+              "kind": "select",
+              "options": [
+                "static",
+                "final",
+                "void"
+              ],
+              "answer": "final"
+            }
+          ],
+          "hint": "[Hinweis] Ищите ключевое слово, запрещающее повторное присваивание.",
+          "explanation": "[Erklärung] final делает переменную неизменяемой после присваивания.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m01-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Если int count = 2 и final int UNIT = 5, что выведет count += 2; println(count * UNIT)?",
+          "options": [
+            {
+              "id": "a",
+              "label": "10"
+            },
+            {
+              "id": "b",
+              "label": "20"
+            },
+            {
+              "id": "c",
+              "label": "25"
+            },
+            {
+              "id": "d",
+              "label": "Ошибка: константу умножать нельзя"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Изменяется счётчик, final-переменная остаётся равной 5.",
+          "explanation": "[Erklärung] Верно: 20. Изменяется счётчик, final-переменная остаётся равной 5."
+        },
+        {
+          "id": "m01-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m01-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Deklarieren Sie final int UNIT = 6 и int count = 2. Увеличьте count на 3 через +=, затем выведите произведение UNIT * count и сам count на разных строках.",
+          "expectedOutput": "30\n5",
+          "hint": "[Hinweis] Меняйте count, а не final-константу; итоговое значение счётчика должно участвовать в умножении.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '30\\n5'. Меняйте count, а не final-константу; итоговое значение счётчика должно участвовать в умножении."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "id": "m01-practice",
+    "title": "Abschlusspraxis Modul 1",
+    "description": "Закрепите типы, операции и структуру программы в семи заданиях.",
+    "tasks": [
+      {
+        "id": "m01-p01",
+        "type": "choice",
+        "prompt": "[Aufgabe] Какие из перечисленных типов примитивные?",
+        "options": [
+          {
+            "id": "a",
+            "label": "int"
+          },
+          {
+            "id": "b",
+            "label": "String"
+          },
+          {
+            "id": "c",
+            "label": "boolean"
+          },
+          {
+            "id": "d",
+            "label": "double"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hinweis] String — класс, а не примитивный тип.",
+        "explanation": "[Erklärung] int, boolean и double — примитивы; String — ссылочный тип."
+      },
+      {
+        "id": "m01-p02",
+        "type": "fill",
+        "prompt": "[Aufgabe] Подберите типы для символа и строки.",
+        "template": [
+          "",
+          " letter = 'J';\n",
+          " word = \"Java\";"
+        ],
+        "blanks": [
+          {
+            "id": "character",
+            "kind": "select",
+            "options": [
+              "char",
+              "String",
+              "int"
+            ],
+            "answer": "char"
+          },
+          {
+            "id": "text",
+            "kind": "select",
+            "options": [
+              "char",
+              "String",
+              "boolean"
+            ],
+            "answer": "String"
+          }
+        ],
+        "hint": "[Hinweis] Один символ пишется в одинарных кавычках, строка — в двойных.",
+        "explanation": "[Erklärung] char хранит одну кодовую единицу, String — текст."
+      },
+      {
+        "id": "m01-p03",
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините тип с подходящим значением.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "int",
+            "right": "42"
+          },
+          {
+            "id": "2",
+            "left": "double",
+            "right": "3.14"
+          },
+          {
+            "id": "3",
+            "left": "boolean",
+            "right": "true"
+          },
+          {
+            "id": "4",
+            "left": "String",
+            "right": "\"Привет\""
+          }
+        ],
+        "hint": "[Hinweis] Обратите внимание на кавычки и дробную точку.",
+        "explanation": "[Erklärung] Значения соответствуют объявленным типам."
+      },
+      {
+        "id": "m01-p04",
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите программу, которая выводит число 5. Упорядочьте строки и выставьте отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "public class Main {"
+          },
+          {
+            "id": "b",
+            "text": "public static void main(String[] args) {"
+          },
+          {
+            "id": "c",
+            "text": "int x = 5;"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(x);"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 2
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Начните с класса Main, затем откройте метод main; закрывающие скобки идут в обратном порядке.",
+        "explanation": "[Erklärung] main находится внутри класса, а команды — внутри main."
+      },
+      {
+        "id": "m01-p05",
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой результат даст (double) 5 / 2?",
+        "options": [
+          {
+            "id": "a",
+            "label": "2"
+          },
+          {
+            "id": "b",
+            "label": "2.0"
+          },
+          {
+            "id": "c",
+            "label": "2.5"
+          },
+          {
+            "id": "d",
+            "label": "Ошибка компиляции"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Приведение к double происходит до деления.",
+        "explanation": "[Erklärung] 5.0 / 2 даёт 2.5."
+      },
+      {
+        "id": "m01-p06",
+        "type": "code",
+        "prompt": "Deklarieren Sie int age = 30, String name = \"Alice\" и boolean isStudent = false. Geben Sie aus: каждую переменную на отдельной строке в этом порядке.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Объявите переменные и выведите их\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "30\nAlice\nfalse",
+        "hint": "Prüfen Sie имена, регистр букв и System.out.println(variableName);",
+        "explanation": "[Erklärung] Три переменные объявлены и выведены по одной на строку."
+      },
+      {
+        "id": "m01-p07",
+        "type": "code",
+        "prompt": "Deklarieren Sie final int WIDTH = 4 и int height = 5. Geben Sie aus: площадь прямоугольника (WIDTH * height).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Вычислите и выведите площадь\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "20",
+        "hint": "[Hinweis] Для произведения используйте *, для вывода — System.out.println(...);",
+        "explanation": "[Erklärung] 4 * 5 = 20. Константу WIDTH нельзя переопределить."
+      }
+    ],
+    "primer": {
+      "why": "Перед упражнениями вспомните цепочку: объявить данные в main → вычислить нужное значение → передать переменную или выражение в System.out.println(...). Выводить можно и текст, и числа.",
+      "steps": [
+        "Для запуска заведите Main.java с public class Main и public static void main(String[] args). Команды вставляйте между скобками main, а не после закрытия класса.",
+        "Тип и имя ставят при объявлении переменной. Например, String label = \"Тетради\"; хранит текст, а вызов println(label) читает это значение без кавычек вокруг имени.",
+        "Оператор * вычисляет произведение целых значений. final запрещает менять PRICE, но не запрещает использовать его при умножении. Каждый println добавляет новую строку."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        final int PRICE = 7;\n        int pieces = 3;\n        String label = \"Тетради\";\n        System.out.println(label);\n        System.out.println(PRICE * pieces);\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "Тетради\n21"
+      },
+      "result": "Получатся две строки: «Тетради» и 21. Вызов println(\"label\") напечатал бы слово label, а не название товара.",
+      "hints": [
+        {
+          "taskId": "m01-p06",
+          "text": "Для задачи с age и name скопируйте форму Main/main из примера урока и используйте свои объявления из условия. Сначала выводите содержимое переменной, не её имя в кавычках."
+        },
+        {
+          "taskId": "m01-p07",
+          "text": "Для площади используйте выражение с * внутри println. Проверьте, что final-переменная объявлена один раз и число из задания не подменено числом примера."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m01-exam",
+    "title": "Mini-Prüfung",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 310,
+    "tasks": [
+      {
+        "id": "m-exam-01-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Aufgabe] Если int count = 2 и final int UNIT = 5, что выведет count += 2; println(count * UNIT)?",
+        "options": [
+          {
+            "id": "a",
+            "label": "10"
+          },
+          {
+            "id": "b",
+            "label": "20"
+          },
+          {
+            "id": "c",
+            "label": "25"
+          },
+          {
+            "id": "d",
+            "label": "Ошибка: константу умножать нельзя"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Изменяется счётчик, final-переменная остаётся равной 5.",
+        "explanation": "[Erklärung] Верно: 20. Изменяется счётчик, final-переменная остаётся равной 5."
+      },
+      {
+        "id": "m-exam-01-02",
+        "type": "fill",
+        "prompt": "Wählen Sie den Typ und geben Sie ein Alter von 0 bis 120 als Dezimalzahl ein.",
+        "template": [
+          "",
+          " age = ",
+          ";"
+        ],
+        "blanks": [
+          {
+            "id": "type",
+            "kind": "select",
+            "options": [
+              "String",
+              "boolean",
+              "int"
+            ],
+            "answer": "int"
+          },
+          {
+            "id": "value",
+            "kind": "text",
+            "answer": "25",
+            "validation": {
+              "kind": "integerRange",
+              "min": 0,
+              "max": 120
+            }
+          }
+        ],
+        "hint": "Erforderlich ist der Typ int und eine ganze Zahl von 0 bis 120 ohne Anführungszeichen, z. B. 3 oder 25.",
+        "explanation": "[Erklärung] int age = 3; и int age = 25; одинаково корректны: int хранит целое значение возраста.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "m-exam-01-03",
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините тип с подходящим значением.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "int",
+            "right": "42"
+          },
+          {
+            "id": "2",
+            "left": "double",
+            "right": "3.14"
+          },
+          {
+            "id": "3",
+            "left": "boolean",
+            "right": "true"
+          },
+          {
+            "id": "4",
+            "left": "String",
+            "right": "\"Привет\""
+          }
+        ],
+        "hint": "[Hinweis] Обратите внимание на кавычки и дробную точку.",
+        "explanation": "[Erklärung] Значения соответствуют объявленным типам.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "m-exam-01-04",
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите программу, которая выводит число 5. Упорядочьте строки и выставьте отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "public class Main {"
+          },
+          {
+            "id": "b",
+            "text": "public static void main(String[] args) {"
+          },
+          {
+            "id": "c",
+            "text": "int x = 5;"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(x);"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 2
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Начните с класса Main, затем откройте метод main; закрывающие скобки идут в обратном порядке.",
+        "explanation": "[Erklärung] main находится внутри класса, а команды — внутри main.",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Составьте отчёт магазина без циклов и методов. Название товара — «Мяч», цена — 40,\nначальный остаток — 12, продано — 1, поступило — 2. Рассчитайте остаток после продажи,\nконечный остаток, выручку и наличие (конечный остаток > 0). Geben Sie aus: название,\nначальный остаток, проданное количество, остаток после продажи, конечный остаток,\nцену, выручку и наличие. Затем рассчитайте и выведите: свободный остаток (резерв = 1),\nстоимость конечного остатка, стоимость поступления, стоимость начального остатка,\nбаланс стоимости (начальная стоимость + поступление - выручка) и равенство\nбаланса стоимости со стоимостью конечного остатка — по одному значению на строку, без подписей.\nVerwenden Sie переменные int, String и boolean, а не готовые ответы.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Мяч\n12\n1\n11\n13\n40\n40\ntrue\n12\n520\n80\n480\n520\ntrue",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nМяч\n12\n1\n11\n13\n40\n40\ntrue\n12\n520\n80\n480\n520\ntrue",
+        "id": "m-exam-01-05"
+      }
+    ]
+  }
+}

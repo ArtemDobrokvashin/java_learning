@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, "arena/**" ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-trainer:
+    name: Python, JS & Java Course Verification
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: java-trainer
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: java-trainer/requirements.txt
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Python test suite (Course, API, Progress, Exams, UTF-8 & JDK Judge)
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: java-trainer/package-lock.json
+
+      - name: Install JS test dependencies & run DOM/Validator tests
+        run: |
+          npm ci
+          npm test

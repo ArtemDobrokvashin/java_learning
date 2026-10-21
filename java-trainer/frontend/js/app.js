@@ -1,4 +1,5 @@
 import { getHealth, getLabs, getModuleContent, getModules, mergeProgress } from './api.js';
+import { getLanguage, setLanguage, SUPPORTED_LANGUAGES, translateDom } from './i18n.js';
 import { levelInfo, recordAttempt, syncState } from './gamification.js';
 import { addSpacedReview, dueQuestions } from './review.js';
 import { sendDueReminder } from './reminders.js';
@@ -53,8 +54,12 @@ function shell() {
 
 function updateHeader() {
   const { level, current, required } = levelInfo(state.xp);
+  const currentLang = getLanguage();
+  const langOptions = SUPPORTED_LANGUAGES.map((item) =>
+    `<option value="${item.code}" ${item.code === currentLang ? 'selected' : ''}>${item.short} · ${item.label}</option>`
+  ).join('');
   document.querySelector('#topbar').innerHTML = `<div class="breadcrumbs"><span>МОЙ ПУТЬ</span>${icon('chevron', 13)}<strong>${activeRoute.name === 'settings' ? 'Настройки' : activeRoute.name === 'review' ? 'Повторение' : activeRoute.name === 'career' || activeRoute.name === 'lab' ? 'Практика для junior' : activeRoute.name === 'result' ? 'Результат' : 'Курс Java'}</strong></div>
-    <div class="topbar-actions"><div class="top-stat stat-xp" title="Всего опыта: ${state.xp}"><span class="top-stat-icon">${icon('bolt', 19)}</span><strong>${state.xp}</strong><small>XP · ур. ${level}</small></div><div class="top-stat stat-streak" title="Серия дней подряд"><span class="top-stat-icon">${icon('flame', 19)}</span><strong>${state.streak}</strong><small>дней</small></div><a href="#/settings" class="top-settings" aria-label="Настройки">${icon('settings', 21)}</a></div>`;
+    <div class="topbar-actions"><label class="lang-switcher" aria-label="Язык интерфейса и курса"><select class="lang-select" data-lang-select>${langOptions}</select></label><div class="top-stat stat-xp" title="Всего опыта: ${state.xp}"><span class="top-stat-icon">${icon('bolt', 19)}</span><strong>${state.xp}</strong><small>XP · ур. ${level}</small></div><div class="top-stat stat-streak" title="Серия дней подряд"><span class="top-stat-icon">${icon('flame', 19)}</span><strong>${state.streak}</strong><small>дней</small></div><a href="#/settings" class="top-settings" aria-label="Настройки">${icon('settings', 21)}</a></div>`;
   document.querySelector('#sidebar-level').innerHTML = `<div class="level-card"><div class="level-card-top"><span>${icon('spark', 18)} ВАШ УРОВЕНЬ</span><strong>${String(level).padStart(2, '0')}</strong></div><div class="level-card-bar"><span style="width:${Math.round(current / required * 100)}%"></span></div><small>${current} / ${required} XP до нового уровня</small></div>`;
   document.querySelectorAll('[data-nav]').forEach((entry) => {
     const section = activeRoute.name === 'lab' ? 'career'
@@ -64,6 +69,17 @@ function updateHeader() {
     if (selected) entry.setAttribute('aria-current', 'page');
     else entry.removeAttribute('aria-current');
   });
+  document.querySelector('[data-lang-select]')?.addEventListener('change', async (event) => {
+    setLanguage(event.target.value);
+    shell();
+    try {
+      modules = await getModules(state);
+    } catch (err) {
+      console.warn('Не удалось перезагрузить локализованный курс', err);
+    }
+    await showRoute(activeRoute);
+  });
+  translateDom(app);
 }
 
 function showMessage(title, message, path = '/') {
@@ -271,6 +287,7 @@ async function showRoute(route) {
   } else {
     showMessage('Такой страницы нет', 'Вернитесь на карту и выберите доступный модуль.');
   }
+  translateDom(app);
   window.scrollTo({ top: 0, behavior: 'auto' });
 }
 

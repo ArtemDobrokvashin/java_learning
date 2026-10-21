@@ -1,0 +1,1077 @@
+{
+  "id": 11,
+  "title": "Errores y excepciones en Java",
+  "lessons": [
+    {
+      "id": "m11-l01",
+      "title": "Introducción al manejo de errores",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Ошибки бывают синтаксическими (их находит компилятор), ошибками выполнения и логическими (программа работает, но делает не то). Сообщение javac содержит строку, указатель и описание проблемы.",
+          "[Teoría] Исключение — объект, сигнализирующий о нештатной ситуации во время работы. Не перехватывайте все ошибки подряд: сначала разберитесь в причине, исправьте неверный код или обработайте ожидаемый случай."
+        ],
+        "code": "int value = Integer.parseInt(\"12\");\nSystem.out.println(value); // 12",
+        "caption": "У ошибки есть причина и этап обнаружения.",
+        "language": "java",
+        "objective": "[Objetivo] Отличить ошибку компиляции, исключение во время запуска и неверный результат.",
+        "walkthrough": "[Análisis] parseInt(\"12\") корректно возвращает 12, и println печатает число. Замена строки на «abc» скомпилируется, но при запуске приведёт к NumberFormatException.",
+        "pitfall": "[Error común] Успешная компиляция не доказывает правильность алгоритма: программа может работать без исключений, но выводить неверный ответ.",
+        "deepDive": "[En profundidad] Исправление начинается с классификации: синтаксис остановит javac, исключение проявится при запуске, а неверное условие может дать правдоподобный, но ложный результат. Каждому классу ошибки нужен свой способ проверки.",
+        "useCase": "[Caso práctico] При падении задания читайте первую существенную строку диагностики, воспроизводите проблему на минимальном входе и добавляйте проверку, прежде чем менять код наугад. Успешная компиляция ещё не доказывает корректность ответа.",
+        "guide": {
+          "why": "[Guía paso a paso] Работающий компилятор не означает правильный ответ: синтаксическая ошибка, сбой во время запуска и неверное условие требуют разных способов поиска.",
+          "steps": [
+            "Если javac жалуется на строку, сначала исправьте синтаксис — программа даже не начала выполняться.",
+            "Если Integer.parseInt получает нечисловой текст, компиляция проходит, но при запуске возникает NumberFormatException. Тест с допустимым вводом не выявит эту ветку."
+          ],
+          "example": {
+            "code": "String raw = \"12\";\nint amount = Integer.parseInt(raw);\nSystem.out.println(amount + 1);",
+            "language": "java",
+            "runnable": false,
+            "label": "Строки внутри main"
+          },
+          "result": "Результат 13: исходная строка превратилась в int до сложения. Подставьте \"abc\" — вместо результата будет исключение.",
+          "bridge": "Для мини-задания отделите ошибку компиляции от исключения. В практике решите, какой ошибочный ввод ожидаем и какое значение показать вместо падения."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m11-l01-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "String raw = \"12\";\nint amount = Integer.parseInt(raw);\nSystem.out.println(amount + 1);",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Результат 13: исходная строка превратилась в int до сложения. Подставьте \"abc\" — вместо результата будет исключение."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что обнаруживает javac до запуска программы?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Синтаксическую ошибку"
+            },
+            {
+              "id": "b",
+              "label": "Все логические ошибки"
+            },
+            {
+              "id": "c",
+              "label": "Все будущие исключения"
+            },
+            {
+              "id": "d",
+              "label": "Проблемы сети через месяц"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "El compilador verifica исходный код заранее.",
+          "explanation": "[Explicación] Неверный синтаксис обнаруживается во время компиляции.",
+          "id": "m11-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Какой метод преобразует строку в int?",
+          "template": [
+            "int n = Integer.",
+            "(\"12\");"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "parseInt",
+              "options": [
+                "parseInt",
+                "toString",
+                "value"
+              ]
+            }
+          ],
+          "hint": "[Pista] Нужен метод класса Integer.",
+          "explanation": "[Explicación] parseInt разбирает текстовое представление числа.",
+          "id": "m11-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m11-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Какое исключение возникнет при Integer.parseInt(\"bad\"), если ввод не числовой?",
+          "options": [
+            {
+              "id": "a",
+              "label": "IOException"
+            },
+            {
+              "id": "b",
+              "label": "NumberFormatException"
+            },
+            {
+              "id": "c",
+              "label": "InterruptedException"
+            },
+            {
+              "id": "d",
+              "label": "AssertionError"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] parseInt проверяет формат строки при выполнении.",
+          "explanation": "[Explicación] Верно: NumberFormatException. parseInt проверяет формат строки при выполнении."
+        },
+        {
+          "id": "m11-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m11-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Tarea] Преобразуйте «42» через Integer.parseInt, затем «bad» в try/catch. Для первого результата выведите удвоенное число, при ошибке второго — «Ошибка формата».",
+          "expectedOutput": "84\nОшибка формата",
+          "hint": "[Pista] Обрабатывайте NumberFormatException отдельно для неверного ввода; не подавляйте результат первого вычисления.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '84\\nОшибка формата'. Обрабатывайте NumberFormatException отдельно для неверного ввода; не подавляйте результат первого вычисления."
+        }
+      ]
+    },
+    {
+      "id": "m11-l02",
+      "title": "Exceptions y Errors",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Throwable — общий предок Exception и Error. Exception описывает ситуации, с которыми приложение может работать; Error обычно обозначает серьёзную проблему JVM, которую не стоит пытаться подавить обычным catch.",
+          "[Teoría] Проверяемые исключения, например IOException, компилятор требует обработать или объявить через throws. Непроверяемые RuntimeException (например, IllegalArgumentException) этого требования не имеют."
+        ],
+        "code": "try {\n    Integer.parseInt(\"abc\");\n} catch (NumberFormatException ex) {\n    System.out.println(\"Не число\");\n}",
+        "caption": "Не ловите Error как обычную ошибку программы.",
+        "language": "java",
+        "objective": "[Objetivo] Разделять ожидаемые исключения приложения и тяжёлые ошибки JVM.",
+        "walkthrough": "[Análisis] parseInt(\"abc\") бросает NumberFormatException; указанный catch перехватывает его и печатает «Не число», так что выполнение продолжается.",
+        "pitfall": "[Error común] Не перехватывайте Throwable или Error для обычной валидации: так можно скрыть серьёзные проблемы JVM и усложнить поиск причины.",
+        "deepDive": "[En profundidad] Checked-исключение отражено в контракте метода: вызывающий код обязан его обработать или объявить. RuntimeException не проверяется компилятором тем же способом, но всё равно требует осмысленного предотвращения или обработки.",
+        "useCase": "[Caso práctico] При чтении файла отличайте ожидаемое отсутствие пользовательского файла от серьёзной ошибки среды. Не перехватывайте Error ради продолжения работы: приложение после такой проблемы может быть в некорректном состоянии.",
+        "guide": {
+          "why": "[Guía paso a paso] Exception описывает ситуацию, которую вызывающий код может ожидать и обработать. Error обычно сигнализирует о серьёзной проблеме среды, а не о неверном поле формы.",
+          "steps": [
+            "Опасную операцию Integer.parseInt поместите внутрь try. Перехватывайте конкретный NumberFormatException, а не любой Throwable.",
+            "catch выполняется только при указанном типе исключения. В нём можно объяснить человеку причину вместо аварийного завершения."
+          ],
+          "example": {
+            "code": "try {\n    int count = Integer.parseInt(\"нет числа\");\n    System.out.println(count);\n} catch (NumberFormatException ex) {\n    System.out.println(\"Нужно число\");\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент внутри main"
+          },
+          "result": "Вывод «Нужно число». println(count) не будет выполнен после возникшего исключения в parseInt.",
+          "bridge": "На упражнении найдите checked и unchecked исключения. Позже в практике перехватите именно ошибку разбора числа."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m11-l02-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "try {\n    int count = Integer.parseInt(\"нет числа\");\n    System.out.println(count);\n} catch (NumberFormatException ex) {\n    System.out.println(\"Нужно число\");\n}",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Вывод «Нужно число». println(count) не будет выполнен после возникшего исключения в parseInt."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Какой вид исключения обязан быть обработан или указан через throws?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Любой Error"
+            },
+            {
+              "id": "b",
+              "label": "Проверяемый Exception"
+            },
+            {
+              "id": "c",
+              "label": "Любой RuntimeException"
+            },
+            {
+              "id": "d",
+              "label": "Никакой"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Компилятор требует явной работы с checked exception.",
+          "explanation": "[Explicación] Проверяемые исключения должны быть обработаны или объявлены.",
+          "id": "m11-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Назовите ветвь непроверяемых исключений.",
+          "template": [
+            "class IllegalArgumentException extends ",
+            " { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "RuntimeException",
+              "options": [
+                "RuntimeException",
+                "Error",
+                "IOException"
+              ]
+            }
+          ],
+          "hint": "[Pista] Это предок типичных ошибок аргументов.",
+          "explanation": "[Explicación] RuntimeException не требует обязательного catch.",
+          "id": "m11-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m11-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Массив a имеет длину 2. Какой тип ошибки возникает при чтении a[2]?",
+          "options": [
+            {
+              "id": "a",
+              "label": "ошибка синтаксиса до запуска"
+            },
+            {
+              "id": "b",
+              "label": "проверяемое IOException"
+            },
+            {
+              "id": "c",
+              "label": "ArrayIndexOutOfBoundsException"
+            },
+            {
+              "id": "d",
+              "label": "NumberFormatException"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Допустимые индексы для длины 2 — только 0 и 1.",
+          "explanation": "[Explicación] Верно: ArrayIndexOutOfBoundsException. Допустимые индексы для длины 2 — только 0 и 1."
+        },
+        {
+          "id": "m11-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m11-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea массив {3, 5}. В try обратитесь к элементу с индексом 2, в catch подходящего RuntimeException выведите «Нет элемента», а после блока — «Продолжаем».",
+          "expectedOutput": "Нет элемента\nПродолжаем",
+          "hint": "[Pista] IndexOutOfBoundsException относится к unchecked-исключениям; JVM не обязана завершать приложение после catch.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: 'Нет элемента\\nПродолжаем'. IndexOutOfBoundsException относится к unchecked-исключениям; JVM не обязана завершать приложение после catch."
+        }
+      ]
+    },
+    {
+      "id": "m11-l03",
+      "title": "Manejo de excepciones",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] try охватывает опасную операцию, catch обрабатывает ожидаемый тип исключения, finally выполняется при выходе из блока (в обычном потоке управления). Обрабатывайте самые специфичные типы раньше общих.",
+          "[Teoría] Для ресурсов вроде файлов и потоков предпочтительнее try-with-resources, который автоматически закрывает объекты AutoCloseable. Исключение не должно просто исчезать: сообщите пользователю или восстановите безопасное состояние."
+        ],
+        "code": "try {\n    int n = Integer.parseInt(input);\n} catch (NumberFormatException ex) {\n    System.out.println(\"Введите число\");\n}",
+        "caption": "Ловите только то, что умеете обработать.",
+        "language": "java",
+        "objective": "[Objetivo] Обработать конкретный тип ошибки и не потерять причину исключения.",
+        "walkthrough": "[Análisis] Если input содержит текст вместо числа, parseInt бросит NumberFormatException, выполнение перейдёт в catch и пользователь увидит «Введите число».",
+        "pitfall": "[Error común] Пустой catch скрывает сбой, а слишком широкий catch(Exception) может замаскировать не связанную с вводом ошибку.",
+        "deepDive": "[En profundidad] catch срабатывает для совместимого типа исключения; более общий обработчик раньше узкого сделал бы узкий недостижимым. finally выполняется при обычном выходе из try/catch, но для закрытия ресурса удобнее try-with-resources.",
+        "useCase": "[Caso práctico] Обрабатывая IOException при импорте, сообщите, какой файл не прочитан, и не отмечайте импорт успешным. Пустой catch скрывает причину, а повторное бросание с контекстом помогает понять место сбоя.",
+        "guide": {
+          "why": "[Guía paso a paso] Обработчик исключения — часть поведения программы: надо определить, что она покажет или сделает после неудачной операции, а не просто спрятать ошибку.",
+          "steps": [
+            "Crea переменную result со значением по умолчанию перед try, чтобы результат был доступен после блока.",
+            "В try преобразуйте текст. В catch для ожидаемого NumberFormatException сохраните запасное значение; затем выведите result один раз после обоих путей."
+          ],
+          "example": {
+            "code": "int result;\ntry {\n    result = Integer.parseInt(\"ошибка\");\n} catch (NumberFormatException ex) {\n    result = -1;\n}\nSystem.out.println(result);",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент внутри main"
+          },
+          "result": "Вывод -1. При корректном тексте выводилось бы преобразованное число, потому что catch не выполнялся бы.",
+          "bridge": "В практике примените тот же приём, но выберите значение по умолчанию из условия задачи, а не копируйте -1."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m11-l03-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "int result;\ntry {\n    result = Integer.parseInt(\"ошибка\");\n} catch (NumberFormatException ex) {\n    result = -1;\n}\nSystem.out.println(result);",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Вывод -1. При корректном тексте выводилось бы преобразованное число, потому что catch не выполнялся бы."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Какой catch лучше поставить раньше?",
+          "options": [
+            {
+              "id": "a",
+              "label": "catch (Exception)"
+            },
+            {
+              "id": "b",
+              "label": "catch (NumberFormatException)"
+            },
+            {
+              "id": "c",
+              "label": "Порядок не имеет значения"
+            },
+            {
+              "id": "d",
+              "label": "catch (Throwable)"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Общий тип перехватит исключение раньше частного.",
+          "explanation": "[Explicación] Сначала ловят более конкретное исключение.",
+          "id": "m11-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Допишите обработчик некорректного числа.",
+          "template": [
+            "try { parse(); } ",
+            " (NumberFormatException ex) { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "catch",
+              "options": [
+                "catch",
+                "throw",
+                "finally"
+              ]
+            }
+          ],
+          "hint": "[Pista] После try укажите ветку обработки.",
+          "explanation": "[Explicación] catch перехватывает ожидаемое исключение.",
+          "id": "m11-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m11-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] При исключении в try, обработанном catch, выполнится ли затем блок finally?",
+          "options": [
+            {
+              "id": "a",
+              "label": "да, обычно выполняется"
+            },
+            {
+              "id": "b",
+              "label": "нет, выполняется только при успехе"
+            },
+            {
+              "id": "c",
+              "label": "нет, всегда пропускается после catch"
+            },
+            {
+              "id": "d",
+              "label": "да, но только если есть return"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Pista] finally используют для освобождения ресурсов после обоих исходов.",
+          "explanation": "[Explicación] Верно: да, обычно выполняется. finally используют для освобождения ресурсов после обоих исходов."
+        },
+        {
+          "id": "m11-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m11-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Tarea] В try преобразуйте «7» в число, выведите его, затем вызовите parseInt для «x». В catch выведите «Некорректно», в finally — «Готово».",
+          "expectedOutput": "7\nНекорректно\nГотово",
+          "hint": "[Pista] finally выполняется независимо от успешности преобразования. Не переносите его вывод в catch.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '7\\nНекорректно\\nГотово'. finally выполняется независимо от успешности преобразования. Не переносите его вывод в catch."
+        }
+      ]
+    },
+    {
+      "id": "m11-l04",
+      "title": "Lanzamiento de excepciones",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Оператор throw создаёт исключение в конкретном месте, например при недопустимом аргументе. Объявление throws в сигнатуре сообщает вызывающему коду о возможном проверяемом исключении.",
+          "[Teoría] Чёткое сообщение исключения помогает найти ошибку. Для нарушения предусловия метода подойдёт IllegalArgumentException; не возвращайте молча неверный результат при некорректном вводе."
+        ],
+        "code": "static void setAge(int age) {\n    if (age < 0) throw new IllegalArgumentException(\"Возраст < 0\");\n}",
+        "caption": "throw и throws решают разные задачи.",
+        "language": "java",
+        "objective": "[Objetivo] Создать исключение для неверного аргумента и отличить throw от throws.",
+        "walkthrough": "[Análisis] При age < 0 метод setAge бросает IllegalArgumentException с сообщением «Возраст < 0». Оператор throw выполняет действие в конкретной ветке.",
+        "pitfall": "[Error común] throws в сигнатуре только объявляет возможные исключения; он не заменяет throw и проверку условия внутри метода.",
+        "deepDive": "[En profundidad] throw — исполняемая команда, создающая конкретное исключение; throws — часть сигнатуры о возможном результате вызова. Проверяйте предусловия на границе метода, чтобы ошибочный аргумент не повредил состояние объекта.",
+        "useCase": "[Caso práctico] Для deposit(-10) выбросьте IllegalArgumentException до изменения баланса. В тесте подтвердите и тип исключения, и то, что прежний баланс сохранился после отклонённой операции.",
+        "guide": {
+          "why": "[Guía paso a paso] Метод должен явно сообщать о нарушении своего контракта. throw создаёт исключение при конкретном условии; throws только объявляет, что ошибка может выйти наружу.",
+          "steps": [
+            "В методе verifySize проверьте значение ДО полезной работы. Если размер отрицателен, бросьте IllegalArgumentException с объяснением.",
+            "Вызывающий код может поймать этот тип через catch и напечатать ex.getMessage(), сохранив контроль над остальной программой."
+          ],
+          "example": {
+            "code": "static void verifySize(int size) {\n    if (size < 0) throw new IllegalArgumentException(\"Размер < 0\");\n}\n// внутри main:\ntry {\n    verifySize(-1);\n} catch (IllegalArgumentException ex) {\n    System.out.println(ex.getMessage());\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Метод рядом с main, обработка внутри main"
+          },
+          "result": "Увидите «Размер < 0»: сообщение передано из места обнаружения ошибки обработчику.",
+          "bridge": "В практике создайте аналогичный метод для возраста. Не возвращайте false молча и не используйте throws вместо нужного throw."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m11-l04-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "static void verifySize(int size) {\n    if (size < 0) throw new IllegalArgumentException(\"Размер < 0\");\n}\n// внутри main:\ntry {\n    verifySize(-1);\n} catch (IllegalArgumentException ex) {\n    System.out.println(ex.getMessage());\n}",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Увидите «Размер < 0»: сообщение передано из места обнаружения ошибки обработчику."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что делает throw new IllegalArgumentException(...)?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Создаёт новый класс"
+            },
+            {
+              "id": "b",
+              "label": "Прерывает текущий поток выполнения исключением"
+            },
+            {
+              "id": "c",
+              "label": "Объявляет метод в интерфейсе"
+            },
+            {
+              "id": "d",
+              "label": "Возвращает int"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Это действие внутри тела метода, не часть сигнатуры.",
+          "explanation": "[Explicación] throw выбрасывает объект исключения.",
+          "id": "m11-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Укажите ключевое слово для генерации исключения.",
+          "template": [
+            "if (age < 0) ",
+            " new IllegalArgumentException();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "throw",
+              "options": [
+                "throw",
+                "throws",
+                "catch"
+              ]
+            }
+          ],
+          "hint": "[Pista] Слово в теле метода — без конечной s.",
+          "explanation": "[Explicación] throw запускает исключение в конкретной ветке.",
+          "id": "m11-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m11-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Какой код явно сигнализирует вызывающему методу о недопустимом значении age = -1?",
+          "options": [
+            {
+              "id": "a",
+              "label": "return -1; всегда"
+            },
+            {
+              "id": "b",
+              "label": "throw new IllegalArgumentException(\"age\");"
+            },
+            {
+              "id": "c",
+              "label": "println(\"ошибка\"); без исключения"
+            },
+            {
+              "id": "d",
+              "label": "new Exception(); без throw"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Для нарушения контракта выбрасывают исключение через throw.",
+          "explanation": "[Explicación] Верно: throw new IllegalArgumentException(\"age\");. Для нарушения контракта выбрасывают исключение через throw."
+        },
+        {
+          "id": "m11-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m11-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea static int percent(int value), бросающий IllegalArgumentException при value вне 0..100. Для 75 выведите результат, для 101 поймайте ошибку и выведите «Вне диапазона».",
+          "expectedOutput": "75\nВне диапазона",
+          "hint": "[Pista] Проверяйте границы внутри метода и используйте throw new IllegalArgumentException(), а не System.exit.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '75\\nВне диапазона'. Проверяйте границы внутри метода и используйте throw new IllegalArgumentException(), а не System.exit."
+        }
+      ]
+    },
+    {
+      "id": "m11-l05",
+      "title": "Aserciones (assert)",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] assert проверяет внутреннее предположение разработчика и может помочь при отладке. Проверки assert обычно отключены по умолчанию и включаются ключом JVM -ea, поэтому они не подходят для валидации пользовательского ввода.",
+          "[Teoría] Для обязательной проверки аргумента используйте if и осмысленное исключение. Не помещайте в assert операции с побочными эффектами: при выключенных утверждениях они не выполнятся."
+        ],
+        "code": "assert count >= 0 : \"Отрицательный счётчик\";\nif (input == null) throw new IllegalArgumentException(\"input\");",
+        "caption": "assert — проверка предположений, не бизнес-правило.",
+        "language": "java",
+        "objective": "[Objetivo] Использовать assert для внутренних предположений, а исключения — для входных данных.",
+        "walkthrough": "[Análisis] assert count >= 0 проверяет инвариант только когда assertions включены. Проверка input == null через if работает всегда и бросает исключение.",
+        "pitfall": "[Error común] По умолчанию assert отключён: запуск java без -ea пропустит такую проверку. Не используйте assert для валидации пользовательского ввода.",
+        "deepDive": "[En profundidad] assert выражает предположение разработчика о внутреннем состоянии, а не обязательное правило для внешних данных. Поскольку JVM может игнорировать его, вычисление с побочным эффектом внутри assert способно вообще не произойти.",
+        "useCase": "[Caso práctico] Прогоните одну программу с -ea и без него, чтобы увидеть разницу. Проверку пользовательского возраста оставьте обычным if: поведение сервиса не должно зависеть от флага запуска JVM.",
+        "guide": {
+          "why": "[Guía paso a paso] assert предназначен для предположений о внутренней логике, а не для обязательной защиты пользовательского ввода: обычно JVM вообще не выполняет такие проверки.",
+          "steps": [
+            "При запуске с флагом -ea выражение assert count >= 0 проверяется; без флага JVM его пропускает.",
+            "Условие для неизвестного ввода напишите через обычный if и исключение: оно должно работать одинаково независимо от флагов запуска."
+          ],
+          "example": {
+            "code": "int count = 3;\nassert count >= 0 : \"Неверный счётчик\";\nif (count < 0) throw new IllegalArgumentException(\"count\");\nSystem.out.println(count);",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент внутри main"
+          },
+          "result": "Вывод 3 будет и с -ea, и без него. Поставьте count = -1: обязательная проверка if сработает при любом запуске.",
+          "bridge": "В мини-задании различайте отладочный assert и валидацию аргумента метода; практическая проверка возраста не должна зависеть от -ea."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m11-l05-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "int count = 3;\nassert count >= 0 : \"Неверный счётчик\";\nif (count < 0) throw new IllegalArgumentException(\"count\");\nSystem.out.println(count);",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Вывод 3 будет и с -ea, и без него. Поставьте count = -1: обязательная проверка if сработает при любом запуске."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Подходит ли assert для обязательной проверки пользовательского ввода?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Да, всегда активен"
+            },
+            {
+              "id": "b",
+              "label": "Нет, по умолчанию может быть отключён"
+            },
+            {
+              "id": "c",
+              "label": "Только в main"
+            },
+            {
+              "id": "d",
+              "label": "Только после catch"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Запуск без -ea обычно выключает assert.",
+          "explanation": "[Explicación] Нужна обычная проверка if с исключением.",
+          "id": "m11-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Включите утверждения при запуске JVM.",
+          "template": [
+            "java ",
+            " Main"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "-ea",
+              "options": [
+                "-ea",
+                "-Xmx",
+                "-version"
+              ]
+            }
+          ],
+          "hint": "[Pista] Нужен короткий флаг enable assertions.",
+          "explanation": "[Explicación] Флаг -ea включает обработку assert.",
+          "id": "m11-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m11-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Почему нельзя полагаться на assert для проверки введённого пользователем age >= 0?",
+          "options": [
+            {
+              "id": "a",
+              "label": "assert всегда удаляет программу"
+            },
+            {
+              "id": "b",
+              "label": "проверка может быть отключена без -ea"
+            },
+            {
+              "id": "c",
+              "label": "assert работает только со String"
+            },
+            {
+              "id": "d",
+              "label": "assert меняет age на 0"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Проверку внешнего ввода делайте обычным условием и исключением.",
+          "explanation": "[Explicación] Верно: проверка может быть отключена без -ea. Проверку внешнего ввода делайте обычным условием и исключением."
+        },
+        {
+          "id": "m11-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m11-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Declara int value = 4 и проверку assert value > 0 : \"invalid\". Затем выведите value * 2. Код должен работать как с флагом -ea, так и без него.",
+          "expectedOutput": "8",
+          "hint": "[Pista] Assert предназначен для внутреннего инварианта, а не для проверки пользовательского ввода.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '8'. Assert предназначен для внутреннего инварианта, а не для проверки пользовательского ввода."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Práctica final del módulo 11",
+    "description": "Verifica исключения, обработку и сообщения об ошибках.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Что выбросит Integer.parseInt(\"oops\")?",
+        "options": [
+          {
+            "id": "a",
+            "label": "IOException"
+          },
+          {
+            "id": "b",
+            "label": "NumberFormatException"
+          },
+          {
+            "id": "c",
+            "label": "AssertionError всегда"
+          },
+          {
+            "id": "d",
+            "label": "Ничего"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Pista] Нечисловой текст не преобразуется в int.",
+        "explanation": "[Explicación] parseInt сообщает об ошибке формата числа.",
+        "id": "m11-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Tarea] Перехватите ошибку формата числа.",
+        "template": [
+          "catch (",
+          " ex) { System.out.println(\"0\"); }"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "NumberFormatException",
+            "options": [
+              "NumberFormatException",
+              "IOException",
+              "Error"
+            ]
+          }
+        ],
+        "hint": "[Pista] Название исключения содержит Format.",
+        "explanation": "[Explicación] Специфичный catch обрабатывает неверный формат.",
+        "id": "m11-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Сопоставьте механизм.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "try",
+            "right": "Блок потенциально ошибочного кода"
+          },
+          {
+            "id": "2",
+            "left": "catch",
+            "right": "Обработка конкретного исключения"
+          },
+          {
+            "id": "3",
+            "left": "throw",
+            "right": "Генерация исключения"
+          },
+          {
+            "id": "4",
+            "left": "throws",
+            "right": "Объявление исключения в сигнатуре"
+          }
+        ],
+        "hint": "[Pista] Отличите действие внутри метода от объявления в сигнатуре.",
+        "explanation": "[Explicación] try/catch обрабатывают, throw/throws создают и декларируют.",
+        "id": "m11-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите проверку отрицательного аргумента.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "if (age < 0) {"
+          },
+          {
+            "id": "b",
+            "text": "throw new IllegalArgumentException(\"age\");"
+          },
+          {
+            "id": "c",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Выбрасывайте исключение внутри условного блока.",
+        "explanation": "[Explicación] Недопустимый возраст вызывает исключение.",
+        "id": "m11-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "IOException — проверяемое исключение"
+          },
+          {
+            "id": "b",
+            "label": "assert всегда активен"
+          },
+          {
+            "id": "c",
+            "label": "try-with-resources закрывает AutoCloseable"
+          },
+          {
+            "id": "d",
+            "label": "catch (Exception) перед catch (IOException) — правильный порядок"
+          }
+        ],
+        "correct": [
+          "a",
+          "c"
+        ],
+        "multiple": true,
+        "hint": "[Pista] assert может быть отключён; общий catch перехватит частный.",
+        "explanation": "[Explicación] IOException checked, а try-with-resources закрывает ресурсы.",
+        "id": "m11-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Tarea] Попробуйте преобразовать строку \"oops\" через Integer.parseInt. Перехватите NumberFormatException и выведите 0 вместо аварийного завершения.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        String raw = \"oops\";\n        // Обработайте NumberFormatException и выведите 0\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "0",
+        "hint": "[Pista] Поместите parseInt в try, а System.out.println(0) — в catch.",
+        "explanation": "[Explicación] Ожидаемая ошибка обработана, программа продолжила работу.",
+        "id": "m11-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Crea un método checkAge(int age): если age < 0, бросьте IllegalArgumentException с сообщением \"Некорректно\". В main вызовите checkAge(-1), поймайте исключение и выведите его сообщение.",
+        "starterCode": "public class Main {\n    static void checkAge(int age) {\n        // Проверка и throw\n    }\n    public static void main(String[] args) {\n        // Вызовите checkAge(-1), поймайте и выведите ex.getMessage()\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Некорректно",
+        "hint": "Usa throw new IllegalArgumentException(\"Некорректно\") и catch (IllegalArgumentException ex).",
+        "explanation": "[Explicación] Метод отверг отрицательное значение и передал сообщение вызывающему коду.",
+        "id": "m11-p07"
+      }
+    ],
+    "id": "m11-practice",
+    "primer": {
+      "why": "Исключения позволяют явно обработать неудачный ввод или сообщить о нарушенном условии. Разделяйте место, где бросают ошибку, и место, где её ловят.",
+      "steps": [
+        "В try помещайте операцию, которая может бросить исключение. catch (NumberFormatException ex) должен обрабатывать именно нечисловой ввод.",
+        "Метод validate проверяет аргумент и вызывает throw new IllegalArgumentException(...). Вызывающий может поймать этот тип и прочитать сообщение через getMessage()."
+      ],
+      "example": {
+        "code": "public class Main {\n    static void validate(int count) {\n        if (count < 0) throw new IllegalArgumentException(\"Меньше нуля\");\n    }\n    public static void main(String[] args) {\n        try {\n            validate(-2);\n        } catch (IllegalArgumentException ex) {\n            System.out.println(ex.getMessage());\n        }\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная программа с собственным исключением",
+        "stdout": "Меньше нуля"
+      },
+      "result": "Программа не упадёт: catch напечатает «Меньше нуля». Без catch вызов завершился бы ошибкой выполнения.",
+      "hints": [
+        {
+          "taskId": "m11-p06",
+          "text": "При разборе нечисловой строки ловите NumberFormatException, а затем выводите значение по умолчанию из условия, не пряча все исключения подряд."
+        },
+        {
+          "taskId": "m11-p07",
+          "text": "Метод проверки возраста объявите отдельно от main. Возникшее исключение перехватите вокруг вызова и выведите именно ex.getMessage()."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m11-exam",
+    "title": "Mini-examen",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 410,
+    "tasks": [
+      {
+        "id": "m-exam-11-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Tarea] Почему нельзя полагаться на assert для проверки введённого пользователем age >= 0?",
+        "options": [
+          {
+            "id": "a",
+            "label": "assert всегда удаляет программу"
+          },
+          {
+            "id": "b",
+            "label": "проверка может быть отключена без -ea"
+          },
+          {
+            "id": "c",
+            "label": "assert работает только со String"
+          },
+          {
+            "id": "d",
+            "label": "assert меняет age на 0"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Pista] Проверку внешнего ввода делайте обычным условием и исключением.",
+        "explanation": "[Explicación] Верно: проверка может быть отключена без -ea. Проверку внешнего ввода делайте обычным условием и исключением."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Tarea] Какой метод преобразует строку в int?",
+        "template": [
+          "int n = Integer.",
+          "(\"12\");"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "parseInt",
+            "options": [
+              "parseInt",
+              "toString",
+              "value"
+            ]
+          }
+        ],
+        "hint": "[Pista] Нужен метод класса Integer.",
+        "explanation": "[Explicación] parseInt разбирает текстовое представление числа.",
+        "id": "m-exam-11-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Сопоставьте механизм.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "try",
+            "right": "Блок потенциально ошибочного кода"
+          },
+          {
+            "id": "2",
+            "left": "catch",
+            "right": "Обработка конкретного исключения"
+          },
+          {
+            "id": "3",
+            "left": "throw",
+            "right": "Генерация исключения"
+          },
+          {
+            "id": "4",
+            "left": "throws",
+            "right": "Объявление исключения в сигнатуре"
+          }
+        ],
+        "hint": "[Pista] Отличите действие внутри метода от объявления в сигнатуре.",
+        "explanation": "[Explicación] try/catch обрабатывают, throw/throws создают и декларируют.",
+        "id": "m-exam-11-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите проверку отрицательного аргумента.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "if (age < 0) {"
+          },
+          {
+            "id": "b",
+            "text": "throw new IllegalArgumentException(\"age\");"
+          },
+          {
+            "id": "c",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Выбрасывайте исключение внутри условного блока.",
+        "explanation": "[Explicación] Недопустимый возраст вызывает исключение.",
+        "id": "m-exam-11-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Crea собственное unchecked-исключение NegativeValue и метод parse(String).\nОн преобразует строку в int, а для отрицательного числа бросает NegativeValue.\nОбработайте массив {\"1\", \"oops\", \"-2\", \"4\"}. В цикле отдельно перехватите\nNumberFormatException и NegativeValue, подсчитайте ошибки и сумму корректных чисел.\nImprime сумму и количество ошибок. В finally увеличивайте счётчик обработанных\nстрок; выведите его третьей строкой.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "5\n2\n4",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n5\n2\n4",
+        "id": "m-exam-11-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nCrea собственное unchecked-исключение NegativeValue и метод parse(String).\nОн преобразует строку в int, а для отрицательного числа бросает NegativeValue.\nОбработайте массив {\"2\", \"oops\", \"-2\", \"4\"}. В цикле отдельно перехватите\nNumberFormatException и NegativeValue, подсчитайте ошибки и сумму корректных чисел.\nImprime сумму и количество ошибок. В finally увеличивайте счётчик обработанных\nстрок; выведите его третьей строкой.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "6\n2\n4",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n6\n2\n4",
+        "id": "m-exam-11-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nCrea собственное unchecked-исключение NegativeValue и метод parse(String).\nОн преобразует строку в int, а для отрицательного числа бросает NegativeValue.\nОбработайте массив {\"3\", \"oops\", \"-2\", \"4\"}. В цикле отдельно перехватите\nNumberFormatException и NegativeValue, подсчитайте ошибки и сумму корректных чисел.\nImprime сумму и количество ошибок. В finally увеличивайте счётчик обработанных\nстрок; выведите его третьей строкой.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 7\nОтчёт: 2\nОтчёт: 4\nСтрок: 3",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 7\nОтчёт: 2\nОтчёт: 4\nСтрок: 3",
+        "id": "m-exam-11-07"
+      }
+    ]
+  }
+}

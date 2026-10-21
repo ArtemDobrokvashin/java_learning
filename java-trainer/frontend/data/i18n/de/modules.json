@@ -1,0 +1,833 @@
+{
+  "version": 9,
+  "modules": [
+    {
+      "id": 1,
+      "title": "Datentypen, Variablen und Konstanten",
+      "subtitle": "Sprachgrundlagen: von Bits zu den ersten Variablen",
+      "lessons": [
+        {
+          "id": "m01-l01",
+          "title": "Einführung"
+        },
+        {
+          "id": "m01-l02",
+          "title": "Aufbau eines Computers"
+        },
+        {
+          "id": "m01-l03",
+          "title": "Datentypen und Operationen"
+        },
+        {
+          "id": "m01-l04",
+          "title": "Variablen und Operationen"
+        }
+      ],
+      "practiceId": "m01-practice",
+      "contentFile": "module-01.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m01-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 310,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 2,
+      "title": "Verzweigungen & Bedingungen",
+      "subtitle": "Entscheidungen im Code treffen lernen",
+      "lessons": [
+        {
+          "id": "m02-l01",
+          "title": "Algorithmen und Flussdiagramme"
+        },
+        {
+          "id": "m02-l02",
+          "title": "Die if-Bedingung"
+        },
+        {
+          "id": "m02-l03",
+          "title": "Logische Operationen"
+        },
+        {
+          "id": "m02-l04",
+          "title": "Die switch-case-Anweisung"
+        }
+      ],
+      "practiceId": "m02-practice",
+      "contentFile": "module-02.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m02-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 320,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 3,
+      "title": "Schleifen & Arrays",
+      "subtitle": "Aktionen wiederholen, ohne Code zu duplizieren",
+      "lessons": [
+        {
+          "id": "m03-l01",
+          "title": "Einführung in Schleifen"
+        },
+        {
+          "id": "m03-l02",
+          "title": "Arrays (Felder)"
+        },
+        {
+          "id": "m03-l03",
+          "title": "Zählschleife: for"
+        },
+        {
+          "id": "m03-l04",
+          "title": "while- und do-while-Schleifen"
+        }
+      ],
+      "practiceId": "m03-practice",
+      "contentFile": "module-03.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m03-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 330,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 4,
+      "title": "Methoden & Einführung in Klassen",
+      "subtitle": "Aufgaben in übersichtliche Teile zerlegen",
+      "lessons": [
+        {
+          "id": "m04-l01",
+          "title": "Einführung in die Zerlegung"
+        },
+        {
+          "id": "m04-l02",
+          "title": "Einführung in Methoden und Klassen"
+        },
+        {
+          "id": "m04-l03",
+          "title": "Methoden, Parameter und Rückgabewerte"
+        },
+        {
+          "id": "m04-l04",
+          "title": "Gültigkeitsbereich von Variablen"
+        }
+      ],
+      "practiceId": "m04-practice",
+      "contentFile": "module-04.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m04-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 340,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 5,
+      "title": "Objektorientierte Programmierung",
+      "subtitle": "Die Welt mit Objekten modellieren",
+      "lessons": [
+        {
+          "id": "m05-l01",
+          "title": "Einführung in OOP"
+        },
+        {
+          "id": "m05-l02",
+          "title": "Objektorientiertes Paradigma"
+        },
+        {
+          "id": "m05-l03",
+          "title": "Klassen und Objekte in Java"
+        },
+        {
+          "id": "m05-l04",
+          "title": "Statische Felder und Methoden"
+        },
+        {
+          "id": "m05-l05",
+          "title": "Statische geschachtelte Klassen"
+        }
+      ],
+      "practiceId": "m05-practice",
+      "contentFile": "module-05.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m05-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 350,
+        "questionCount": 5
+      }
+    },
+    {
+      "id": 6,
+      "title": "Vererbung",
+      "subtitle": "Klassenverhalten wiederverwenden und erweitern",
+      "lessons": [
+        {
+          "id": "m06-l01",
+          "title": "Vererbung in Java: Einführung"
+        },
+        {
+          "id": "m06-l02",
+          "title": "Vererbung in Java umsetzen"
+        },
+        {
+          "id": "m06-l03",
+          "title": "Überschreiben von Methoden"
+        },
+        {
+          "id": "m06-l04",
+          "title": "Abstrakte Klassen"
+        },
+        {
+          "id": "m06-l05",
+          "title": "Interfaces und Default-Methoden"
+        }
+      ],
+      "practiceId": "m06-practice",
+      "contentFile": "module-06.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m06-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 360,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 7,
+      "title": "Kapselung",
+      "subtitle": "Zugriff auf Daten kontrollieren",
+      "lessons": [
+        {
+          "id": "m07-l01",
+          "title": "Einführung in die Kapselung"
+        },
+        {
+          "id": "m07-l02",
+          "title": "Kapselung in Java"
+        }
+      ],
+      "practiceId": "m07-practice",
+      "contentFile": "module-07.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m07-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 370,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 8,
+      "title": "Polymorphie & Generics",
+      "subtitle": "Eine Schnittstelle — verschiedene Implementierungen",
+      "lessons": [
+        {
+          "id": "m08-l01",
+          "title": "Einführung in die Polymorphie"
+        },
+        {
+          "id": "m08-l02",
+          "title": "Polymorphie in Java"
+        },
+        {
+          "id": "m08-l03",
+          "title": "Generics — parametrisierte Typen"
+        }
+      ],
+      "practiceId": "m08-practice",
+      "contentFile": "module-08.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m08-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 380,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 9,
+      "title": "Java Collections Framework",
+      "subtitle": "Datenmengen speichern und verarbeiten",
+      "lessons": [
+        {
+          "id": "m09-l01",
+          "title": "Einführung in Collections"
+        },
+        {
+          "id": "m09-l02",
+          "title": "List und seine Implementierungen"
+        },
+        {
+          "id": "m09-l03",
+          "title": "Mengen mit Set"
+        },
+        {
+          "id": "m09-l04",
+          "title": "Methoden toString, equals, hashCode"
+        },
+        {
+          "id": "m09-l05",
+          "title": "Assoziative Arrays (Map)"
+        }
+      ],
+      "practiceId": "m09-practice",
+      "contentFile": "module-09.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m09-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 390,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 10,
+      "title": "Dateiverarbeitung & I/O",
+      "subtitle": "Lesen, analysieren, schreiben und speichern",
+      "lessons": [
+        {
+          "id": "m10-l01",
+          "title": "Einführung in Datei-I/O"
+        },
+        {
+          "id": "m10-l02",
+          "title": "Aus Dateien lesen"
+        },
+        {
+          "id": "m10-l03",
+          "title": "Strings analysieren und parsen"
+        },
+        {
+          "id": "m10-l04",
+          "title": "In Dateien schreiben"
+        },
+        {
+          "id": "m10-l05",
+          "title": "Serialisierung von Objekten"
+        }
+      ],
+      "practiceId": "m10-practice",
+      "contentFile": "module-10.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m10-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 400,
+        "questionCount": 6
+      }
+    },
+    {
+      "id": 11,
+      "title": "Fehler & Ausnahmen in Java",
+      "subtitle": "Ausfälle in kontrollierte Abläufe verwandeln",
+      "lessons": [
+        {
+          "id": "m11-l01",
+          "title": "Einführung in die Fehlerbehandlung"
+        },
+        {
+          "id": "m11-l02",
+          "title": "Exceptions und Errors"
+        },
+        {
+          "id": "m11-l03",
+          "title": "Ausnahmen behandeln (try-catch)"
+        },
+        {
+          "id": "m11-l04",
+          "title": "Ausnahmen werfen (throw)"
+        },
+        {
+          "id": "m11-l05",
+          "title": "Zusicherungen (assert)"
+        }
+      ],
+      "practiceId": "m11-practice",
+      "contentFile": "module-11.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m11-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 410,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 12,
+      "title": "Multithreading & Nebenläufigkeit",
+      "subtitle": "Parallele Ausführung beherrschen",
+      "lessons": [
+        {
+          "id": "m12-l01",
+          "title": "Einführung in Multithreading"
+        },
+        {
+          "id": "m12-l02",
+          "title": "Threads und Prozesse in Java"
+        },
+        {
+          "id": "m12-l03",
+          "title": "Thread-Zustände und Synchronisation"
+        },
+        {
+          "id": "m12-l04",
+          "title": "Methoden isAlive und sleep"
+        },
+        {
+          "id": "m12-l05",
+          "title": "Das Schlüsselwort synchronized"
+        },
+        {
+          "id": "m12-l06",
+          "title": "Die Methode yield()"
+        },
+        {
+          "id": "m12-l07",
+          "title": "Callable und Executors nutzen"
+        }
+      ],
+      "practiceId": "m12-practice",
+      "contentFile": "module-12.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m12-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 420,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 13,
+      "title": "Algorithmen",
+      "subtitle": "Über die Effizienz von Lösungen nachdenken",
+      "lessons": [
+        {
+          "id": "m13-l01",
+          "title": "Einführung in Algorithmen"
+        },
+        {
+          "id": "m13-l02",
+          "title": "Algorithmische Komplexität (Big-O)"
+        },
+        {
+          "id": "m13-l03",
+          "title": "Dynamische Programmierung"
+        },
+        {
+          "id": "m13-l04",
+          "title": "Graphen"
+        }
+      ],
+      "practiceId": "m13-practice",
+      "contentFile": "module-13.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m13-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 430,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 14,
+      "title": "Entwurfsmuster (Design Patterns)",
+      "subtitle": "Bewährte Lösungen für typische Probleme",
+      "lessons": [
+        {
+          "id": "m14-l01",
+          "title": "Was Entwurfsmuster sind und wozu sie dienen"
+        },
+        {
+          "id": "m14-l02",
+          "title": "Erzeugungsmuster"
+        },
+        {
+          "id": "m14-l03",
+          "title": "Erbaumer-Muster (Builder)"
+        },
+        {
+          "id": "m14-l04",
+          "title": "Singleton-Muster"
+        },
+        {
+          "id": "m14-l05",
+          "title": "Strukturmuster und Proxy"
+        },
+        {
+          "id": "m14-l06",
+          "title": "Verhaltensmuster und Iterator"
+        }
+      ],
+      "practiceId": "m14-practice",
+      "contentFile": "module-14.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m14-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 440,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 15,
+      "title": "MVC-Muster & einfache Anwendung",
+      "subtitle": "Daten, Oberfläche und Logik trennen",
+      "lessons": [
+        {
+          "id": "m15-l01",
+          "title": "Einführung in das MVC-Muster"
+        },
+        {
+          "id": "m15-l02",
+          "title": "Die Präsentationsschicht (View)"
+        },
+        {
+          "id": "m15-l03",
+          "title": "Das Datenmodell (Model)"
+        },
+        {
+          "id": "m15-l04",
+          "title": "Der Controller"
+        }
+      ],
+      "practiceId": "m15-practice",
+      "contentFile": "module-15.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m15-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 450,
+        "questionCount": 7
+      }
+    },
+    {
+      "id": 16,
+      "title": "Datenbanken & SQL",
+      "subtitle": "Von Tabellen und Abfragen bis JDBC",
+      "lessons": [
+        {
+          "id": "m16-l01",
+          "title": "Einführung in SQL"
+        },
+        {
+          "id": "m16-l02",
+          "title": "Datenbanknormalisierung"
+        },
+        {
+          "id": "m16-l03",
+          "title": "JDBC verwenden"
+        },
+        {
+          "id": "m16-l04",
+          "title": "Benutzerverwaltung"
+        },
+        {
+          "id": "m16-l05",
+          "title": "Tabellenbeziehungen (JOIN)"
+        },
+        {
+          "id": "m16-l06",
+          "title": "Komplexe Abfragen"
+        },
+        {
+          "id": "m16-l07",
+          "title": "Datenbankindizes"
+        }
+      ],
+      "practiceId": "m16-practice",
+      "contentFile": "module-16.json",
+      "contentStatus": "ready",
+      "exam": {
+        "id": "m16-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 460,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 17,
+      "title": "Einführung in Spring & Spring Web",
+      "subtitle": "Die erste Webanwendung entwickeln",
+      "lessons": [
+        {
+          "id": "m17-l01",
+          "title": "Maven Build-System"
+        },
+        {
+          "id": "m17-l02",
+          "title": "Einführung in Spring"
+        },
+        {
+          "id": "m17-l03",
+          "title": "ApplicationContext, IoC und Spring Boot"
+        },
+        {
+          "id": "m17-l04",
+          "title": "GetMapping- und PostMapping-Anfragen"
+        },
+        {
+          "id": "m17-l05",
+          "title": "Spring DevTools"
+        }
+      ],
+      "practiceId": "m17-practice",
+      "contentFile": "module-17.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m17-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m17-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 470,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 18,
+      "title": "Datenbanken in Spring",
+      "subtitle": "Anwendung und Datenbank verbinden",
+      "lessons": [
+        {
+          "id": "m18-l01",
+          "title": "JdbcTemplate"
+        },
+        {
+          "id": "m18-l02",
+          "title": "Einführung in JPA"
+        },
+        {
+          "id": "m18-l03",
+          "title": "Hibernate ORM"
+        },
+        {
+          "id": "m18-l04",
+          "title": "Feldtypen in Entities"
+        },
+        {
+          "id": "m18-l05",
+          "title": "OneToOne-, OneToMany-, ManyToMany-Beziehungen"
+        },
+        {
+          "id": "m18-l06",
+          "title": "Vererbung bei Entities"
+        }
+      ],
+      "practiceId": "m18-practice",
+      "contentFile": "module-18.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m18-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m18-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 480,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 19,
+      "title": "Einführung in Spring REST",
+      "subtitle": "Eine saubere HTTP-API entwerfen",
+      "lessons": [
+        {
+          "id": "m19-l01",
+          "title": "Netzwerkprotokolle & Client-Server-Apps"
+        },
+        {
+          "id": "m19-l02",
+          "title": "Einführung in Spring REST"
+        },
+        {
+          "id": "m19-l03",
+          "title": "REST-Controller"
+        }
+      ],
+      "practiceId": "m19-practice",
+      "contentFile": "module-19.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m19-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m19-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 490,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 20,
+      "title": "Softwaretests (JUnit & Mockito)",
+      "subtitle": "Verhalten automatisch überprüfen",
+      "lessons": [
+        {
+          "id": "m20-l01",
+          "title": "Softwaretests und Testarten"
+        },
+        {
+          "id": "m20-l02",
+          "title": "Die JUnit-Bibliothek"
+        },
+        {
+          "id": "m20-l03",
+          "title": "Die Mockito-Bibliothek"
+        }
+      ],
+      "practiceId": "m20-practice",
+      "contentFile": "module-20.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m20-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m20-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 500,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 21,
+      "title": "Softwareentwicklungsprozess",
+      "subtitle": "Verstehen, wie Entwicklungsteams arbeiten",
+      "lessons": [
+        {
+          "id": "m21-l01",
+          "title": "Entwicklungsmethodologien"
+        },
+        {
+          "id": "m21-l02",
+          "title": "Waterfall und Agile"
+        },
+        {
+          "id": "m21-l03",
+          "title": "Scrum und Kanban"
+        },
+        {
+          "id": "m21-l04",
+          "title": "Teamarbeit und Rollen"
+        }
+      ],
+      "practiceId": "m21-practice",
+      "contentFile": "module-21.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m21-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m21-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 510,
+        "questionCount": 8
+      }
+    },
+    {
+      "id": 22,
+      "title": "CI/CD & Docker",
+      "subtitle": "Der Weg zur automatisierten Code-Auslieferung",
+      "lessons": [
+        {
+          "id": "m22-l01",
+          "title": "Einführung in CI/CD und Docker"
+        },
+        {
+          "id": "m22-l02",
+          "title": "Docker-Container und Images"
+        },
+        {
+          "id": "m22-l03",
+          "title": "Beispiele für CI/CD-Systeme"
+        },
+        {
+          "id": "m22-l04",
+          "title": "GitLab CI/CD-Pipelines"
+        }
+      ],
+      "practiceId": "m22-practice",
+      "contentFile": "module-22.json",
+      "contentStatus": "ready",
+      "boss": {
+        "id": "m22-boss",
+        "title": "Kontrolllektion",
+        "questionCount": 5,
+        "passingScore": 0.8
+      },
+      "exam": {
+        "id": "m22-exam",
+        "title": "Mini-Prüfung",
+        "passingPercent": 80,
+        "cooldownSeconds": 3600,
+        "xpBonus": 520,
+        "questionCount": 8
+      }
+    }
+  ]
+}

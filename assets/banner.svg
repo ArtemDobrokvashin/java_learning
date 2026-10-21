@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="100%" height="100%" role="img" aria-label="JavaДа — Интерактивный тренажёр по Java">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Фон -->
+  <rect width="1200" height="380" rx="20" fill="url(#bgGrad)"/>
+
+  <!-- Декоративная сетка и свечение -->
+  <circle cx="1020" cy="80" r="180" fill="#f97316" opacity="0.08"/>
+  <circle cx="180" cy="320" r="210" fill="#10b981" opacity="0.07"/>
+  <rect x="0" y="374" width="1200" height="6" rx="3" fill="url(#accentGrad)"/>
+
+  <!-- Левая колонка: бренд и слоган -->
+  <g transform="translate(56, 52)">
+    <!-- Бейдж версии курса -->
+    <rect x="0" y="0" width="330" height="30" rx="15" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <circle cx="18" cy="15" r="5" fill="#10b981"/>
+    <text x="32" y="20" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#cbd5e1">
+      OPEN SOURCE EDTECH · LOCAL-FIRST · UTF-8
+    </text>
+
+    <!-- Заголовок -->
+    <text x="0" y="88" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="54" font-weight="800" fill="#f8fafc" letter-spacing="-1">
+      ☕ Java<tspan fill="#f97316">Да</tspan>
+    </text>
+
+    <!-- Подзаголовок -->
+    <text x="0" y="128" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="21" font-weight="500" fill="#e2e8f0">
+      От первого <tspan font-family="monospace" fill="#38bdf8">System.out.println</tspan> до собственных Java-проектов
+    </text>
+    <text x="0" y="158" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#94a3b8">
+      Учитесь в браузере или прямо в IntelliJ IDEA с настоящим компилятором javac и единым прогрессом
+    </text>
+
+    <!-- Плашки со статистикой курса -->
+    <g transform="translate(0, 192)">
+      <rect x="0" y="0" width="125" height="68" rx="12" fill="#1e293b" stroke="#334155"/>
+      <text x="62" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#f97316">22</text>
+      <text x="62" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#94a3b8">модуля</text>
+
+      <rect x="139" y="0" width="125" height="68" rx="12" fill="#1e293b" stroke="#334155"/>
+      <text x="201" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#38bdf8">99</text>
+      <text x="201" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#94a3b8">уроков</text>
+
+      <rect x="278" y="0" width="135" height="68" rx="12" fill="#1e293b" stroke="#334155"/>
+      <text x="345" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#10b981">825</text>
+      <text x="345" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#94a3b8">заданий</text>
+
+      <rect x="427" y="0" width="145" height="68" rx="12" fill="#1e293b" stroke="#334155"/>
+      <text x="499" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="800" fill="#a855f7">22 + 5</text>
+      <text x="499" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#94a3b8">экзамена и лабы</text>
+    </g>
+  </g>
+
+  <!-- Правая колонка: карточка кода и проверки -->
+  <g transform="translate(690, 42)" filter="url(#shadow)">
+    <rect x="0" y="0" width="456" height="292" rx="14" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <!-- Шапка окна редактора -->
+    <rect x="0" y="0" width="456" height="36" rx="14" fill="#0f172a"/>
+    <circle cx="20" cy="18" r="6" fill="#ef4444"/>
+    <circle cx="38" cy="18" r="6" fill="#f59e0b"/>
+    <circle cx="56" cy="18" r="6" fill="#10b981"/>
+    <text x="228" y="23" text-anchor="middle" font-family="monospace" font-size="13" fill="#94a3b8">Main.java — Web &amp; IntelliJ IDEA</text>
+
+    <!-- Код -->
+    <g transform="translate(22, 62)" font-family="monospace" font-size="14">
+      <text x="0" y="0" fill="#c084fc">public class <tspan fill="#38bdf8">Main</tspan> <tspan fill="#cbd5e1">{</tspan></text>
+      <text x="18" y="24" fill="#c084fc">public static void <tspan fill="#fbbf24">main</tspan><tspan fill="#cbd5e1">(String[] args) {</tspan></text>
+      <text x="36" y="48" fill="#38bdf8">String <tspan fill="#f8fafc">mode</tspan> <tspan fill="#94a3b8">=</tspan> <tspan fill="#4ade80">"Browser + IDEA"</tspan><tspan fill="#cbd5e1">;</tspan></text>
+      <text x="36" y="72" fill="#f97316">int <tspan fill="#f8fafc">xp</tspan> <tspan fill="#94a3b8">=</tspan> <tspan fill="#fbbf24">50</tspan><tspan fill="#cbd5e1">;</tspan></text>
+      <text x="36" y="96" fill="#f8fafc">System.out.println(<tspan fill="#4ade80">"✓ Зачтено: +"</tspan> + xp + <tspan fill="#4ade80">" XP"</tspan>);</text>
+      <text x="18" y="120" fill="#cbd5e1">}</text>
+      <text x="0" y="144" fill="#cbd5e1">}</text>
+    </g>
+
+    <!-- Статус проверки внизу карточки -->
+    <rect x="18" y="226" width="420" height="48" rx="10" fill="#064e3b" opacity="0.65" stroke="#10b981" stroke-width="1"/>
+    <text x="34" y="247" font-family="monospace" font-size="13" font-weight="700" fill="#34d399">
+      ✓ javac &amp; JUnit 5: все проверки пройдены (84 мс)
+    </text>
+    <text x="34" y="265" font-family="sans-serif" font-size="12" fill="#a7f3d0">
+      Синхронизировано с .javada/progress.json · Серия: 7 дней 🔥
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+name: 💡 Предложить улучшение (Feature Request)
+description: Идея новой задачи, функции тренажёра, плагина IDEA или Android-приложения
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: К какой части проекта относится идея?
+      options:
+        - Курс и задания (новые темы, уроки, проекты)
+        - Веб-тренажёр (интерфейс, геймификация)
+        - Плагин для IntelliJ IDEA
+        - Android-приложение «JavaДа Mobile»
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Описание предложения
+      description: Опишите, какую задачу решает улучшение и как оно должно работать.
+    validations:
+      required: true

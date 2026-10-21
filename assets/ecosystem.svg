@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 280" width="100%" height="100%" role="img" aria-label="Архитектура экосистемы JavaДа">
+  <defs>
+    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="280" rx="16" fill="#0b1120"/>
+
+  <!-- Блок 1: Веб-тренажёр -->
+  <g transform="translate(32, 36)">
+    <rect width="290" height="208" rx="14" fill="url(#boxGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#38bdf8">🌐 Веб-тренажёр (Браузер)</text>
+    <text x="24" y="68" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Быстрый старт без настройки IDE</text>
+    <text x="24" y="94" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• 6 интерактивных форматов задач</text>
+    <text x="24" y="120" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Редактор CodeMirror 5 + Prism</text>
+    <text x="24" y="146" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Локальный Flask-сервер (server.py)</text>
+    <text x="24" y="182" font-family="monospace" font-size="12" fill="#94a3b8">http://localhost:8000</text>
+  </g>
+
+  <!-- Стрелки связи 1 -->
+  <g transform="translate(326, 120)">
+    <line x1="8" y1="12" x2="62" y2="12" stroke="#34d399" stroke-width="2.5" stroke-dasharray="5,4"/>
+    <polygon points="62,7 72,12 62,17" fill="#34d399"/>
+    <polygon points="12,7 2,12 12,17" fill="#34d399"/>
+    <text x="37" y="0" text-anchor="middle" font-family="monospace" font-size="11" fill="#6ee7b7">sync</text>
+  </g>
+
+  <!-- Центральный блок: Единое ядро курса и прогресса -->
+  <g transform="translate(402, 24)">
+    <rect width="276" height="232" rx="14" fill="url(#centerGrad)" stroke="#10b981" stroke-width="2"/>
+    <text x="138" y="36" text-anchor="middle" font-family="system-ui, sans-serif" font-size="17" font-weight="800" fill="#ecfdf5">
+      🔄 Единый профиль и курс
+    </text>
+    <rect x="22" y="52" width="232" height="32" rx="8" fill="#064e3b"/>
+    <text x="138" y="73" text-anchor="middle" font-family="monospace" font-size="13" font-weight="600" fill="#6ee7b7">
+      .javada/progress.json
+    </text>
+    <text x="24" y="108" font-family="system-ui, sans-serif" font-size="13" fill="#d1fae5">• Атомарная запись (ATOMIC_MOVE)</text>
+    <text x="24" y="132" font-family="system-ui, sans-serif" font-size="13" fill="#d1fae5">• Идемпотентный реестр xpLedger</text>
+    <text x="24" y="156" font-family="system-ui, sans-serif" font-size="13" fill="#d1fae5">• Общие черновики Main.java</text>
+    <text x="24" y="180" font-family="system-ui, sans-serif" font-size="13" fill="#d1fae5">• 22 модуля JSON + lab_cases.json</text>
+    <text x="24" y="208" font-family="monospace" font-size="12" fill="#a7f3d0">📱 + Android App (Jetpack Compose)</text>
+  </g>
+
+  <!-- Стрелки связи 2 -->
+  <g transform="translate(682, 120)">
+    <line x1="8" y1="12" x2="62" y2="12" stroke="#f97316" stroke-width="2.5" stroke-dasharray="5,4"/>
+    <polygon points="62,7 72,12 62,17" fill="#f97316"/>
+    <polygon points="12,7 2,12 12,17" fill="#f97316"/>
+    <text x="37" y="0" text-anchor="middle" font-family="monospace" font-size="11" fill="#fdba74">WatchService</text>
+  </g>
+
+  <!-- Блок 3: Плагин IntelliJ IDEA -->
+  <g transform="translate(758, 36)">
+    <rect width="290" height="208" rx="14" fill="url(#boxGrad)" stroke="#f97316" stroke-width="1.5"/>
+    <text x="24" y="38" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#fb923c">🧩 Плагин IntelliJ IDEA</text>
+    <text x="24" y="68" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Полная замена браузера в IDE</text>
+    <text x="24" y="94" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Split View теории (Markdown/HTML)</text>
+    <text x="24" y="120" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Нативный javac/java + JUnit 5</text>
+    <text x="24" y="146" font-family="system-ui, sans-serif" font-size="13" fill="#cbd5e1">• Автономная работа без сервера</text>
+    <text x="24" y="182" font-family="monospace" font-size="12" fill="#94a3b8">Kotlin · JDK 25 · IDEA 2025.3+</text>
+  </g>
+</svg>

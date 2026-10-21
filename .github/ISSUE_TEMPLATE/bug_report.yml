@@ -1,0 +1,36 @@
+name: 🐛 Сообщить об ошибке (Bug Report)
+description: Ошибка в задании, теории, веб-тренажёре или плагине IntelliJ IDEA
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Где возникла ошибка?
+      options:
+        - Веб-тренажёр (Браузер / Flask server.py)
+        - Плагин для IntelliJ IDEA (Kotlin)
+        - Контент курса (теория, условие задачи, тест или экзамен)
+        - Лабораторные работы / Стартовые проекты
+    validations:
+      required: true
+
+  - type: input
+    id: task_id
+    attributes:
+      label: ID урока или задания (если применимо)
+      placeholder: Например: m03-l02-hardcore или lab-array-report
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Описание проблемы
+      description: Что произошло и какой результат ожидался?
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Окружение (ОС, версия JDK, Python / IntelliJ IDEA)
+      placeholder: "ОС: Windows 11 / macOS / Ubuntu\nJDK: Temurin 21\nIDEA: 2025.3"

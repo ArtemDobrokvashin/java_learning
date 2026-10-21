@@ -1,0 +1,831 @@
+{
+  "id": 8,
+  "title": "Polimorfismo y Generics",
+  "lessons": [
+    {
+      "id": "m08-l01",
+      "title": "Introducción al polimorfismo",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Teoría] Полиморфизм позволяет использовать разные реализации через один общий тип. Ссылка Animal может указывать на Dog или Cat; вызов переопределённого метода выбирает поведение реального объекта.",
+          "[Teoría] Это сокращает ветвления по типу: вместо if для каждого подкласса вызывайте общий метод. Для полиморфного вызова метод должен быть экземплярным; static-методы разрешаются по типу ссылки и не дают такого поведения."
+        ],
+        "code": "Animal[] pets = { new Dog(), new Cat() };\nfor (Animal pet : pets) {\n    System.out.println(pet.sound());\n}",
+        "caption": "Один вызов — разное поведение.",
+        "language": "java",
+        "objective": "[Objetivo] Вызвать одноимённую операцию разных объектов через общий родительский тип.",
+        "walkthrough": "[Análisis] В массиве Animal[] лежат Dog и Cat. На каждой итерации pet.sound() выполняет метод реального объекта, хотя переменная pet имеет тип Animal.",
+        "pitfall": "[Error común] Не проверяйте каждый тип через instanceof, если общий виртуальный метод уже выражает нужное действие.",
+        "deepDive": "[En profundidad] Полиморфная переменная сообщает клиенту, какие операции доступны, а конкретный объект определяет их реализацию. Новый подкласс должен выполнять обещания общего типа, иначе замена сломает код, ожидающий контракт Animal.",
+        "useCase": "[Caso práctico] Для нескольких способов оплаты определите общий метод pay(amount) и протестируйте его для каждой реализации. Клиенту не нужны проверки имени класса, если все реализации соблюдают одинаковые условия оплаты.",
+        "guide": {
+          "why": "[Guía paso a paso] Полиморфизм убирает длинный список if по видам объектов: код вызывает общий метод, а каждый тип отвечает своей реализацией.",
+          "steps": [
+            "Crea массив ссылок общего типа Animal, но положите в него разные конкретные объекты.",
+            "Цикл for-each берёт по одному элементу. Вызов pet.sound() выбирает метод реального класса, затем println показывает полученный текст."
+          ],
+          "example": {
+            "code": "class Animal { String sound() { return \"?\"; } }\nclass Cat extends Animal { String sound() { return \"Мяу\"; } }\nclass Bird extends Animal { String sound() { return \"Чирик\"; } }\n// внутри main:\nAnimal[] pets = { new Cat(), new Bird() };\nfor (Animal pet : pets) System.out.println(pet.sound());",
+            "language": "java",
+            "runnable": false,
+            "label": "Массив общего типа и разные реализации"
+          },
+          "result": "На двух строках появятся «Мяу» и «Чирик». Порядок вывода соответствует порядку элементов массива.",
+          "bridge": "В упражнении укажите общий тип для разных животных; в практике тем же способом вызовите area() у фигур и соберите итог."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m08-l01-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "class Animal { String sound() { return \"?\"; } }\nclass Cat extends Animal { String sound() { return \"Мяу\"; } }\nclass Bird extends Animal { String sound() { return \"Чирик\"; } }\n// внутри main:\nAnimal[] pets = { new Cat(), new Bird() };\nfor (Animal pet : pets) System.out.println(pet.sound());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. На двух строках появятся «Мяу» и «Чирик». Порядок вывода соответствует порядку элементов массива."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что выбирает реализацию переопределённого метода?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Имя переменной"
+            },
+            {
+              "id": "b",
+              "label": "Реальный класс объекта"
+            },
+            {
+              "id": "c",
+              "label": "Порядок импортов"
+            },
+            {
+              "id": "d",
+              "label": "Имя файла"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] В массиве ссылки одного типа могут указывать на разные объекты.",
+          "explanation": "[Explicación] Динамическая диспетчеризация учитывает реальный тип объекта.",
+          "id": "m08-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Usa общий тип для разных животных.",
+          "template": [
+            "",
+            " pet = new Dog();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Animal",
+              "options": [
+                "Animal",
+                "Dog[]",
+                "static"
+              ]
+            }
+          ],
+          "hint": "[Pista] Dog является подтипом Animal.",
+          "explanation": "[Explicación] Ссылка базового типа может хранить подкласс.",
+          "id": "m08-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m08-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Animal[] содержит Cat и Bird с переопределённым sound(). Что выберет вызов sound() в цикле?",
+          "options": [
+            {
+              "id": "a",
+              "label": "метод по типу каждого объекта"
+            },
+            {
+              "id": "b",
+              "label": "метод только класса Animal"
+            },
+            {
+              "id": "c",
+              "label": "первый для обоих"
+            },
+            {
+              "id": "d",
+              "label": "ошибка приведения"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Полиморфизм выбирает реализацию при исполнении для реального объекта.",
+          "explanation": "[Explicación] Верно: метод по типу каждого объекта. Полиморфизм выбирает реализацию при исполнении для реального объекта."
+        },
+        {
+          "id": "m08-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m08-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Tarea] Сделайте Animal.sound(), две реализации Cat → «Мяу» и Bird → «Чирик». Сохраните Cat и Bird в массиве Animal[] и выведите результаты sound() через запятую.",
+          "expectedOutput": "Мяу,Чирик",
+          "hint": "[Pista] Обходите массив общим типом, а не проверяйте класс каждого объекта через instanceof.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: 'Мяу,Чирик'. Обходите массив общим типом, а не проверяйте класс каждого объекта через instanceof."
+        }
+      ]
+    },
+    {
+      "id": "m08-l02",
+      "title": "Polimorfismo en Java",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "En Java, перегрузка (overload) — методы с одним именем, но разными параметрами; выбор происходит во время компиляции. Переопределение (override) меняет реализацию унаследованного экземплярного метода.",
+          "[Teoría] Полиморфизм времени выполнения связан именно с переопределением. При работе с общим интерфейсом клиенту не нужно знать детали каждой реализации; добавление нового класса обычно не меняет цикл обработки."
+        ],
+        "code": "interface Shape { int area(); }\nclass Square implements Shape {\n    public int area() { return 4; }\n}",
+        "caption": "Overload и override — разные механизмы.",
+        "language": "java",
+        "objective": "[Objetivo] Различить перегрузку и переопределение и вызвать реализацию через интерфейс.",
+        "walkthrough": "[Análisis] Square implements Shape обещает area(), возвращающий int. При Shape shape = new Square() вызов shape.area() возвращает 4 без знания о классе Square.",
+        "pitfall": "[Error común] Одинаковое имя метода с разными аргументами — перегрузка, а не override; добавляйте @Override при переопределении.",
+        "deepDive": "[En profundidad] Перегрузка выбирается по объявленным типам аргументов при компиляции, а переопределение — по типу получателя при выполнении. Эти механизмы могут встретиться вместе: сначала находится сигнатура метода, затем её реализация.",
+        "useCase": "[Caso práctico] Если вызов через интерфейс ведёт себя неожиданно, выпишите тип переменной, тип аргументов и реальный класс объекта. Это поможет отличить не ту перегрузку от неверного переопределения.",
+        "guide": {
+          "why": "[Guía paso a paso] Не путайте перегрузку с переопределением. У перегрузки разные параметры и выбор при компиляции; у переопределения та же сигнатура и выбор во время выполнения.",
+          "steps": [
+            "Интерфейс Shape требует public int area(). Класс Circle реализует именно этот метод; другой список параметров не выполнил бы контракт.",
+            "Переменная Shape shape видит area() из интерфейса, а тело Circle выполняется благодаря реальному типу созданного объекта."
+          ],
+          "example": {
+            "code": "interface Shape { int area(); }\nclass Circle implements Shape {\n    public int area() { return 7; }\n}\n// внутри main:\nShape shape = new Circle();\nSystem.out.println(shape.area());",
+            "language": "java",
+            "runnable": false,
+            "label": "Интерфейс и реализация в конкретном классе"
+          },
+          "result": "На экране 7. Если переименовать метод в Circle или убрать public, класс не выполнит требования интерфейса.",
+          "bridge": "В мини-задании вызывайте area() через переменную общего типа, а в практике реализуйте один метод у разных фигур с их собственными результатами."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m08-l02-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "interface Shape { int area(); }\nclass Circle implements Shape {\n    public int area() { return 7; }\n}\n// внутри main:\nShape shape = new Circle();\nSystem.out.println(shape.area());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. На экране 7. Если переименовать метод в Circle или убрать public, класс не выполнит требования интерфейса."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Какая операция демонстрирует override?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Два метода print(int) и print(String)"
+            },
+            {
+              "id": "b",
+              "label": "Новая реализация area() в Square"
+            },
+            {
+              "id": "c",
+              "label": "Переименование переменной"
+            },
+            {
+              "id": "d",
+              "label": "Создание массива"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Нужна реализация метода из базового типа.",
+          "explanation": "[Explicación] Square.area() реализует контракт Shape.",
+          "id": "m08-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Tarea] Вызовите метод интерфейса у переменной shape.",
+          "template": [
+            "int size = shape",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": ".area",
+              "options": [
+                ".area",
+                ".class",
+                ".new"
+              ]
+            }
+          ],
+          "hint": "[Pista] Площадь возвращает метод area().",
+          "explanation": "[Explicación] Вызов shape.area() динамически выбирает реализацию.",
+          "id": "m08-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m08-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Shape[] содержит Square.area()=9 и Triangle.area()=6. Чему равна сумма вызовов через общий тип?",
+          "options": [
+            {
+              "id": "a",
+              "label": "0"
+            },
+            {
+              "id": "b",
+              "label": "6"
+            },
+            {
+              "id": "c",
+              "label": "9"
+            },
+            {
+              "id": "d",
+              "label": "15"
+            }
+          ],
+          "correct": [
+            "d"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Интерфейс гарантирует наличие метода, хотя реализации различаются.",
+          "explanation": "[Explicación] Верно: 15. Интерфейс гарантирует наличие метода, хотя реализации различаются."
+        },
+        {
+          "id": "m08-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m08-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Crea интерфейс Shape с int area() и реализации Square → 9, Triangle → 6. Поместите их в Shape[] и выведите сумму двух вызовов area().",
+          "expectedOutput": "15",
+          "hint": "[Pista] Метод реализации интерфейса объявляйте public; сумма вычисляется по объектам общего типа.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: '15'. Метод реализации интерфейса объявляйте public; сумма вычисляется по объектам общего типа."
+        }
+      ]
+    },
+    {
+      "id": "m08-l03",
+      "title": "Generics — tipos parametrizados",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "Обобщённые типы (generics) позволяют описывать контейнеры и методы с параметром типа: Box<String> хранит String. El compilador verifica совместимость и избавляет от небезопасных приведения типов.",
+          "[Teoría] Типовой параметр <T> известен компилятору, а при выполнении чаще стирается (type erasure). Не используйте raw-тип Box без параметра: это ослабляет проверку. Для ограничения возможностей T применяют extends, например <T extends Number>."
+        ],
+        "code": "class Box<T> {\n    T value;\n    Box(T value) { this.value = value; }\n}\nBox<String> box = new Box<>(\"Java\");",
+        "caption": "Generics ловит несоответствие типов заранее.",
+        "language": "java",
+        "objective": "[Objetivo] Создать типобезопасный Box<String> и объяснить проверку типов компилятором.",
+        "walkthrough": "[Análisis] Box<String> box = new Box<>(\"Java\") подставляет String вместо T. Попытка создать Box<String> с числом 42 будет отвергнута ещё при компиляции.",
+        "pitfall": "[Error común] Raw-тип Box без <String> отключает полезную проверку и может привести к ClassCastException позже.",
+        "deepDive": "[En profundidad] Параметр типа позволяет компилятору сохранять связь между входом и результатом без ручного приведения. Но List<Dog> не становится List<Animal>: иначе в него можно было бы добавить Cat и сломать гарантию типа.",
+        "useCase": "[Caso práctico] Для хранения строк объявите Box<String> и попробуйте передать число: ошибку видно до запуска. Если метод только читает разные подтипы Animal, изучите <? extends Animal>, не переходя к raw-типу.",
+        "guide": {
+          "why": "[Guía paso a paso] Обобщённый тип помогает компилятору проверить, что контейнер получает и возвращает ожидаемое значение, без небезопасного приведения к String.",
+          "steps": [
+            "T в Box<T> — место для типа, который будет указан при использовании класса. Поле и конструктор обязаны использовать тот же T.",
+            "Для Box<Integer> поле становится целым значением на уровне проверки типов. get() возвращает T, поэтому результат можно передать прямо в println."
+          ],
+          "example": {
+            "code": "class Box<T> {\n    private T value;\n    Box(T value) { this.value = value; }\n    T get() { return value; }\n}\n// внутри main:\nBox<Integer> box = new Box<>(42);\nSystem.out.println(box.get());",
+            "language": "java",
+            "runnable": false,
+            "label": "Класс с параметром типа и вызов из main"
+          },
+          "result": "Вывод 42. Попытка передать строку в Box<Integer> не пройдёт проверку типов при компиляции.",
+          "bridge": "В мини-задании укажите параметр типа для строк. В практике повторите класс Box с T, но создайте экземпляр с другим конкретным типом."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m08-l03-copy",
+          "type": "copy",
+          "prompt": "Transcribe manualmente el ejemplo paso a paso mostrado abajo. Conserva el orden de las instrucciones, los nombres, los literales de texto y la sangría.",
+          "sourceCode": "class Box<T> {\n    private T value;\n    Box(T value) { this.value = value; }\n    T get() { return value; }\n}\n// внутри main:\nBox<Integer> box = new Box<>(42);\nSystem.out.println(box.get());",
+          "language": "java",
+          "hint": "Compara las instrucciones, mayúsculas/minúsculas, comillas y llaves de cierre con el modelo. Solo puede variar el formato de espacios.",
+          "explanation": "Este es el mismo fragmento explicado en la teoría. Вывод 42. Попытка передать строку в Box<Integer> не пройдёт проверку типов при компиляции."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Tarea] Что гарантирует Box<String> при присваивании value?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Только числа"
+            },
+            {
+              "id": "b",
+              "label": "Проверку типа String компилятором"
+            },
+            {
+              "id": "c",
+              "label": "Наличие main в Box"
+            },
+            {
+              "id": "d",
+              "label": "Автоматическое наследование String"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Посмотрите на параметр типа внутри угловых скобок.",
+          "explanation": "[Explicación] Компилятор не даст положить int в Box<String>.",
+          "id": "m08-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Crea типобезопасный контейнер строк.",
+          "template": [
+            "Box<",
+            "> box = new Box<>(\"Java\");"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "String",
+              "options": [
+                "String",
+                "int",
+                "void"
+              ]
+            }
+          ],
+          "hint": "[Pista] В угловых скобках нужен ссылочный тип.",
+          "explanation": "[Explicación] Box<String> хранит строковое значение.",
+          "id": "m08-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m08-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Tarea] Что вернёт Box<String>.get(), если объект хранит строку «Java»?",
+          "options": [
+            {
+              "id": "a",
+              "label": "String без явного cast"
+            },
+            {
+              "id": "b",
+              "label": "Object, обязательно cast"
+            },
+            {
+              "id": "c",
+              "label": "Integer"
+            },
+            {
+              "id": "d",
+              "label": "ошибка параметра типа"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Pista] Параметр типа фиксирует тип хранимого значения при компиляции.",
+          "explanation": "[Explicación] Верно: String без явного cast. Параметр типа фиксирует тип хранимого значения при компиляции."
+        },
+        {
+          "id": "m08-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m08-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите обобщённый Box<T> с конструктором и get(). Crea Box<String> со значением «Код» и Box<Integer> со значением 7. Imprime их содержимое через двоеточие.",
+          "expectedOutput": "Код:7",
+          "hint": "[Pista] Один класс принимает разные параметры типа; вызов get() возвращает нужный тип без cast.",
+          "explanation": "[Explicación] Сопоставьте свой результат с ожидаемым выводом: 'Код:7'. Один класс принимает разные параметры типа; вызов get() возвращает нужный тип без cast."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Práctica final del módulo 8",
+    "description": "Usa общий тип и типобезопасные контейнеры.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Что произойдёт при Animal a = new Dog(); a.sound(), если sound переопределён?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Вызовется Dog.sound()"
+          },
+          {
+            "id": "b",
+            "label": "Всегда Animal.sound()"
+          },
+          {
+            "id": "c",
+            "label": "Метод не найдётся"
+          },
+          {
+            "id": "d",
+            "label": "Оба метода одновременно"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Pista] Смотрите на тип объекта после new.",
+        "explanation": "[Explicación] Динамический вызов идёт в Dog.",
+        "id": "m08-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "Declara список строк без raw-типа.",
+        "template": [
+          "java.util.List<",
+          "> words = new java.util.ArrayList<>();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "String",
+            "options": [
+              "String",
+              "int",
+              "void"
+            ]
+          }
+        ],
+        "hint": "[Pista] В generics используются ссылочные классы.",
+        "explanation": "[Explicación] List<String> хранит строки с проверкой типов.",
+        "id": "m08-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Соедините термин и определение.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Полиморфизм",
+            "right": "Разное поведение через общий тип"
+          },
+          {
+            "id": "2",
+            "left": "Override",
+            "right": "Новая реализация унаследованного метода"
+          },
+          {
+            "id": "3",
+            "left": "Overload",
+            "right": "Одинаковое имя с разными параметрами"
+          },
+          {
+            "id": "4",
+            "left": "Generics",
+            "right": "Параметр типа с проверкой компилятором"
+          }
+        ],
+        "hint": "[Pista] Различайте выбор метода во время компиляции и выполнения.",
+        "explanation": "[Explicación] Все четыре механизма помогают расширяемости по-разному.",
+        "id": "m08-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите реализацию интерфейса Shape.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Square implements Shape {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "public int area() {"
+          },
+          {
+            "id": "d",
+            "text": "return 4;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Сигнатура интерфейса public, а return внутри метода.",
+        "explanation": "[Explicación] Square реализует метод area из Shape.",
+        "id": "m08-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Tarea] Какие утверждения о generics верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "List<String> проверяет тип элементов"
+          },
+          {
+            "id": "b",
+            "label": "В Box<T> T — параметр типа"
+          },
+          {
+            "id": "c",
+            "label": "Raw-типы усиливают безопасность"
+          },
+          {
+            "id": "d",
+            "label": "Обобщения уменьшают необходимость cast"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Pista] Raw-тип отключает часть проверки компилятора.",
+        "explanation": "[Explicación] Generics сохраняет типовую информацию для проверки при компиляции.",
+        "id": "m08-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Crea интерфейс Shape с int area() и две реализации: Square.area() = 4, Rectangle.area() = 5. Поместите их в Shape[] и выведите сумму площадей.",
+        "starterCode": "interface Shape { int area(); }\nclass Square implements Shape { public int area() { return 4; } }\nclass Rectangle implements Shape { public int area() { return 5; } }\npublic class Main {\n    public static void main(String[] args) {\n        Shape[] shapes = { new Square(), new Rectangle() };\n        // Выведите сумму площадей\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "9",
+        "hint": "[Pista] Переберите массив Shape[] циклом и суммируйте area() каждого элемента.",
+        "explanation": "[Explicación] Полиморфные вызовы дали 4 + 5 = 9.",
+        "id": "m08-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Crea обобщённый класс Box<T> с полем value, конструктором и методом get(). Crea Box<String>(\"Java\") и выведите содержимое.",
+        "starterCode": "class Box<T> {\n    private T value;\n    Box(T value) { this.value = value; }\n    T get() {\n        // Верните value\n        return null;\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Создайте Box<String> и выведите get()\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Java",
+        "hint": "Usa T для поля, параметра конструктора и типа результата get().",
+        "explanation": "[Explicación] Box<String> вернул строку Java.",
+        "id": "m08-p07"
+      }
+    ],
+    "id": "m08-practice",
+    "primer": {
+      "why": "Две техники решают разные задачи: общий интерфейс позволяет вызвать один метод у разных объектов, а Box<T> сохраняет тип того, что лежит в контейнере.",
+      "steps": [
+        "Crea интерфейс Scored с int score(), несколько реализаций и массив Scored[]. Цикл for-each вызовет метод у каждого объекта.",
+        "При объявлении Box<Integer> подставьте T = Integer в поле, конструктор и get(). Для хранения строки понадобится другой аргумент типа."
+      ],
+      "example": {
+        "code": "interface Scored { int score(); }\nclass First implements Scored { public int score() { return 3; } }\nclass Second implements Scored { public int score() { return 8; } }\nclass Box<T> {\n    private final T value;\n    Box(T value) { this.value = value; }\n    T get() { return value; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        int sum = 0;\n        for (Scored item : new Scored[]{new First(), new Second()}) sum += item.score();\n        System.out.println(sum);\n        System.out.println(new Box<Integer>(5).get());\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "11\n5"
+      },
+      "result": "Выведутся 11 и 5. Интерфейс отвечает за поведение, обобщение — за проверку типа данных при компиляции.",
+      "hints": [
+        {
+          "taskId": "m08-p06",
+          "text": "Для Shape[] объедините две реализации area() через общий интерфейс и складывайте результаты вызовов внутри цикла."
+        },
+        {
+          "taskId": "m08-p07",
+          "text": "Для Box<T> примените ту же заготовку полей и методов, но подставьте String и вызовите get() без приведения типов."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m08-exam",
+    "title": "Mini-examen",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 380,
+    "tasks": [
+      {
+        "id": "m-exam-08-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Tarea] Что вернёт Box<String>.get(), если объект хранит строку «Java»?",
+        "options": [
+          {
+            "id": "a",
+            "label": "String без явного cast"
+          },
+          {
+            "id": "b",
+            "label": "Object, обязательно cast"
+          },
+          {
+            "id": "c",
+            "label": "Integer"
+          },
+          {
+            "id": "d",
+            "label": "ошибка параметра типа"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Pista] Параметр типа фиксирует тип хранимого значения при компиляции.",
+        "explanation": "[Explicación] Верно: String без явного cast. Параметр типа фиксирует тип хранимого значения при компиляции."
+      },
+      {
+        "type": "fill",
+        "prompt": "Usa общий тип для разных животных.",
+        "template": [
+          "",
+          " pet = new Dog();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Animal",
+            "options": [
+              "Animal",
+              "Dog[]",
+              "static"
+            ]
+          }
+        ],
+        "hint": "[Pista] Dog является подтипом Animal.",
+        "explanation": "[Explicación] Ссылка базового типа может хранить подкласс.",
+        "id": "m-exam-08-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Tarea] Соедините термин и определение.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Полиморфизм",
+            "right": "Разное поведение через общий тип"
+          },
+          {
+            "id": "2",
+            "left": "Override",
+            "right": "Новая реализация унаследованного метода"
+          },
+          {
+            "id": "3",
+            "left": "Overload",
+            "right": "Одинаковое имя с разными параметрами"
+          },
+          {
+            "id": "4",
+            "left": "Generics",
+            "right": "Параметр типа с проверкой компилятором"
+          }
+        ],
+        "hint": "[Pista] Различайте выбор метода во время компиляции и выполнения.",
+        "explanation": "[Explicación] Все четыре механизма помогают расширяемости по-разному.",
+        "id": "m-exam-08-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Tarea] Соберите реализацию интерфейса Shape.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Square implements Shape {"
+          },
+          {
+            "id": "b",
+            "text": "@Override"
+          },
+          {
+            "id": "c",
+            "text": "public int area() {"
+          },
+          {
+            "id": "d",
+            "text": "return 4;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Pista] Сигнатура интерфейса public, а return внутри метода.",
+        "explanation": "[Explicación] Square реализует метод area из Shape.",
+        "id": "m-exam-08-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Crea интерфейс Metric с value(). Реализуйте Fixed(int), возвращающий сохранённое\nчисло, и DoubleMetric(int), возвращающий удвоенное число. Crea Box<T> с конструктором\nи get(). Поместите в List<Metric> объекты Fixed(1), DoubleMetric(5), Fixed(3).\nМетод total(List<? extends Metric>) складывает value(). Оберните результат в Box<Integer>.\nImprime сумму из Box и количество метрик — две строки. Без raw-типов и приведений.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "14\n3",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n14\n3",
+        "id": "m-exam-08-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nCrea интерфейс Metric с value(). Реализуйте Fixed(int), возвращающий сохранённое\nчисло, и DoubleMetric(int), возвращающий удвоенное число. Crea Box<T> с конструктором\nи get(). Поместите в List<Metric> объекты Fixed(2), DoubleMetric(5), Fixed(3).\nМетод total(List<? extends Metric>) складывает value(). Оберните результат в Box<Integer>.\nImprime сумму из Box и количество метрик — две строки. Без raw-типов и приведений.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "15\n3",
+        "hint": "[Pista] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Verifica вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n15\n3",
+        "id": "m-exam-08-06"
+      }
+    ]
+  }
+}

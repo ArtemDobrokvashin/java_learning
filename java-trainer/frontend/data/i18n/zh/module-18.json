@@ -1,0 +1,1452 @@
+{
+  "id": 18,
+  "title": "Spring 数据库开发",
+  "lessons": [
+    {
+      "id": "m18-l01",
+      "title": "JdbcTemplate 模板操作",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】JdbcTemplate упрощает работу с JDBC: управляет закрытием ресурсов и выполняет запросы с параметрами. Его query(...) обрабатывает строки через RowMapper, а update(...) подходит для изменения данных.",
+          "【核心理论】Даже с JdbcTemplate всё ещё нужен JDBC-драйвер конкретной базы. Параметры передаются отдельно от текста запроса: не склеивайте SQL с пользовательским вводом."
+        ],
+        "code": "jdbcTemplate.query(\"SELECT id, name FROM users WHERE id = ?\",\n    (rs, row) -> new User(rs.getLong(\"id\"), rs.getString(\"name\")), id);",
+        "caption": "JdbcTemplate уменьшает рутинный JDBC-код.",
+        "language": "java",
+        "objective": "【学习目标】Прочитать результат SQL-запроса через JdbcTemplate и RowMapper.",
+        "walkthrough": "【代码走读】query подставляет id в параметр ? и вызывает лямбду для каждой строки; из столбцов id и name создаются объекты User. Возвращается список объектов.",
+        "pitfall": "【常见陷阱】JdbcTemplate избавляет от части boilerplate, но не заменяет драйвер БД и DataSource: для настоящего запроса нужно подключение.",
+        "deepDive": "【深入解析】JdbcTemplate берёт на себя повторяющийся код выполнения запроса, но RowMapper по-прежнему отвечает за сопоставление столбцов и полей. Параметр ? защищает именно значения; корректность SQL и структура ответа остаются ответственностью разработчика.",
+        "useCase": "【实际应用】Получите пользователя по ID и проверьте, что произойдёт при нуле или нескольких строках. Для набора связанных изменений используйте транзакцию: автоматическое закрытие соединения само по себе не гарантирует целостность операции.",
+        "guide": {
+          "why": "【分步指南】JdbcTemplate сокращает шаблонный код JDBC, но запрос, параметры и перевод каждой строки ResultSet в Java-объект остаются вашей ответственностью.",
+          "steps": [
+            "Оставьте ? в SQL и передайте id отдельно: значения не конкатенируются в запрос.",
+            "Лямбда (rs, rowNum) читает колонки ResultSet и создаёт User. query возвращает список; при одном результате учитывайте случай пустого ответа."
+          ],
+          "example": {
+            "code": "List<User> users = jdbcTemplate.query(\n    \"SELECT id, name FROM users WHERE active = ?\",\n    (rs, rowNum) -> new User(rs.getLong(\"id\"), rs.getString(\"name\")),\n    true);",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент Spring JDBC; зависимость и БД обязательны"
+          },
+          "result": "Для двух активных строк список получит два User. Нужны User, таблица users, JdbcTemplate и подключение к СУБД.",
+          "bridge": "В практике без Spring сами составьте List из объектов или Map и примените тот же принцип отбора активных записей."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l01-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "List<User> users = jdbcTemplate.query(\n    \"SELECT id, name FROM users WHERE active = ?\",\n    (rs, rowNum) -> new User(rs.getLong(\"id\"), rs.getString(\"name\")),\n    true);",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Для двух активных строк список получит два User. Нужны User, таблица users, JdbcTemplate и подключение к СУБД."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что делает RowMapper в JdbcTemplate?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Переводит строку результата в объект"
+            },
+            {
+              "id": "b",
+              "label": "Создаёт HTML"
+            },
+            {
+              "id": "c",
+              "label": "Запускает Docker"
+            },
+            {
+              "id": "d",
+              "label": "Заменяет JDK"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Смотрите на ResultSet rs и создание User.",
+          "explanation": "【解析】RowMapper преобразует каждую строку ResultSet в Java-объект.",
+          "id": "m18-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Выберите метод JdbcTemplate для INSERT/UPDATE.",
+          "template": [
+            "jdbcTemplate.",
+            "(\"UPDATE users SET name = ? WHERE id = ?\", name, id);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "update",
+              "options": [
+                "update",
+                "query",
+                "toString"
+              ]
+            }
+          ],
+          "hint": "【提示】Нужна операция изменения данных.",
+          "explanation": "【解析】update выполняет DML и возвращает число затронутых строк.",
+          "id": "m18-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Зачем JdbcTemplate предоставляет операции query с RowMapper вместо ручного чтения каждого ResultSet повсюду?",
+          "options": [
+            {
+              "id": "a",
+              "label": "чтобы отделить извлечение и преобразование строк"
+            },
+            {
+              "id": "b",
+              "label": "чтобы никогда не соединяться с БД"
+            },
+            {
+              "id": "c",
+              "label": "чтобы хранить SQL в браузере"
+            },
+            {
+              "id": "d",
+              "label": "чтобы отменить параметры ?"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】RowMapper описывает преобразование строки результата в объект.",
+          "explanation": "【解析】Верно: чтобы отделить извлечение и преобразование строк. RowMapper описывает преобразование строки результата в объект."
+        },
+        {
+          "id": "m18-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте JdbcTemplate без Spring: Map<Integer,String> хранит 1→«Мира», 2→«Лена». 创建方法 findName(map,id) и выведите имя для id=2.",
+          "expectedOutput": "Лена",
+          "hint": "【提示】Метод отделяет запрос от отображения результата, как RowMapper; реальная БД и драйвер здесь не нужны.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'Лена'. Метод отделяет запрос от отображения результата, как RowMapper; реальная БД и драйвер здесь не нужны."
+        }
+      ]
+    },
+    {
+      "id": "m18-l02",
+      "title": "JPA 持久化规范简介",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】JPA — спецификация отображения объектов на реляционные таблицы. Сущность @Entity имеет идентификатор @Id; EntityManager управляет состоянием сущностей и операциями сохранения.",
+          "【核心理论】Аннотация сама по себе не создаёт таблицу или подключение: нужен провайдер JPA и настроенная БД. Отделяйте модель таблиц от API-ответов, чтобы не раскрывать поля и не зависеть от ленивой загрузки."
+        ],
+        "code": "@Entity\nclass User {\n    @Id Long id;\n    String name;\n}",
+        "caption": "JPA определяет контракт, а не конкретную реализацию.",
+        "language": "java",
+        "objective": "【学习目标】Объявить JPA-сущность и её первичный ключ, не путая JPA с Hibernate.",
+        "walkthrough": "【代码走读】@Entity обозначает отображаемый класс, @Id — ключ. В показанном фрагменте значение id нужно задать вручную: @GeneratedValue не указан.",
+        "pitfall": "【常见陷阱】JPA — спецификация, а Hibernate — одна из реализаций. Для работы понадобятся провайдер, конфигурация и база.",
+        "deepDive": "【深入解析】Управляемая JPA-сущность имеет идентичность в контексте сохранения, а Hibernate сопоставляет её с таблицей. Поле @Id задаёт ключ; генерация ID, схема и жизненный цикл зависят от явной конфигурации, не от одного @Entity.",
+        "useCase": "Для Order отделите таблицу и DTO ответа API: отдавать сущность напрямую рискованно из-за внутренних полей и ленивых связей. 请检查 сохранение и повторное чтение на настоящей тестовой БД.",
+        "guide": {
+          "why": "【分步指南】JPA сопоставляет класс с таблицей, а объект с записью. Аннотации описывают структуру; они не сохраняют объект без EntityManager или репозитория.",
+          "steps": [
+            "Пометьте класс @Entity и задайте @Id для ключа записи. У класса должен быть конструктор без аргументов не менее чем protected.",
+            "Изменения управляемого объекта могут попасть в БД внутри транзакции. Создание new User() вне контекста само по себе INSERT не делает."
+          ],
+          "example": {
+            "code": "@Entity\nclass User {\n    @Id Long id;\n    String name;\n    protected User() { }\n    User(Long id, String name) { this.id = id; this.name = name; }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Сущность JPA в проекте с провайдером и БД"
+          },
+          "result": "Объект содержит id и name; сохранение требует настроенной JPA и действия репозитория. Код нельзя запускать в обычном Main без библиотек.",
+          "bridge": "В практическом задании реализуйте простую модель Customer/Order без JPA: связь объектов похожа, но сама по себе не создаёт таблиц."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l02-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "@Entity\nclass User {\n    @Id Long id;\n    String name;\n    protected User() { }\n    User(Long id, String name) { this.id = id; this.name = name; }\n}",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Объект содержит id и name; сохранение требует настроенной JPA и действия репозитория. Код нельзя запускать в обычном Main без библиотек."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какая аннотация отмечает JPA-сущность?",
+          "options": [
+            {
+              "id": "a",
+              "label": "@Entity"
+            },
+            {
+              "id": "b",
+              "label": "@GetMapping"
+            },
+            {
+              "id": "c",
+              "label": "@Override"
+            },
+            {
+              "id": "d",
+              "label": "@Test"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Она обозначает объект, отображаемый на таблицу.",
+          "explanation": "【解析】@Entity сообщает провайдеру JPA о сущности.",
+          "id": "m18-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Укажите поле-идентификатор сущности.",
+          "template": [
+            "",
+            "\nLong id;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@Id",
+              "options": [
+                "@Id",
+                "@Bean",
+                "@Mock"
+              ]
+            }
+          ],
+          "hint": "【提示】Аннотация отмечает первичный ключ.",
+          "explanation": "【解析】@Id указывает идентификатор сущности.",
+          "id": "m18-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】У двух record UserEntity(1L,\"Мира\") одинаковые компоненты. Что вернёт equals?",
+          "options": [
+            {
+              "id": "a",
+              "label": "false из-за двух new"
+            },
+            {
+              "id": "b",
+              "label": "true по компонентам"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "ошибку SQL"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】record генерирует equals по значениям своих компонентов.",
+          "explanation": "【解析】Верно: true по компонентам. record генерирует equals по значениям своих компонентов."
+        },
+        {
+          "id": "m18-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 record UserEntity(Long id,String name). Два объекта с одинаковым id=1L и именем «Мира» сравните через equals; выведите результат.",
+          "expectedOutput": "true",
+          "hint": "【提示】Это учебная модель сущности JPA без Jakarta-зависимостей; record сравнивает компоненты по значениям.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'true'. Это учебная модель сущности JPA без Jakarta-зависимостей; record сравнивает компоненты по значениям."
+        }
+      ]
+    },
+    {
+      "id": "m18-l03",
+      "title": "Hibernate 框架",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Hibernate — распространённая реализация JPA. Он отслеживает изменения управляемых сущностей и может формировать SQL автоматически, но знание SQL по-прежнему необходимо для понимания производительности.",
+          "【核心理论】Ленивая загрузка откладывает чтение связанных объектов до обращения. Неосторожный цикл по коллекции может породить N+1 запрос: один для списка и по одному для каждой связи. Изучайте логи SQL и используйте подходящую выборку."
+        ],
+        "code": "List<Order> orders = repository.findAll();\n// Доступ к order.getCustomer() может вызвать новые SQL-запросы.",
+        "caption": "Следите за SQL, который генерирует ORM.",
+        "language": "java",
+        "objective": "【学习目标】Распознать дополнительные запросы ORM при чтении связанных объектов.",
+        "walkthrough": "【代码走读】repository.findAll() получает список Order. Доступ к каждому getCustomer() может вызвать дополнительные запросы: число SQL зависит от стратегии загрузки.",
+        "pitfall": "【常见陷阱】Не считайте любую связь всегда LAZY: @ManyToOne по умолчанию EAGER в JPA. Анализируйте SQL и планы выборки на реальной БД.",
+        "deepDive": "【深入解析】ORM скрывает построение части SQL, но не его стоимость. Если получить список заказов и затем читать каждого клиента отдельно, возможна проблема N+1; режим загрузки зависит от вида связи и конкретного запроса.",
+        "useCase": "【实际应用】Включите лог SQL для страницы из десяти заказов и посчитайте запросы. Если их слишком много, рассмотрите JOIN FETCH или проекцию для нужного экрана, а не глобальное изменение всех связей на EAGER.",
+        "guide": {
+          "why": "【分步指南】ORM скрывает часть SQL, но обращение к связям может породить дополнительные запросы. Особенно заметна проблема N+1 при обходе списка заказов.",
+          "steps": [
+            "Представьте один запрос для N заказов. Если для каждого лениво загрузить customer, получится ещё N запросов.",
+            "Сравните планы загрузки и посмотрите реальные SQL-логи перед оптимизацией. JOIN FETCH может помочь в подходящем сценарии, но не универсален."
+          ],
+          "example": {
+            "code": "List<Order> orders = repository.findAll();\nfor (Order order : orders) {\n    System.out.println(order.getCustomer().getName());\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент Hibernate: нужны repository, Order, транзакция"
+          },
+          "result": "Для N заказов при ленивой загрузке возможно до N дополнительных запросов. Точное число зависит от кеша и настроек Hibernate.",
+          "bridge": "В мини-задании объясните N+1. В практике без ORM обходите уже подготовленный список заказов одного клиента и посчитайте их суммы."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l03-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "List<Order> orders = repository.findAll();\nfor (Order order : orders) {\n    System.out.println(order.getCustomer().getName());\n}",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Для N заказов при ленивой загрузке возможно до N дополнительных запросов. Точное число зависит от кеша и настроек Hibernate."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Как проявляется проблема N+1?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Один запрос всегда"
+            },
+            {
+              "id": "b",
+              "label": "Один запрос списка плюс дополнительные запросы для элементов"
+            },
+            {
+              "id": "c",
+              "label": "Ошибка синтаксиса javac"
+            },
+            {
+              "id": "d",
+              "label": "Потеря класса Main"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Ленивая связь может загружаться отдельно для каждого объекта.",
+          "explanation": "【解析】N+1 увеличивает число запросов при обходе связанных сущностей.",
+          "id": "m18-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Назовите популярную реализацию JPA.",
+          "template": [
+            "JPA provider: ",
+            ""
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Hibernate",
+              "options": [
+                "Hibernate",
+                "JUnit",
+                "Mockito"
+              ]
+            }
+          ],
+          "hint": "【提示】Это ORM, работающий с сущностями и SQL.",
+          "explanation": "【解析】Hibernate реализует спецификацию JPA.",
+          "id": "m18-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Почему модель кэша по id возвращает тот же объект при повторном get(3) в одной Map?",
+          "options": [
+            {
+              "id": "a",
+              "label": "ключ один и в Map хранится одна ссылка"
+            },
+            {
+              "id": "b",
+              "label": "создаётся новый объект в каждом get"
+            },
+            {
+              "id": "c",
+              "label": "get случайно выбирает запись"
+            },
+            {
+              "id": "d",
+              "label": "Map сравнивает только строки"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】В рамках одной карты извлекают ранее положенное значение.",
+          "explanation": "【解析】Верно: ключ один и в Map хранится одна ссылка. В рамках одной карты извлекают ранее положенное значение."
+        },
+        {
+          "id": "m18-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Смоделируйте кэш первого уровня ORM: Map<Integer,String> хранит запись id=3 → «Мира». Вызовите get(3) дважды и выведите true, если возвращённые ссылки одинаковы.",
+          "expectedOutput": "true",
+          "hint": "【提示】Одна карта в рамках условной сессии возвращает тот же объект; это не настоящий Hibernate-кэш.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'true'. Одна карта в рамках условной сессии возвращает тот же объект; это не настоящий Hibernate-кэш."
+        }
+      ]
+    },
+    {
+      "id": "m18-l04",
+      "title": "实体类中的字段类型映射",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Поля сущности могут иметь типы String, числа, BigDecimal, LocalDate и перечисления. Для денег BigDecimal лучше double: двоичные дроби могут давать неточные суммы.",
+          "【核心理论】Перечисление храните по имени через @Enumerated(EnumType.STRING), а не по порядковому номеру: добавление константы изменит ordinal. Учитывайте отображение дат и временных зон для выбранной СУБД."
+        ],
+        "code": "@Enumerated(EnumType.STRING)\nprivate Status status;\nprivate java.math.BigDecimal price;",
+        "caption": "Выбор типа влияет на точность и миграции.",
+        "language": "java",
+        "objective": "【学习目标】Выбрать BigDecimal для денег и строковое хранение перечисления в сущности.",
+        "walkthrough": "【代码走读】@Enumerated(EnumType.STRING) хранит имя статуса, а BigDecimal избегает двоичной ошибки точности double для денежных значений.",
+        "pitfall": "【常见陷阱】Не создавайте BigDecimal из неточного double (например, 0.1); используйте строку или valueOf. Переименование enum потребует миграции БД.",
+        "deepDive": "【深入解析】BigDecimal хранит десятичное значение без ошибки двоичного представления double при корректном создании. Для денег также важны масштаб и правило округления; имя константы enum в БД стабильнее ordinal, но переименование требует миграции.",
+        "useCase": "【实际应用】Посчитайте итог заказа с налогом и явно задайте округление до копеек. Для времени события уточните, храните ли вы локальное время или абсолютный момент: зона сервера и пользователя может различаться.",
+        "guide": {
+          "why": "【分步指南】Тип поля сущности должен соответствовать смыслу: BigDecimal для денежной точности, LocalDate для даты без времени, enum для ограниченного набора состояний.",
+          "steps": [
+            "Храните enum по имени с @Enumerated(EnumType.STRING): тогда новые значения не сломают старые порядковые номера.",
+            "Для даты задавайте LocalDate.of(год, месяц, день); тип LocalDate не содержит часового пояса и подходит именно для календарной даты."
+          ],
+          "example": {
+            "code": "enum Status { NEW, DONE }\n@Enumerated(EnumType.STRING)\nprivate Status status = Status.NEW;\nprivate java.time.LocalDate created = java.time.LocalDate.of(2024, 1, 1);",
+            "language": "java",
+            "runnable": false,
+            "label": "Поля сущности JPA; для аннотации нужна зависимость"
+          },
+          "result": "При сохранении JPA может записать NEW как строку и календарную дату отдельно. Без JPA это обычные Java-поля.",
+          "bridge": "В практическом задании используйте enum и LocalDate как чистые Java-типы и выведите их строковое представление через println."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l04-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "enum Status { NEW, DONE }\n@Enumerated(EnumType.STRING)\nprivate Status status = Status.NEW;\nprivate java.time.LocalDate created = java.time.LocalDate.of(2024, 1, 1);",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 При сохранении JPA может записать NEW как строку и календарную дату отдельно. Без JPA это обычные Java-поля."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Почему для суммы денег рекомендуют BigDecimal?",
+          "options": [
+            {
+              "id": "a",
+              "label": "У него меньше символов"
+            },
+            {
+              "id": "b",
+              "label": "Он избегает двоичных ошибок дробных вычислений"
+            },
+            {
+              "id": "c",
+              "label": "Он заменяет SQL"
+            },
+            {
+              "id": "d",
+              "label": "Он всегда быстрее double"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】double не точно представляет многие десятичные дроби.",
+          "explanation": "【解析】BigDecimal позволяет точно задавать десятичную арифметику.",
+          "id": "m18-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Храните enum по имени, а не ordinal.",
+          "template": [
+            "@Enumerated(EnumType.",
+            ")"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "STRING",
+              "options": [
+                "STRING",
+                "ORDINAL",
+                "NUMBER"
+              ]
+            }
+          ],
+          "hint": "【提示】Имя константы устойчивее к перестановке enum.",
+          "explanation": "【解析】EnumType.STRING хранит текстовое значение константы.",
+          "id": "m18-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Какой тип лучше применять для денежной цены 12.50 в сущности, избегая ошибок двоичной дроби?",
+          "options": [
+            {
+              "id": "a",
+              "label": "double для абсолютной точности"
+            },
+            {
+              "id": "b",
+              "label": "BigDecimal из строки"
+            },
+            {
+              "id": "c",
+              "label": "boolean"
+            },
+            {
+              "id": "d",
+              "label": "Thread"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】BigDecimal(\"12.50\") точно хранит десятичные цифры.",
+          "explanation": "【解析】Верно: BigDecimal из строки. BigDecimal(\"12.50\") точно хранит десятичные цифры."
+        },
+        {
+          "id": "m18-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "请创建 record Product(long id,java.math.BigDecimal price,boolean active). Для Product(5,new BigDecimal(\"12.50\"),true) выведите цену и флаг через двоеточие.",
+          "expectedOutput": "12.50:true",
+          "hint": "【提示】Деньги представляйте BigDecimal, а не double; record хранит разные типы полей.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '12.50:true'. Деньги представляйте BigDecimal, а не double; record хранит разные типы полей."
+        }
+      ]
+    },
+    {
+      "id": "m18-l05",
+      "title": "OneToOne、OneToMany 与 ManyToMany 关联",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Связи JPA отражают отношения таблиц: @OneToOne, @OneToMany и @ManyToMany. Например, у одного Customer много Order; внешним ключом обычно владеет сторона ManyToOne в Order.",
+          "【核心理论】Не выставляйте cascade = ALL повсюду: удаление родителя может неожиданно удалить дочерние записи. Для двусторонней связи поддерживайте обе стороны в Java и понимайте owning side и mappedBy."
+        ],
+        "code": "class Order {\n    @ManyToOne Customer customer;\n}\nclass Customer {\n    @OneToMany(mappedBy = \"customer\") List<Order> orders;\n}",
+        "caption": "Каскады и стороны связи выбирайте осознанно.",
+        "language": "java",
+        "objective": "【学习目标】Определить владельца отношения между Customer и Order.",
+        "walkthrough": "【代码走读】@ManyToOne в Order хранит ссылку на Customer; mappedBy=\"customer\" в Customer показывает обратную сторону связи через поле Order.customer.",
+        "pitfall": "【常见陷阱】Не добавляйте каскадное удаление без проверки: удаление Customer может случайно удалить заказы. JSON-сериализация двусторонних связей требует осторожности.",
+        "deepDive": "【深入解析】В двусторонней связи JPA запись внешнего ключа контролирует владеющая сторона. mappedBy указывает на поле владельца; обновление только обратной коллекции без согласования владельца может не дать ожидаемого SQL.",
+        "useCase": "【实际应用】Добавляя Order к Customer, обновите и order.customer, и коллекцию заказов через один метод доменной модели. Протестируйте сохранение и удаление без cascade=ALL по умолчанию, чтобы не удалить чужие данные.",
+        "guide": {
+          "why": "【分步指南】Связь ManyToOne означает, что много заказов принадлежат одному клиенту. Обратное поле OneToMany указывает на то же отношение, а не создаёт новую таблицу без правил.",
+          "steps": [
+            "В Order храните ссылку на Customer. В Customer храните список Order; mappedBy указывает имя поля customer в Order.",
+            "Если вы добавляете заказ только в список клиента, но забываете установить order.customer, у JPA не появится корректная владельческая сторона связи."
+          ],
+          "example": {
+            "code": "class Order { @ManyToOne Customer customer; }\nclass Customer {\n    @OneToMany(mappedBy = \"customer\")\n    List<Order> orders = new ArrayList<>();\n    void add(Order order) { orders.add(order); order.customer = this; }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент JPA-классов; импорты и контекст отдельно"
+          },
+          "result": "После customer.add(order) объект присутствует в списке и ссылается на владельца. Для записи в БД нужны контекст и транзакция.",
+          "bridge": "В практике без аннотаций соберите один Customer с несколькими Order и сложите суммы, следя за одной и той же ссылкой на клиента."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l05-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "class Order { @ManyToOne Customer customer; }\nclass Customer {\n    @OneToMany(mappedBy = \"customer\")\n    List<Order> orders = new ArrayList<>();\n    void add(Order order) { orders.add(order); order.customer = this; }\n}",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 После customer.add(order) объект присутствует в списке и ссылается на владельца. Для записи в БД нужны контекст и транзакция."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какая связь подходит: один клиент — много заказов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "OneToOne"
+            },
+            {
+              "id": "b",
+              "label": "OneToMany"
+            },
+            {
+              "id": "c",
+              "label": "ManyToMany всегда"
+            },
+            {
+              "id": "d",
+              "label": "Нет связи"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Один Customer связан с несколькими Order.",
+          "explanation": "【解析】@OneToMany выражает коллекцию заказов клиента.",
+          "id": "m18-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Отметьте ссылку заказа на одного клиента.",
+          "template": [
+            "",
+            " Customer customer;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@ManyToOne",
+              "options": [
+                "@ManyToOne",
+                "@OneToMany",
+                "@Id"
+              ]
+            }
+          ],
+          "hint": "【提示】Много заказов могут ссылаться на одного клиента.",
+          "explanation": "【解析】@ManyToOne обычно владеет внешним ключом.",
+          "id": "m18-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Один User может иметь несколько Order по userId. Какая кратность связи у User по отношению к Order?",
+          "options": [
+            {
+              "id": "a",
+              "label": "OneToOne"
+            },
+            {
+              "id": "b",
+              "label": "OneToMany"
+            },
+            {
+              "id": "c",
+              "label": "ManyToOne только на стороне User"
+            },
+            {
+              "id": "d",
+              "label": "никакой"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Один пользователь связан с несколькими заказами.",
+          "explanation": "【解析】Верно: OneToMany. Один пользователь связан с несколькими заказами."
+        },
+        {
+          "id": "m18-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Смоделируйте OneToMany: User с id=1, список Order с userId 1, 2, 1. Подсчитайте число заказов первого пользователя и выведите результат.",
+          "expectedOutput": "2",
+          "hint": "【提示】Внешний ключ Order.userId соответствует User.id; не включайте заказ пользователя с id=2.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '2'. Внешний ключ Order.userId соответствует User.id; не включайте заказ пользователя с id=2."
+        }
+      ]
+    },
+    {
+      "id": "m18-l06",
+      "title": "实体继承映射策略",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】JPA поддерживает наследование сущностей: SINGLE_TABLE складывает иерархию в одну таблицу с дискриминатором; JOINED распределяет общие и дочерние поля по связанным таблицам.",
+          "【核心理论】Выбор стратегии влияет на число JOIN, пустые колонки и миграции схемы. Не каждая иерархия классов должна стать иерархией сущностей: иногда композиция проще. @MappedSuperclass наследует поля, но не создаёт отдельную сущность."
+        ],
+        "code": "@Entity\n@Inheritance(strategy = InheritanceType.JOINED)\nabstract class Payment { @Id Long id; }",
+        "caption": "Стратегия наследования влияет на SQL-запросы.",
+        "language": "java",
+        "objective": "【学习目标】Сравнить JOINED и SINGLE_TABLE по хранению и стоимости запросов.",
+        "walkthrough": "【代码走读】@Inheritance(strategy = JOINED) помещает общие поля Payment в базовую таблицу, а поля подклассов — в отдельные; выборка подкласса потребует JOIN.",
+        "pitfall": "【常见陷阱】Не выбирайте стратегию без оценки запросов: SINGLE_TABLE уменьшает JOIN, но создаёт много пустых столбцов у разных подклассов.",
+        "deepDive": "【深入解析】Стратегия JOINED нормализует общие и специфические поля по таблицам, но для чтения потомка может понадобиться соединение. SINGLE_TABLE ускоряет некоторые выборки ценой разреженных строк и ограничений на обязательные поля подклассов.",
+        "useCase": "【实际应用】Для нескольких типов Payment выпишите поля и частые запросы, затем сравните схему JOINED и SINGLE_TABLE. Если нужно только разделить код Java, а не сущности в БД, рассмотрите композицию или @MappedSuperclass.",
+        "guide": {
+          "why": "【分步指南】Наследование Java-классов и схема хранения в БД — разные решения. Стратегия JOINED раскладывает базовые и специальные поля по связанным таблицам.",
+          "steps": [
+            "Пометьте базовый класс @Entity и укажите @Inheritance(strategy = InheritanceType.JOINED). Каждая конкретная сущность-наследник добавит свою таблицу.",
+            "При чтении наследника ORM соединит таблицы. Выбор влияет на запросы и миграции, поэтому его лучше принять до большого объёма данных."
+          ],
+          "example": {
+            "code": "@Entity\n@Inheritance(strategy = InheritanceType.JOINED)\nabstract class Document { @Id Long id; }\n@Entity\nclass Receipt extends Document { String number; }",
+            "language": "java",
+            "runnable": false,
+            "label": "Схема JPA-наследования, требующая провайдера и БД"
+          },
+          "result": "Поле id живёт в базовой таблице, number — в таблице потомка при настроенной JPA; без провайдера аннотации ничего не сохраняют.",
+          "bridge": "В мини-задании сравните стратегии наследования. В практике создайте обычный Java-объект без обращения к таблицам."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m18-l06-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "@Entity\n@Inheritance(strategy = InheritanceType.JOINED)\nabstract class Document { @Id Long id; }\n@Entity\nclass Receipt extends Document { String number; }",
+          "language": "java",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Поле id живёт в базовой таблице, number — в таблице потомка при настроенной JPA; без провайдера аннотации ничего не сохраняют."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какая стратегия JPA использует одну таблицу для иерархии?",
+          "options": [
+            {
+              "id": "a",
+              "label": "JOINED"
+            },
+            {
+              "id": "b",
+              "label": "SINGLE_TABLE"
+            },
+            {
+              "id": "c",
+              "label": "TABLE_PER_CLASS только"
+            },
+            {
+              "id": "d",
+              "label": "@MappedSuperclass"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Название стратегии говорит о количестве таблиц.",
+          "explanation": "【解析】SINGLE_TABLE хранит подклассы в одной таблице.",
+          "id": "m18-l06-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Укажите стратегию с отдельными связанными таблицами.",
+          "template": [
+            "@Inheritance(strategy = InheritanceType.",
+            ")"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "JOINED",
+              "options": [
+                "JOINED",
+                "STRING",
+                "GET"
+              ]
+            }
+          ],
+          "hint": "【提示】Общее и дочернее соединяются JOIN.",
+          "explanation": "【解析】JOINED хранит наследуемые данные в связанных таблицах.",
+          "id": "m18-l06-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m18-l06-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Как вызвать amount() у объектов CardPayment и CashPayment единообразно в одном цикле?",
+          "options": [
+            {
+              "id": "a",
+              "label": "поместить оба в Payment[] и вызвать общий метод"
+            },
+            {
+              "id": "b",
+              "label": "хранить их только как String"
+            },
+            {
+              "id": "c",
+              "label": "создать два разных main"
+            },
+            {
+              "id": "d",
+              "label": "запретить наследование"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Полиморфизм обрабатывает реализации общего базового типа.",
+          "explanation": "【解析】Верно: поместить оба в Payment[] и вызвать общий метод. Полиморфизм обрабатывает реализации общего базового типа."
+        },
+        {
+          "id": "m18-l06-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m18-l06",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Смоделируйте наследование сущностей: abstract Payment с amount(), CardPayment возвращает 8, CashPayment возвращает 5. Сложите значения двух Payment в массиве.",
+          "expectedOutput": "13",
+          "hint": "【提示】Общий тип позволяет обработать обе реализации; это аналог полиморфной иерархии сущностей без JPA.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '13'. Общий тип позволяет обработать обе реализации; это аналог полиморфной иерархии сущностей без JPA."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "第 18 模块综合实战",
+    "description": "Закрепите JPA и связи; Java-код моделирует сущности без внешних библиотек и БД.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Что является JPA, а что Hibernate?",
+        "options": [
+          {
+            "id": "a",
+            "label": "JPA — реализация Hibernate"
+          },
+          {
+            "id": "b",
+            "label": "JPA — спецификация, Hibernate — реализация"
+          },
+          {
+            "id": "c",
+            "label": "Это классы JDK"
+          },
+          {
+            "id": "d",
+            "label": "Оба — SQL-серверы"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Отделите стандарт API от провайдера.",
+        "explanation": "【解析】Hibernate реализует контракт JPA.",
+        "id": "m18-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Укажите связь заказа с одним клиентом.",
+        "template": [
+          "",
+          " Customer customer;"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "@ManyToOne",
+            "options": [
+              "@ManyToOne",
+              "@OneToMany",
+              "@GetMapping"
+            ]
+          }
+        ],
+        "hint": "【提示】Заказов много, клиент для каждого один.",
+        "explanation": "【解析】@ManyToOne отражает внешний ключ на стороне заказа.",
+        "id": "m18-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте инструмент и понятие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "JdbcTemplate",
+            "right": "Упрощение JDBC-запросов"
+          },
+          {
+            "id": "2",
+            "left": "@Entity",
+            "right": "Пометка JPA-сущности"
+          },
+          {
+            "id": "3",
+            "left": "Hibernate",
+            "right": "Провайдер JPA"
+          },
+          {
+            "id": "4",
+            "left": "EnumType.STRING",
+            "right": "Сохранение enum по имени"
+          }
+        ],
+        "hint": "【提示】Отделите доступ к SQL от ORM и способа хранения enum.",
+        "explanation": "【解析】Инструменты решают разные задачи слоя данных.",
+        "id": "m18-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите безопасную модель связи в обычной Java.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Order {"
+          },
+          {
+            "id": "b",
+            "text": "private final Customer customer;"
+          },
+          {
+            "id": "c",
+            "text": "Order(Customer customer) {"
+          },
+          {
+            "id": "d",
+            "text": "this.customer = customer;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Поле и конструктор находятся внутри Order.",
+        "explanation": "【解析】Поле допустимо до или после конструктора; конструктор сохраняет связь с клиентом.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m18-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "BigDecimal подходит для денег"
+          },
+          {
+            "id": "b",
+            "label": "N+1 может появиться при ленивой загрузке"
+          },
+          {
+            "id": "c",
+            "label": "EnumType.ORDINAL устойчив к перестановке enum"
+          },
+          {
+            "id": "d",
+            "label": "JPA-сущность обычно имеет @Id"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "【提示】Порядковый номер enum меняется при вставке новых констант.",
+        "explanation": "【解析】Правильные типы и анализ SQL предотвращают ошибки.",
+        "id": "m18-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "【任务】Без Spring и JPA создайте Customer с двумя Order на суммы 7 и 8. Просуммируйте заказы клиента и выведите 15.",
+        "starterCode": "import java.util.*;\nclass Order { final int amount; Order(int amount) { this.amount = amount; } }\nclass Customer {\n    final List<Order> orders = new ArrayList<>();\n    // Добавьте метод total(), суммирующий amount\n}\npublic class Main {\n    public static void main(String[] args) {\n        Customer customer = new Customer();\n        customer.orders.add(new Order(7));\n        customer.orders.add(new Order(8));\n        // Выведите суммарную стоимость\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "15",
+        "hint": "【提示】Сохраните заказы в List<Order>, у Order сделайте int amount, сложите в цикле.",
+        "explanation": "【解析】Одна модель Customer связана с двумя заказами: 7 + 8 = 15.",
+        "id": "m18-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Без JPA смоделируйте сущность с enum Status {NEW,DONE} и LocalDate.of(2024,1,1). 请输出 одну строку \"DONE 2024-01-01\".",
+        "starterCode": "import java.time.LocalDate;\nenum Status { NEW, DONE }\npublic class Main {\n    public static void main(String[] args) {\n        Status status = Status.DONE;\n        LocalDate date = LocalDate.of(2024, 1, 1);\n        // Выведите статус и дату через пробел\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "DONE 2024-01-01",
+        "hint": "请使用 Status.DONE и date.toString(); соедините пробелом.",
+        "explanation": "【解析】Enum и дата преобразованы в строку без ORM-драйвера.",
+        "id": "m18-p07"
+      }
+    ],
+    "id": "m18-practice",
+    "primer": {
+      "why": "Аннотации JPA в теории показывают ORM, но практические задачи намеренно работают с обычными Java-объектами: связь Customer и Order создаётся ссылками, не таблицами.",
+      "steps": [
+        "Customer может хранить List<Order>; цикл проходит каждый заказ и складывает его сумму. Не пытайтесь вызвать repository.findAll без проекта Spring.",
+        "Для второй задачи создайте enum с состояниями и LocalDate.of(...); их toString даёт текст для вывода. Выберите статус осознанно, не используйте порядковый номер enum."
+      ],
+      "example": {
+        "code": "class Order {\n    final int total;\n    Order(int total) { this.total = total; }\n}\nclass Customer {\n    java.util.List<Order> orders = new java.util.ArrayList<>();\n    void add(Order order) { orders.add(order); }\n}\nenum Phase { NEW, SENT }\npublic class Main {\n    public static void main(String[] args) {\n        Customer customer = new Customer();\n        customer.add(new Order(3));\n        customer.add(new Order(6));\n        int sum = 0;\n        for (Order order : customer.orders) sum += order.total;\n        System.out.println(sum);\n        System.out.println(Phase.SENT + \" \" + java.time.LocalDate.of(2023, 2, 1));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная Java-программа без JPA",
+        "stdout": "9\nSENT 2023-02-01"
+      },
+      "result": "Вывод — 9 и «SENT 2023-02-01». Заказы в памяти, а enum и LocalDate работают и без JPA.",
+      "hints": [
+        {
+          "taskId": "m18-p06",
+          "text": "В задаче Customer возьмите количества и суммы из условия; проверяйте цикл суммирования, а не просто печатайте готовое число."
+        },
+        {
+          "taskId": "m18-p07",
+          "text": "Для статуса и даты используйте enum Status и LocalDate.of. Выведите их с пробелом как строку, не создавая аннотаций JPA."
+        }
+      ]
+    }
+  },
+  "boss": {
+    "id": "m18-boss",
+    "title": "阶段关卡测验",
+    "description": "Мини-экзамен: четыре верных ответа из пяти для зачёта.",
+    "passingScore": 0.8,
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Что упрощает JdbcTemplate?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Повторяющийся JDBC-код"
+          },
+          {
+            "id": "b",
+            "label": "Синтаксис Java generics"
+          },
+          {
+            "id": "c",
+            "label": "HTML-разметку"
+          },
+          {
+            "id": "d",
+            "label": "Dockerfile"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Он оборачивает работу с запросами и ресурсами.",
+        "explanation": "【解析】JdbcTemplate снижает рутину работы с JDBC.",
+        "id": "m18-b01"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Как соотносятся JPA и Hibernate?",
+        "options": [
+          {
+            "id": "a",
+            "label": "JPA — стандарт, Hibernate — одна из реализаций"
+          },
+          {
+            "id": "b",
+            "label": "Hibernate — стандарт, JPA — драйвер"
+          },
+          {
+            "id": "c",
+            "label": "Оба входят в JDK"
+          },
+          {
+            "id": "d",
+            "label": "Оба являются СУБД"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Нужны спецификация и провайдер.",
+        "explanation": "【解析】Hibernate реализует спецификацию JPA.",
+        "id": "m18-b02"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Какая связь: заказ принадлежит одному клиенту, у клиента много заказов?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Только ManyToMany"
+          },
+          {
+            "id": "b",
+            "label": "Order @ManyToOne, Customer @OneToMany"
+          },
+          {
+            "id": "c",
+            "label": "Только OneToOne"
+          },
+          {
+            "id": "d",
+            "label": "Никакой"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Посмотрите на каждую сторону отдельно.",
+        "explanation": "【解析】Много Order → один Customer.",
+        "id": "m18-b03"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Почему enum в сущности часто хранят как STRING?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Чтобы имя пережило перестановку констант"
+          },
+          {
+            "id": "b",
+            "label": "Чтобы выключить индексы"
+          },
+          {
+            "id": "c",
+            "label": "Чтобы убрать @Id"
+          },
+          {
+            "id": "d",
+            "label": "Чтобы автоматически удалить БД"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Порядковые номера нестабильны при изменении enum.",
+        "explanation": "【解析】Имя enum сохраняет смысл при добавлении констант.",
+        "id": "m18-b04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Что такое N+1 в ORM?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Один запрос всегда достаточен"
+          },
+          {
+            "id": "b",
+            "label": "Дополнительный запрос на каждую связанную запись"
+          },
+          {
+            "id": "c",
+            "label": "Выполнение ровно N потоков"
+          },
+          {
+            "id": "d",
+            "label": "Синтаксическая ошибка"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Связанные сущности могут лениво загружаться по одной.",
+        "explanation": "【解析】N+1 увеличивает число SQL-запросов при обходе.",
+        "id": "m18-b05"
+      }
+    ]
+  },
+  "exam": {
+    "id": "m18-exam",
+    "title": "模块小测验",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 480,
+    "tasks": [
+      {
+        "id": "m-exam-18-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "【任务】Как вызвать amount() у объектов CardPayment и CashPayment единообразно в одном цикле?",
+        "options": [
+          {
+            "id": "a",
+            "label": "поместить оба в Payment[] и вызвать общий метод"
+          },
+          {
+            "id": "b",
+            "label": "хранить их только как String"
+          },
+          {
+            "id": "c",
+            "label": "создать два разных main"
+          },
+          {
+            "id": "d",
+            "label": "запретить наследование"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Полиморфизм обрабатывает реализации общего базового типа.",
+        "explanation": "【解析】Верно: поместить оба в Payment[] и вызвать общий метод. Полиморфизм обрабатывает реализации общего базового типа."
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Выберите метод JdbcTemplate для INSERT/UPDATE.",
+        "template": [
+          "jdbcTemplate.",
+          "(\"UPDATE users SET name = ? WHERE id = ?\", name, id);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "update",
+            "options": [
+              "update",
+              "query",
+              "toString"
+            ]
+          }
+        ],
+        "hint": "【提示】Нужна операция изменения данных.",
+        "explanation": "【解析】update выполняет DML и возвращает число затронутых строк.",
+        "id": "m-exam-18-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте инструмент и понятие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "JdbcTemplate",
+            "right": "Упрощение JDBC-запросов"
+          },
+          {
+            "id": "2",
+            "left": "@Entity",
+            "right": "Пометка JPA-сущности"
+          },
+          {
+            "id": "3",
+            "left": "Hibernate",
+            "right": "Провайдер JPA"
+          },
+          {
+            "id": "4",
+            "left": "EnumType.STRING",
+            "right": "Сохранение enum по имени"
+          }
+        ],
+        "hint": "【提示】Отделите доступ к SQL от ORM и способа хранения enum.",
+        "explanation": "【解析】Инструменты решают разные задачи слоя данных.",
+        "id": "m-exam-18-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите безопасную модель связи в обычной Java.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Order {"
+          },
+          {
+            "id": "b",
+            "text": "private final Customer customer;"
+          },
+          {
+            "id": "c",
+            "text": "Order(Customer customer) {"
+          },
+          {
+            "id": "d",
+            "text": "this.customer = customer;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "【提示】Поле и конструктор находятся внутри Order.",
+        "explanation": "【解析】Поле допустимо до или после конструктора; конструктор сохраняет связь с клиентом.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m-exam-18-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Без JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(1*10, DONE), (7, NEW), (5, DONE). 请输出 сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "15\nfalse",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n15\nfalse",
+        "id": "m-exam-18-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(2*10, DONE), (7, NEW), (5, DONE). 请输出 сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "25\nfalse",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n25\nfalse",
+        "id": "m-exam-18-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(3*10, DONE), (7, NEW), (5, DONE). 请输出 сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 35\nОтчёт: false\nСтрок: 2",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 35\nОтчёт: false\nСтрок: 2",
+        "id": "m-exam-18-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез JPA смоделируйте связь Customer–Order и репозиторий. Customer хранит id и\nList<Order>, Order — amount и enum Status {NEW,DONE}. Repository хранит клиентов\nв Map и возвращает Optional<Customer> из find(int). Клиент 1 имеет заказы\n(4*10, DONE), (7, NEW), (5, DONE). 请输出 сумму только DONE для клиента 1,\nзатем наличие клиента 99 (boolean). Поддерживайте связь через Customer.add(Order).\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 45\nОтчёт: false\nСтрок: 2\nАудит: 10/2",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 45\nОтчёт: false\nСтрок: 2\nАудит: 10/2",
+        "id": "m-exam-18-08"
+      }
+    ]
+  }
+}

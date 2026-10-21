@@ -1,0 +1,1582 @@
+{
+  "id": 22,
+  "title": "CI/CD 与 Docker 容器化",
+  "lessons": [
+    {
+      "id": "m22-l01",
+      "title": "CI/CD 与 Docker 简介",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Continuous Integration (CI) регулярно объединяет изменения и автоматически запускает сборку и тесты. Continuous Delivery готовит выпуск к развёртыванию, а Continuous Deployment дополнительно автоматически выпускает каждое прошедшее изменение.",
+          "【核心理论】Docker упаковывает приложение и окружение в образ, из которого запускается контейнер. Контейнер разделяет ядро с хостом и не является полноценной виртуальной машиной; изоляция и права требуют отдельной настройки."
+        ],
+        "code": "commit → build → test → artifact → deploy\nDocker image → running container",
+        "caption": "CI/CD делает обратную связь воспроизводимой.",
+        "language": "text",
+        "objective": "【学习目标】Различить CI, подготовку к выпуску и автоматическое развёртывание.",
+        "walkthrough": "【代码走读】Коммит запускает build и test; только успешный результат должен пойти дальше к артефакту и выпуску. Образ Docker служит шаблоном запущенного контейнера.",
+        "pitfall": "【常见陷阱】Continuous Delivery готовит выпуск и допускает ручное подтверждение, а Continuous Deployment автоматически развёртывает успешные изменения; это не синонимы.",
+        "deepDive": "【深入解析】CI проверяет объединяемые изменения автоматически, а CD определяет, как проверенный артефакт достигает окружения. Контейнер упаковывает процесс и зависимости, но не заменяет тесты и не гарантирует безопасную изоляцию без настройки.",
+        "useCase": "【实际应用】Для учебного сервиса настройте сборку и тесты на каждый push, затем выпускайте один проверенный артефакт. Не допускайте deploy после красного теста; отдельно продумайте ручное подтверждение и план отката.",
+        "guide": {
+          "why": "【分步指南】CI автоматически собирает и тестирует изменение, а CD помогает доставить прошедший проверку артефакт. Если тесты упали, выпуск прекращают.",
+          "steps": [
+            "Сначала commit запускает build, затем test проверяет собранный результат. Артефакт сохраняет именно проверенную версию.",
+            "Только при успешных первых шагах разрешён deploy. Docker-образ описывает упакованное приложение, контейнер — его запущенный экземпляр."
+          ],
+          "example": {
+            "code": "commit → build → test → artifact → deploy\n           ↑ stop on failure ↑\nimage (шаблон) → container (запуск)",
+            "language": "text",
+            "runnable": false,
+            "label": "Схема пайплайна и жизненного цикла образа"
+          },
+          "result": "Это схема процесса, не команда Docker. Ошибка на test означает отсутствие нового развёртывания.",
+          "bridge": "В практике в Java-массиве проверьте порядок этапов и остановитесь на первой неуспешной проверке."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m22-l01-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "commit → build → test → artifact → deploy\n           ↑ stop on failure ↑\nimage (шаблон) → container (запуск)",
+          "language": "text",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Это схема процесса, не команда Docker. Ошибка на test означает отсутствие нового развёртывания."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Что является базовым шагом CI после нового коммита?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Автоматическая сборка и тесты"
+            },
+            {
+              "id": "b",
+              "label": "Удаление кода"
+            },
+            {
+              "id": "c",
+              "label": "Только ручной выпуск"
+            },
+            {
+              "id": "d",
+              "label": "Выключение Git"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Нужно быстро обнаружить несовместимость изменений.",
+          "explanation": "【解析】CI часто запускает build и test после интеграции.",
+          "id": "m22-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Дополните цепочку перед выпуском.",
+          "template": [
+            "commit → build → ",
+            " → artifact"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "test",
+              "options": [
+                "test",
+                "delete",
+                "skip"
+              ]
+            }
+          ],
+          "hint": "【提示】Проверка должна идти до создания выпускаемого артефакта.",
+          "explanation": "【解析】Тесты проверяют сборку перед публикацией.",
+          "id": "m22-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m22-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Сборка и тесты успешны, развёртывание не прошло. Считать ли весь pipeline успешным?",
+          "options": [
+            {
+              "id": "a",
+              "label": "да: хватает сборки"
+            },
+            {
+              "id": "b",
+              "label": "нет: одна обязательная стадия упала"
+            },
+            {
+              "id": "c",
+              "label": "да: тесты всегда отменяют deploy"
+            },
+            {
+              "id": "d",
+              "label": "нельзя представить булевым значением"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Конвейер завершается успешно, только если все обязательные шаги прошли.",
+          "explanation": "【解析】Верно: нет: одна обязательная стадия упала. Конвейер завершается успешно, только если все обязательные шаги прошли."
+        },
+        {
+          "id": "m22-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m22-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте CI-конвейер без Docker: boolean build=true, tests=true, deploy=false. 请输出 true, если можно выпускать релиз только при успехе всех трёх стадий.",
+          "expectedOutput": "false",
+          "hint": "【提示】Стадии соедините &&: пропущенный или неудачный deploy блокирует полный релиз.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'false'. Стадии соедините &&: пропущенный или неудачный deploy блокирует полный релиз."
+        }
+      ]
+    },
+    {
+      "id": "m22-l02",
+      "title": "Docker 镜像与容器实战",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】Dockerfile описывает создание образа: FROM задаёт базу, COPY переносит файлы, RUN выполняется при сборке, CMD задаёт команду по умолчанию при запуске контейнера.",
+          "【核心理论】Образ — неизменяемый шаблон, контейнер — запущенный экземпляр. Не помещайте секреты в Dockerfile или образ: они могут остаться в слоях. Для Java-приложения нужен подходящий JRE/JDK в базовом образе."
+        ],
+        "code": "FROM eclipse-temurin:17-jre\nWORKDIR /app\nCOPY app.jar /app/app.jar\nCMD [\"java\", \"-jar\", \"/app/app.jar\"]",
+        "caption": "Секреты не должны попадать в слои образа.",
+        "language": "dockerfile",
+        "objective": "【学习目标】Объяснить роль FROM, COPY и CMD при сборке и запуске Docker-образа.",
+        "walkthrough": "【代码走读】FROM берёт JRE 17, COPY добавляет ранее собранный app.jar в /app, CMD запускает java -jar /app/app.jar при старте контейнера.",
+        "pitfall": "【常见陷阱】Dockerfile не собирает app.jar сам: подготовьте его до docker build. Пароли и токены нельзя копировать внутрь образа.",
+        "deepDive": "【深入解析】Dockerfile исполняет RUN при сборке образа, а CMD задаёт запуск контейнера; COPY берёт файлы из контекста сборки. Слои образа могут сохранять случайно добавленные файлы, поэтому секреты не должны попадать внутрь.",
+        "useCase": "【实际应用】Соберите jar до docker build и проверьте, что путь в COPY соответствует контексту. Запустите контейнер с ограниченными правами и передавайте конфигурацию отдельно, не прописывая пароль в Dockerfile.",
+        "guide": {
+          "why": "【分步指南】Dockerfile содержит инструкции создания образа. WORKDIR задаёт рабочую папку, COPY добавляет артефакт, CMD описывает стартовую команду контейнера.",
+          "steps": [
+            "Сначала соберите app.jar отдельно — COPY не компилирует исходники. Затем возьмите базовый JRE-образ и укажите WORKDIR.",
+            "При сборке COPY app.jar переносит файл внутрь образа, а CMD выполняется лишь при запуске контейнера, не во время docker build."
+          ],
+          "example": {
+            "code": "FROM eclipse-temurin:17-jre\nWORKDIR /app\nCOPY app.jar /app/app.jar\nCMD [\"java\", \"-jar\", \"app.jar\"]",
+            "language": "dockerfile",
+            "runnable": false,
+            "label": "Учебный Dockerfile для готового app.jar"
+          },
+          "result": "При docker run запускается java -jar app.jar из /app. Файл app.jar должен существовать в контексте сборки; без него COPY не сработает.",
+          "bridge": "В мини-задании определите последовательность инструкций. Практика моделирует порядок сборки и теста в Java, не запускает Docker."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m22-l02-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "FROM eclipse-temurin:17-jre\nWORKDIR /app\nCOPY app.jar /app/app.jar\nCMD [\"java\", \"-jar\", \"app.jar\"]",
+          "language": "dockerfile",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 При docker run запускается java -jar app.jar из /app. Файл app.jar должен существовать в контексте сборки; без него COPY не сработает."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Какая инструкция Dockerfile задаёт базовый образ?",
+          "options": [
+            {
+              "id": "a",
+              "label": "COPY"
+            },
+            {
+              "id": "b",
+              "label": "FROM"
+            },
+            {
+              "id": "c",
+              "label": "CMD"
+            },
+            {
+              "id": "d",
+              "label": "EXPOSE"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Обычно это первая инструкция файла.",
+          "explanation": "【解析】FROM выбирает исходный образ для сборки.",
+          "id": "m22-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Укажите команду запуска контейнера по умолчанию.",
+          "template": [
+            "",
+            " [\"java\", \"-jar\", \"app.jar\"]"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "CMD",
+              "options": [
+                "CMD",
+                "COPY",
+                "FROM"
+              ]
+            }
+          ],
+          "hint": "【提示】Это инструкция времени запуска, а не копирования файлов.",
+          "explanation": "【解析】CMD задаёт команду контейнера.",
+          "id": "m22-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m22-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】Какая инструкция Dockerfile задаёт базовый образ для сборки?",
+          "options": [
+            {
+              "id": "a",
+              "label": "FROM eclipse-temurin:17"
+            },
+            {
+              "id": "b",
+              "label": "COPY . ."
+            },
+            {
+              "id": "c",
+              "label": "RUN javac Main.java"
+            },
+            {
+              "id": "d",
+              "label": "WORKDIR /app"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】FROM выбирает образ-основу; рабочая папка и копирование идут затем.",
+          "explanation": "【解析】Верно: FROM eclipse-temurin:17. FROM выбирает образ-основу; рабочая папка и копирование идут затем."
+        },
+        {
+          "id": "m22-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m22-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Без запуска Docker создайте список строк \"FROM eclipse-temurin:17\", \"WORKDIR /app\", \"COPY . .\". 请输出 число инструкций и первую через двоеточие.",
+          "expectedOutput": "3:FROM eclipse-temurin:17",
+          "hint": "【提示】Dockerfile читается как последовательность инструкций; задача проверяет структуру, не наличие Docker.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: '3:FROM eclipse-temurin:17'. Dockerfile читается как последовательность инструкций; задача проверяет структуру, не наличие Docker."
+        }
+      ]
+    },
+    {
+      "id": "m22-l03",
+      "title": "主流 CI/CD 系统对比",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】GitLab CI/CD, GitHub Actions и Jenkins запускают автоматизированные пайплайны по событиям репозитория. Работы (jobs) проверяют код, собирают артефакты и могут развёртывать версии.",
+          "【核心理论】Принцип важнее конкретной системы: быстрые тесты, видимый статус, контролируемый выпуск, секреты в защищённом хранилище. Не путайте успешную сборку с безопасным развёртыванием — нужны проверки окружения и откат."
+        ],
+        "code": "push → job(build) → job(test) → artifact → job(deploy)",
+        "caption": "Пайплайн должен давать понятный статус.",
+        "language": "text",
+        "objective": "【学习目标】Нарисовать пайплайн с проверками до передачи артефакта на deploy.",
+        "walkthrough": "【代码走读】После push выполняются build и test; артефакт успешной сборки получает следующая job. При провале тестов обычный путь к deploy блокируется.",
+        "pitfall": "【常见陷阱】Секреты храните в защищённых переменных CI и ограничивайте доступ к production. Зелёный build сам по себе не гарантирует безопасный deploy.",
+        "deepDive": "【深入解析】Jobs и этапы пайплайна образуют граф проверок и передачи артефактов. Успешная компиляция не доказывает, что тесты прошли или что окружение готово; условия запуска deploy должны зависеть от нужных результатов.",
+        "useCase": "【实际应用】Сымитируйте провал теста и убедитесь, что публикация остановилась. Для выпуска храните артефакт проверенной сборки, а не пересобирайте другую версию после зелёного статуса.",
+        "guide": {
+          "why": "【分步指南】CI-системы реализуют общую идею задания и зависимостей, хотя YAML-конфигурация у каждой своя. Проверка должна предшествовать доставке.",
+          "steps": [
+            "В конфигурации опишите отдельную job test, запускающую тесты, и job deploy для доставки артефакта.",
+            "Задайте зависимость deploy от test: при провале тестов выпуск не должен происходить. Синтаксис GitHub Actions и GitLab CI различается."
+          ],
+          "example": {
+            "code": "jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: ./mvnw test\n  deploy:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo \"deploy after tests\"",
+            "language": "yaml",
+            "runnable": false,
+            "label": "Фрагмент GitHub Actions; нужен полный workflow"
+          },
+          "result": "Это фрагмент GitHub Actions; он не работает как .gitlab-ci.yml. Полноценный workflow также должен получить исходники и настроить JDK.",
+          "bridge": "В мини-задании проследите, какая job блокирует выпуск. В практике без CI-инструментов остановите Java-цикл при неуспешном test."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m22-l03-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: ./mvnw test\n  deploy:\n    needs: test\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo \"deploy after tests\"",
+          "language": "yaml",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 Это фрагмент GitHub Actions; он не работает как .gitlab-ci.yml. Полноценный workflow также должен получить исходники и настроить JDK."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Где хранить токен доступа для CI?",
+          "options": [
+            {
+              "id": "a",
+              "label": "В исходном коде"
+            },
+            {
+              "id": "b",
+              "label": "В защищённых секретах системы CI"
+            },
+            {
+              "id": "c",
+              "label": "В комментарии к Dockerfile"
+            },
+            {
+              "id": "d",
+              "label": "В имени файла"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Секрет не должен попасть в репозиторий или образ.",
+          "explanation": "【解析】CI-системы предоставляют защищённые переменные/секреты.",
+          "id": "m22-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Назовите результат сборки, передаваемый между jobs.",
+          "template": [
+            "",
+            " сборки"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Артефакт",
+              "options": [
+                "Артефакт",
+                "Ключ API",
+                "Курсор"
+              ]
+            }
+          ],
+          "hint": "【提示】Это файл или набор файлов после build.",
+          "explanation": "【解析】Артефакт передают последующим этапам пайплайна.",
+          "id": "m22-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m22-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】В последовательности CI «build → test → deploy» какой этап должен предшествовать развёртыванию?",
+          "options": [
+            {
+              "id": "a",
+              "label": "test"
+            },
+            {
+              "id": "b",
+              "label": "deploy снова"
+            },
+            {
+              "id": "c",
+              "label": "мониторинг после релиза"
+            },
+            {
+              "id": "d",
+              "label": "никакой"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】Развёртывание не должно опережать проверку собранной версии.",
+          "explanation": "【解析】Верно: test. Развёртывание не должно опережать проверку собранной версии."
+        },
+        {
+          "id": "m22-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m22-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Смоделируйте стадии CI: список [\"build\", \"test\", \"deploy\"]. Через цикл соедините их стрелками -> и выведите строку без пробелов.",
+          "expectedOutput": "build->test->deploy",
+          "hint": "【提示】Стадии выполняются по порядку; используйте String.join или StringBuilder, не печатайте список как объект.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'build->test->deploy'. Стадии выполняются по порядку; используйте String.join или StringBuilder, не печатайте список как объект."
+        }
+      ]
+    },
+    {
+      "id": "m22-l04",
+      "title": "GitLab CI/CD 流水线配置",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "【核心理论】В .gitlab-ci.yml список stages задаёт порядок этапов. Каждая job указывает stage и script; если тестовая job завершилась с ошибкой, зависимые следующие этапы обычно не запускаются.",
+          "【核心理论】Artifacts сохраняют результаты сборки для последующих jobs, rules определяют условия запуска. Не публикуйте секреты в логах. Для продакшен-развёртывания добавьте защиту окружения и возможность отката."
+        ],
+        "code": "image: maven:3.9-eclipse-temurin-17\nstages: [build, test, deploy]\nbuild_app:\n  stage: build\n  script: mvn -DskipTests package\n  artifacts:\n    paths: [target/*.jar]\ntest_app:\n  stage: test\n  script: mvn test",
+        "caption": "YAML-файл описывает задачи и условия запуска.",
+        "language": "yaml",
+        "objective": "【学习目标】Разобрать stages, stage и script в .gitlab-ci.yml.",
+        "walkthrough": "【代码走读】image задаёт Maven-окружение, stages — build → test → deploy. build_app сохраняет jar как artifact, test_app выполняет тесты; job deploy здесь ещё не описана.",
+        "pitfall": "【常见陷阱】Даже с образом Maven нужен настроенный GitLab runner. Защитите продакшен-переменные и отдельно добавьте правила и job развёртывания.",
+        "deepDive": "【深入解析】В GitLab CI/CD stages определяют порядок этапов, stage привязывает job к этапу, а script перечисляет выполняемые команды. Runner исполняет работу; artifacts передают файлы дальше, тогда как cache лишь ускоряет повторные сборки.",
+        "useCase": "【实际应用】Добавьте job build и test в .gitlab-ci.yml и проверьте, что тест получает нужный jar. Для production понадобятся отдельная deploy-job, защищённые переменные и rules, чтобы случайная ветка не запустила выпуск.",
+        "guide": {
+          "why": "【分步指南】GitLab CI описывает стадии в .gitlab-ci.yml. Название stage связывает job с объявленным порядком stages, а ошибка job блокирует последующие стадии.",
+          "steps": [
+            "Укажите stages: build, test, deploy. Каждой job задайте stage и script с командами, которые действительно вернут ненулевой код при ошибке.",
+            "Артефакт сборки должен быть доступен следующей job по настроенным правилам передачи; для реальной сборки нужны Maven/JDK и проект."
+          ],
+          "example": {
+            "code": "stages: [build, test, deploy]\nbuild_app:\n  stage: build\n  script: mvn -DskipTests package\n  artifacts:\n    paths: [target/*.jar]\ntest_app:\n  stage: test\n  script: mvn test",
+            "language": "yaml",
+            "runnable": false,
+            "label": "Фрагмент .gitlab-ci.yml; deploy добавляется отдельно"
+          },
+          "result": "При успешной сборке и тестах стадия deploy сможет стартовать, если её job добавлена. Это конфигурация GitLab, не Java-код.",
+          "bridge": "В мини-задании проверьте порядок stages и stage каждой job. В практике повторите fail-fast смысл на массиве результатов."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m22-l04-copy",
+          "type": "copy",
+          "prompt": "请手动输入下方分步解析中的示例代码。保持语句顺序、变量名、字符串字面量和关键缩进一致，并理解每一行的作用。",
+          "sourceCode": "stages: [build, test, deploy]\nbuild_app:\n  stage: build\n  script: mvn -DskipTests package\n  artifacts:\n    paths: [target/*.jar]\ntest_app:\n  stage: test\n  script: mvn test",
+          "language": "yaml",
+          "hint": "请对照示例检查语句、大小写、引号和闭合括号。仅允许 Java 空白格式有所差异。",
+          "explanation": "这与理论部分解析的代码片段相同。 При успешной сборке и тестах стадия deploy сможет стартовать, если её job добавлена. Это конфигурация GitLab, не Java-код."
+        },
+        {
+          "type": "choice",
+          "prompt": "【任务】Где в GitLab CI задают порядок этапов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "В секции stages"
+            },
+            {
+              "id": "b",
+              "label": "В имени класса Main"
+            },
+            {
+              "id": "c",
+              "label": "В поле version Java"
+            },
+            {
+              "id": "d",
+              "label": "Только в Dockerfile"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "【提示】В YAML есть список build, test, deploy.",
+          "explanation": "【解析】stages задаёт порядок групп jobs.",
+          "id": "m22-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "【任务】Укажите этап для job тестирования.",
+          "template": [
+            "test_app:\n  ",
+            ": test\n  script: mvn test"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "stage",
+              "options": [
+                "stage",
+                "imageOnly",
+                "artifactPath"
+              ]
+            }
+          ],
+          "hint": "【提示】Каждая job привязывается к этапу.",
+          "explanation": "【解析】stage: test связывает job с этапом test.",
+          "id": "m22-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m22-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "【任务】В GitLab CI build=true, test=true, deploy=false. Каков общий результат при объединении всех стадий через &&?",
+          "options": [
+            {
+              "id": "a",
+              "label": "true"
+            },
+            {
+              "id": "b",
+              "label": "false"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "зависит от названия переменных"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "【提示】Логическое И ложно, если хотя бы одна обязательная стадия не удалась.",
+          "explanation": "【解析】Верно: false. Логическое И ложно, если хотя бы одна обязательная стадия не удалась."
+        },
+        {
+          "id": "m22-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m22-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "【任务】Без GitLab создайте Map<String,Boolean> с build=true, test=true, deploy=false. Через цикл вычислите общий успех всех стадий и выведите false.",
+          "expectedOutput": "false",
+          "hint": "【提示】Релиз блокируется провалом любой стадии; это моделирование pipeline, не настоящий GitLab CI.",
+          "explanation": "【解析】Сопоставьте свой результат с ожидаемым выводом: 'false'. Релиз блокируется провалом любой стадии; это моделирование pipeline, не настоящий GitLab CI."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "第 22 模块综合实战",
+    "description": "Упорядочьте этапы и разберите ошибку без необходимости запускать Docker или GitLab.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Что обычно должно произойти после неудачных тестов в CI?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Автоматический deploy несмотря на ошибку"
+          },
+          {
+            "id": "b",
+            "label": "Пайплайн остановится и покажет сбой"
+          },
+          {
+            "id": "c",
+            "label": "Удаление исходников"
+          },
+          {
+            "id": "d",
+            "label": "Изменение Java-версии само собой"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Следующие этапы не должны публиковать сломанную сборку.",
+        "explanation": "【解析】Сбой тестов блокирует обычный выпуск.",
+        "id": "m22-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Привяжите job к этапу тестирования.",
+        "template": [
+          "test_app:\n  stage: ",
+          "\n  script: mvn test"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "test",
+            "options": [
+              "build",
+              "test",
+              "deploy"
+            ]
+          }
+        ],
+        "hint": "【提示】Название этапа соответствует проверке.",
+        "explanation": "【解析】stage: test отправляет job в тестовую стадию.",
+        "id": "m22-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте CI/CD-термин.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "CI",
+            "right": "Частая интеграция и автоматические проверки"
+          },
+          {
+            "id": "2",
+            "left": "Docker image",
+            "right": "Шаблон для запуска контейнеров"
+          },
+          {
+            "id": "3",
+            "left": "Artifact",
+            "right": "Файл результата сборки"
+          },
+          {
+            "id": "4",
+            "left": "CD",
+            "right": "Автоматизированная подготовка или выпуск версии"
+          }
+        ],
+        "hint": "【提示】Отделите процесс проверки от образа и результата сборки.",
+        "explanation": "【解析】Термины описывают разные части конвейера.",
+        "id": "m22-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите минимальный GitLab CI YAML-пайплайн.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "stages: [build, test]"
+          },
+          {
+            "id": "b",
+            "text": "build_app:"
+          },
+          {
+            "id": "c",
+            "text": "stage: build"
+          },
+          {
+            "id": "d",
+            "text": "script: mvn package"
+          },
+          {
+            "id": "e",
+            "text": "test_app:"
+          },
+          {
+            "id": "f",
+            "text": "stage: test"
+          },
+          {
+            "id": "g",
+            "text": "script: mvn test"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          },
+          {
+            "id": "f",
+            "indent": 1
+          },
+          {
+            "id": "g",
+            "indent": 1
+          }
+        ],
+        "hint": "【提示】Каждая job содержит собственные stage и script; порядок этапов задаёт stages.",
+        "explanation": "【解析】Порядок объявления jobs и их полей произволен; stages определяет build → test.",
+        "alternativeOrders": [
+          [
+            "a",
+            "e",
+            "f",
+            "g",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "a",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "a"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "b",
+            "c",
+            "d",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "a",
+            "e",
+            "g",
+            "f",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "a",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "e",
+            "g",
+            "f",
+            "a"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "b",
+            "c",
+            "d",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "d",
+            "c",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "a",
+            "e",
+            "f",
+            "g",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "a",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "e",
+            "f",
+            "g",
+            "a"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "a",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "b",
+            "d",
+            "c",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "d",
+            "c",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "a",
+            "e",
+            "g",
+            "f",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "a",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "e",
+            "g",
+            "f",
+            "a"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "a",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "b",
+            "d",
+            "c",
+            "a"
+          ]
+        ],
+        "id": "m22-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "FROM задаёт базовый Docker-образ"
+          },
+          {
+            "id": "b",
+            "label": "Секреты безопасно хранить в Dockerfile"
+          },
+          {
+            "id": "c",
+            "label": "Неуспешный тест должен блокировать выпуск"
+          },
+          {
+            "id": "d",
+            "label": "Контейнер и образ — разные понятия"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "【提示】Секреты не помещают в образ и исходники.",
+        "explanation": "【解析】Docker и CI помогают воспроизводимой поставке.",
+        "id": "m22-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "【任务】Без GitLab создайте список этапов build, test, deploy. Проверьте, что их индексы идут в указанном порядке, и выведите \"OK\" при правильном порядке.",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<String> stages = List.of(\"build\", \"test\", \"deploy\");\n        // Выведите OK, если build раньше test, а test раньше deploy\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "OK",
+        "hint": "请创建 List<String>, сравните indexOf(\"build\"), indexOf(\"test\"), indexOf(\"deploy\").",
+        "explanation": "【解析】Проверка зафиксировала порядок этапов пайплайна.",
+        "id": "m22-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "【任务】Смоделируйте fail-fast пайплайн: стадии {\"build\",\"test\",\"deploy\"}, результаты {true,false,true}. Прервите цикл на первом false и выведите \"Остановлено: test\".",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        String[] stages = {\"build\", \"test\", \"deploy\"};\n        boolean[] results = {true, false, true};\n        // Прервите выполнение на первой неуспешной стадии\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Остановлено: test",
+        "hint": "【提示】Идите по массиву индексов; если results[i] ложно, выведите имя этапа и break.",
+        "explanation": "【解析】Проверка test остановила поставку до deploy.",
+        "id": "m22-p07"
+      }
+    ],
+    "id": "m22-practice",
+    "primer": {
+      "why": "Смысл CI/CD можно запрограммировать без GitLab и Docker: список этапов задаёт порядок, а первый неуспех останавливает выполнение до выпуска.",
+      "steps": [
+        "请检查 индексы нужных строк методом indexOf; значение -1 означает, что стадии вообще нет, поэтому сравнивать только порядок недостаточно.",
+        "Для fail-fast идите по stages в том же порядке, что и по results. При false напечатайте имя проблемной стадии и вызовите break, чтобы не выполнять deploy."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        String[] stages = {\"compile\", \"verify\", \"release\"};\n        boolean[] results = {true, true, false};\n        for (int i = 0; i < stages.length; i++) {\n            if (!results[i]) {\n                System.out.println(\"Стоп: \" + stages[i]);\n                break;\n            }\n        }\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная Java-модель пайплайна без CI-сервиса",
+        "stdout": "Стоп: release"
+      },
+      "result": "Будет «Стоп: release». Более ранняя ошибка остановила бы цикл до следующих стадий; в настоящем CI это блокирует доставку.",
+      "hints": [
+        {
+          "taskId": "m22-p06",
+          "text": "Для проверки порядка убедитесь, что все три нужные строки присутствуют и их индексы строго возрастают, затем выведите подтверждение."
+        },
+        {
+          "taskId": "m22-p07",
+          "text": "Для fail-fast используйте названия и результаты из задания. При первом false выведите имя остановившейся стадии и прекратите цикл."
+        }
+      ]
+    }
+  },
+  "boss": {
+    "id": "m22-boss",
+    "title": "阶段关卡测验",
+    "description": "Мини-экзамен: четыре верных ответа из пяти для зачёта.",
+    "passingScore": 0.8,
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "【任务】Что обычно запускает CI при каждом изменении?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Сборку и тесты"
+          },
+          {
+            "id": "b",
+            "label": "Удаление репозитория"
+          },
+          {
+            "id": "c",
+            "label": "Ручное копирование пароля"
+          },
+          {
+            "id": "d",
+            "label": "Только тёмную тему"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Нужна автоматическая обратная связь.",
+        "explanation": "【解析】CI проверяет совместимость и тесты изменений.",
+        "id": "m22-b01"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Что обозначает FROM в Dockerfile?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Базовый образ"
+          },
+          {
+            "id": "b",
+            "label": "Путь к тестам"
+          },
+          {
+            "id": "c",
+            "label": "Команду запуска"
+          },
+          {
+            "id": "d",
+            "label": "Токен CI"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Обычно это первая инструкция.",
+        "explanation": "【解析】FROM выбирает основу образа.",
+        "id": "m22-b02"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Как отличается Docker image от контейнера?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Контейнер — запущенный экземпляр образа"
+          },
+          {
+            "id": "b",
+            "label": "Образ — запущенный контейнер"
+          },
+          {
+            "id": "c",
+            "label": "Оба всегда виртуальные машины"
+          },
+          {
+            "id": "d",
+            "label": "Разницы нет"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Шаблон используется для запуска экземпляра.",
+        "explanation": "【解析】Образ создаётся при сборке, контейнер запускается из него.",
+        "id": "m22-b03"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Где хранить секреты для job?",
+        "options": [
+          {
+            "id": "a",
+            "label": "В открытом pom.xml"
+          },
+          {
+            "id": "b",
+            "label": "В защищённых переменных CI"
+          },
+          {
+            "id": "c",
+            "label": "В Dockerfile"
+          },
+          {
+            "id": "d",
+            "label": "В имени ветки"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Секреты не должны попадать в исходники и логи.",
+        "explanation": "【解析】Защищённые секреты CI отделены от кода.",
+        "id": "m22-b04"
+      },
+      {
+        "type": "choice",
+        "prompt": "【任务】Что задаёт порядок этапов в .gitlab-ci.yml?",
+        "options": [
+          {
+            "id": "a",
+            "label": "stages"
+          },
+          {
+            "id": "b",
+            "label": "System.out.println"
+          },
+          {
+            "id": "c",
+            "label": "git status"
+          },
+          {
+            "id": "d",
+            "label": "serialVersionUID"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "【提示】Это список build, test, deploy.",
+        "explanation": "【解析】stages задаёт последовательность этапов.",
+        "id": "m22-b05"
+      }
+    ]
+  },
+  "exam": {
+    "id": "m22-exam",
+    "title": "模块小测验",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 520,
+    "tasks": [
+      {
+        "id": "m-exam-22-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "【任务】В GitLab CI build=true, test=true, deploy=false. Каков общий результат при объединении всех стадий через &&?",
+        "options": [
+          {
+            "id": "a",
+            "label": "true"
+          },
+          {
+            "id": "b",
+            "label": "false"
+          },
+          {
+            "id": "c",
+            "label": "null"
+          },
+          {
+            "id": "d",
+            "label": "зависит от названия переменных"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "【提示】Логическое И ложно, если хотя бы одна обязательная стадия не удалась.",
+        "explanation": "【解析】Верно: false. Логическое И ложно, если хотя бы одна обязательная стадия не удалась."
+      },
+      {
+        "type": "fill",
+        "prompt": "【任务】Дополните цепочку перед выпуском.",
+        "template": [
+          "commit → build → ",
+          " → artifact"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "test",
+            "options": [
+              "test",
+              "delete",
+              "skip"
+            ]
+          }
+        ],
+        "hint": "【提示】Проверка должна идти до создания выпускаемого артефакта.",
+        "explanation": "【解析】Тесты проверяют сборку перед публикацией.",
+        "id": "m-exam-22-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "【任务】Сопоставьте CI/CD-термин.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "CI",
+            "right": "Частая интеграция и автоматические проверки"
+          },
+          {
+            "id": "2",
+            "left": "Docker image",
+            "right": "Шаблон для запуска контейнеров"
+          },
+          {
+            "id": "3",
+            "left": "Artifact",
+            "right": "Файл результата сборки"
+          },
+          {
+            "id": "4",
+            "left": "CD",
+            "right": "Автоматизированная подготовка или выпуск версии"
+          }
+        ],
+        "hint": "【提示】Отделите процесс проверки от образа и результата сборки.",
+        "explanation": "【解析】Термины описывают разные части конвейера.",
+        "id": "m-exam-22-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "【任务】Соберите минимальный GitLab CI YAML-пайплайн.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "stages: [build, test]"
+          },
+          {
+            "id": "b",
+            "text": "build_app:"
+          },
+          {
+            "id": "c",
+            "text": "stage: build"
+          },
+          {
+            "id": "d",
+            "text": "script: mvn package"
+          },
+          {
+            "id": "e",
+            "text": "test_app:"
+          },
+          {
+            "id": "f",
+            "text": "stage: test"
+          },
+          {
+            "id": "g",
+            "text": "script: mvn test"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          },
+          {
+            "id": "f",
+            "indent": 1
+          },
+          {
+            "id": "g",
+            "indent": 1
+          }
+        ],
+        "hint": "【提示】Каждая job содержит собственные stage и script; порядок этапов задаёт stages.",
+        "explanation": "【解析】Порядок объявления jobs и их полей произволен; stages определяет build → test.",
+        "alternativeOrders": [
+          [
+            "a",
+            "e",
+            "f",
+            "g",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "a",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "a"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "b",
+            "c",
+            "d",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "a",
+            "e",
+            "g",
+            "f",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "a",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "b",
+            "c",
+            "d",
+            "e",
+            "g",
+            "f",
+            "a"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "b",
+            "c",
+            "d",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "d",
+            "c",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "a",
+            "e",
+            "f",
+            "g",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "a",
+            "e",
+            "f",
+            "g"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "e",
+            "f",
+            "g",
+            "a"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "a",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "e",
+            "f",
+            "g",
+            "b",
+            "d",
+            "c",
+            "a"
+          ],
+          [
+            "a",
+            "b",
+            "d",
+            "c",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "a",
+            "e",
+            "g",
+            "f",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "a",
+            "e",
+            "g",
+            "f"
+          ],
+          [
+            "b",
+            "d",
+            "c",
+            "e",
+            "g",
+            "f",
+            "a"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "a",
+            "b",
+            "d",
+            "c"
+          ],
+          [
+            "e",
+            "g",
+            "f",
+            "b",
+            "d",
+            "c",
+            "a"
+          ]
+        ],
+        "id": "m-exam-22-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "请创建 Stage(name,success) и Pipeline.run(List<Stage>). Пайплайн печатает имя\nкаждого реально запущенного этапа, при первом false печатает «STOP имя» и немедленно\nвозвращает false; если все этапы успешны — печатает «DEPLOYED» и возвращает true.\nЭтапы build=true, test=(1 % 2 == 0), deploy=true. 请输出 результат run последней\nстрокой. Отдельный метод validate проверяет порядок build,test,deploy и бросает\nIllegalArgumentException при нарушении. Вызовите его перед запуском.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "build\ntest\nSTOP test\nfalse",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nbuild\ntest\nSTOP test\nfalse",
+        "id": "m-exam-22-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\n请创建 Stage(name,success) и Pipeline.run(List<Stage>). Пайплайн печатает имя\nкаждого реально запущенного этапа, при первом false печатает «STOP имя» и немедленно\nвозвращает false; если все этапы успешны — печатает «DEPLOYED» и возвращает true.\nЭтапы build=true, test=(2 % 2 == 0), deploy=true. 请输出 результат run последней\nстрокой. Отдельный метод validate проверяет порядок build,test,deploy и бросает\nIllegalArgumentException при нарушении. Вызовите его перед запуском.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "build\ntest\ndeploy\nDEPLOYED\ntrue",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nbuild\ntest\ndeploy\nDEPLOYED\ntrue",
+        "id": "m-exam-22-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\n请创建 Stage(name,success) и Pipeline.run(List<Stage>). Пайплайн печатает имя\nкаждого реально запущенного этапа, при первом false печатает «STOP имя» и немедленно\nвозвращает false; если все этапы успешны — печатает «DEPLOYED» и возвращает true.\nЭтапы build=true, test=(3 % 2 == 0), deploy=true. 请输出 результат run последней\nстрокой. Отдельный метод validate проверяет порядок build,test,deploy и бросает\nIllegalArgumentException при нарушении. Вызовите его перед запуском.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: build\nОтчёт: test\nОтчёт: STOP test\nОтчёт: false\nСтрок: 4",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: build\nОтчёт: test\nОтчёт: STOP test\nОтчёт: false\nСтрок: 4",
+        "id": "m-exam-22-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\n请创建 Stage(name,success) и Pipeline.run(List<Stage>). Пайплайн печатает имя\nкаждого реально запущенного этапа, при первом false печатает «STOP имя» и немедленно\nвозвращает false; если все этапы успешны — печатает «DEPLOYED» и возвращает true.\nЭтапы build=true, test=(4 % 2 == 0), deploy=true. 请输出 результат run последней\nстрокой. Отдельный метод validate проверяет порядок build,test,deploy и бросает\nIllegalArgumentException при нарушении. Вызовите его перед запуском.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: build\nОтчёт: test\nОтчёт: deploy\nОтчёт: DEPLOYED\nОтчёт: true\nСтрок: 5\nАудит: 10/2",
+        "hint": "【提示】Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "请检查 вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: build\nОтчёт: test\nОтчёт: deploy\nОтчёт: DEPLOYED\nОтчёт: true\nСтрок: 5\nАудит: 10/2",
+        "id": "m-exam-22-08"
+      }
+    ]
+  }
+}

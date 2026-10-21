@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "labs": [
+    {
+      "id": "lab-array-report",
+      "type": "code",
+      "mode": "run",
+      "title": "Arreglo: mínimo, máximo y suma",
+      "goal": "Un solo recorrido por los datos, casos límite y desbordamiento de int.",
+      "description": "Lee n números enteros de la entrada estándar (n de 1 a 100). Imprime el mínimo, el máximo y la suma separados por espacio. Guarda la suma en long.",
+      "prerequisites": [
+        1,
+        2,
+        3
+      ],
+      "skills": [
+        "arreglos y bucles",
+        "límites",
+        "long para la suma"
+      ],
+      "inputFormat": "La primera línea es n, seguida de n enteros separados por espacio o salto de línea.",
+      "outputFormat": "Una línea: min max sum.",
+      "sampleInput": "5\n5 -2 9 9 0\n",
+      "sampleOutput": "-2 9 21",
+      "hint": "Lee el primer elemento como valor inicial para min, max y sum; procesa los demás en un bucle de 1 a n-1.",
+      "starterCode": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int first = in.nextInt();\n        int min = first, max = first;\n        long sum = first;\n        // TODO: обработайте остальные n - 1 чисел.\n        System.out.println(min + \" \" + max + \" \" + sum);\n    }\n}\n"
+    },
+    {
+      "id": "lab-user-lookup",
+      "type": "code",
+      "mode": "run",
+      "title": "Directorio de usuarios",
+      "goal": "Modelado de datos, indexación con Map y manejo explícito de claves ausentes.",
+      "description": "Lee n líneas con formato id;nombre;true|false (IDs únicos y positivos) y luego el ID buscado. Si está activo imprime su nombre; si está inactivo, INACTIVE; si no existe, NOT_FOUND.",
+      "prerequisites": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "skills": [
+        "clases o record",
+        "Map",
+        "condicionales"
+      ],
+      "inputFormat": "Primera línea n (0..100), luego n líneas id;nombre;active y finalmente el ID buscado.",
+      "outputFormat": "Nombre, INACTIVE o NOT_FOUND (una línea).",
+      "sampleInput": "3\n1;Анна;true\n2;Борис;false\n10;Лена;true\n10\n",
+      "sampleOutput": "Лена",
+      "hint": "Guarda objetos User en Map<Integer, User>; usa split(\";\", -1) y verifica primero si existe antes de revisar active.",
+      "starterCode": "import java.io.*;\nimport java.util.*;\n\nrecord User(int id, String name, boolean active) { }\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        Map<Integer, User> users = new HashMap<>();\n        // TODO: прочитайте n записей id;имя;true|false.\n        // TODO: прочитайте искомый ID и выведите один ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-import-report",
+      "type": "code",
+      "mode": "run",
+      "title": "Importación: tolerancia a datos inválidos",
+      "goal": "Análisis de cadenas, validación de entrada y manejo de errores sin abortar el programa.",
+      "description": "Lee n líneas con formato nombre,edad. Una línea es válida si el nombre tras trim no está vacío, hay exactamente una coma y la edad es un entero entre 0 y 120. Ignora las líneas inválidas e imprime cantidad válida y suma de edades.",
+      "prerequisites": [
+        10,
+        11,
+        13
+      ],
+      "skills": [
+        "análisis tipo CSV",
+        "NumberFormatException",
+        "validación de límites"
+      ],
+      "inputFormat": "Primera línea n (0..100), seguida de n líneas nombre,edad.",
+      "outputFormat": "Una línea: cantidad_válida suma_edades.",
+      "sampleInput": "5\nАнна,25\nБорис,abc\n,20\nИгорь,17\nЗоя,30\n",
+      "sampleOutput": "3 72",
+      "hint": "Usa split(\",\", -1), comprueba longitud == 2 y nombre no vacío; captura NumberFormatException.",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        int count = 0;\n        long totalAge = 0;\n        for (int i = 0; i < n; i++) {\n            String row = in.readLine();\n            // TODO: разберите row, проверьте диапазон и обновите счётчики.\n        }\n        System.out.println(count + \" \" + totalAge);\n    }\n}\n"
+    },
+    {
+      "id": "lab-order-totals",
+      "type": "code",
+      "mode": "run",
+      "title": "Pedidos: GROUP BY sin base de datos",
+      "goal": "Agregar sumas por ID, filtrar grupos y ordenar de forma predecible.",
+      "description": "Lee n pedidos userId amount y luego un umbral. Suma los importes por usuario en long, conserva los que tengan total >= umbral, ordénalos por ID ascendente e imprime id:suma separados por comas (o - si no hay ninguno).",
+      "prerequisites": [
+        9,
+        13,
+        16
+      ],
+      "skills": [
+        "Map y ordenación",
+        "agregación en long",
+        "formato de salida"
+      ],
+      "inputFormat": "Primera línea n (0..100), luego n líneas userId amount y última línea con el umbral.",
+      "outputFormat": "Una línea: id1:suma1,id2:suma2 o -.",
+      "sampleInput": "4\n1 30\n2 70\n1 80\n3 100\n100\n",
+      "sampleOutput": "1:110,3:100",
+      "hint": "Usa TreeMap<Integer, Long> con merge(id, amount, Long::sum) para mantener las claves ordenadas.",
+      "starterCode": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        Map<Integer, Long> totals = new HashMap<>();\n        // TODO: прочитайте n пар ID / сумма.\n        long threshold = in.nextLong();\n        // TODO: отсортируйте ID, оставьте подходящие группы и выведите ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-rest-router",
+      "type": "code",
+      "mode": "run",
+      "title": "Mini enrutador de peticiones HTTP",
+      "goal": "Enrutar métodos y rutas HTTP, validar parámetros numéricos y devolver códigos de estado.",
+      "description": "Lee n líneas METHOD /path. Responde GET /health -> 200 OK, POST /users -> 201 CREATED, GET /users/{id} (con id entero positivo de 64 bits) -> 200 USER {id}, y cualquier otra ruta -> 404 NOT_FOUND.",
+      "prerequisites": [
+        16,
+        17,
+        19
+      ],
+      "skills": [
+        "enrutamiento HTTP",
+        "análisis de rutas",
+        "códigos de estado"
+      ],
+      "inputFormat": "Primera línea n (1..100), seguida de n líneas METHOD /path.",
+      "outputFormat": "n líneas con el resultado de cada petición.",
+      "sampleInput": "4\nGET /health\nGET /users/42\nPOST /users\nDELETE /users/42\n",
+      "sampleOutput": "200 OK\n200 USER 42\n201 CREATED\n404 NOT_FOUND",
+      "hint": "Verifica primero rutas exactas y luego el prefijo /users/ validando que el ID sea un Long positivo.",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        for (int i = 0; i < n; i++) {\n            String request = in.readLine();\n            String[] parts = request.split(\" \", 2);\n            // TODO: выберите ответ по методу и пути.\n            System.out.println(\"404 NOT_FOUND\");\n        }\n    }\n}\n"
+    }
+  ]
+}

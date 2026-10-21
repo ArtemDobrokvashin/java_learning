@@ -1,0 +1,999 @@
+{
+  "id": 2,
+  "title": "Branching & Conditionals",
+  "lessons": [
+    {
+      "id": "m02-l01",
+      "title": "Algorithms and Flowcharts",
+      "duration": 5,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Алгоритм — последовательность конечных, понятных шагов для решения задачи. Обычно программа сочетает три конструкции: следование (шаги подряд), ветвление (выбор действия) и повторение (цикл).",
+          "На блок-схеме ромб обозначает проверку условия, прямоугольник — действие, стрелки задают порядок. In Java, условие принимает значение boolean: true или false. Один и тот же алгоритм можно сначала описать словами, затем записать кодом."
+        ],
+        "code": "int temperature = 12;\nif (temperature < 15) {\n    System.out.println(\"Возьми куртку\");\n}",
+        "caption": "Short snippet for main; below is a complete runnable example with output.",
+        "objective": "[Goal] Разложить простой алгоритм на условие и действие и предсказать, выполнится ли ветка.",
+        "walkthrough": "[Walkthrough] При temperature = 12 проверка 12 < 15 истинна, поэтому в консоль попадёт «Возьми куртку». Если заменить 12 на 15, тело if выполнено не будет.",
+        "pitfall": "[Common Pitfall] Не рисуйте действие вместо условия: ромб — проверка с выходами да/нет, прямоугольник — выполняемый шаг.",
+        "deepDive": "[Deep Dive] Чтобы алгоритм можно было проверить, сформулируйте вход, выход и правило завершения. Для ветвления отдельно опишите поведение по обе стороны границы; даже простая блок-схема выявляет случай, для которого действие забыли.",
+        "useCase": "Представьте рекомендацию одежды: на входе температура, на выходе совет. Check значение ниже порога, ровно на пороге и выше него, а затем переведите два пути схемы в if и else.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Алгоритм — последовательность проверяемых действий, а условие позволяет выбрать путь. Сначала сформулируйте словами, когда должен появиться совет, и только затем переводите правило в if.",
+          "steps": [
+            "Declare число rainLevel внутри main: это входные данные для решения, а не текст, который нужно напечатать.",
+            "The condition rainLevel >= 2 вычисляется в true или false. Если оно истинно, выполняются команды в первых фигурных скобках; иначе — в ветке else.",
+            "У двух вариантов должен быть осмысленный вывод: println показывает результат выбранного пути, поэтому читатель может проверить алгоритм."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int rainLevel = 3;\n        if (rainLevel >= 2) {\n            System.out.println(\"Возьми зонт\");\n        } else {\n            System.out.println(\"Зонт не нужен\");\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Complete Main.java program — runnable",
+            "stdout": "Возьми зонт"
+          },
+          "result": "При rainLevel = 3 на экране «Возьми зонт». Поменяйте его на 1: выберется другая ветка, но программа всё равно выведет ровно одну строку.",
+          "bridge": "На блок-схеме правило >= 2 поместили бы в ромб, а вывод — в прямоугольник. Позже то же разделение позволит выбрать совет по температуре."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m02-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int rainLevel = 3;\n        if (rainLevel >= 2) {\n            System.out.println(\"Возьми зонт\");\n        } else {\n            System.out.println(\"Зонт не нужен\");\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. При rainLevel = 3 на экране «Возьми зонт». Поменяйте его на 1: выберется другая ветка, но программа всё равно выведет ровно одну строку."
+        },
+        {
+          "id": "m02-l01-q1",
+          "type": "choice",
+          "prompt": "[Task] Какую фигуру блок-схемы обычно используют для проверки условия?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Прямоугольник"
+            },
+            {
+              "id": "b",
+              "label": "Ромб"
+            },
+            {
+              "id": "c",
+              "label": "Овал"
+            },
+            {
+              "id": "d",
+              "label": "Круг"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] У проверки обычно два выхода: «да» и «нет».",
+          "explanation": "[Explanation] Ромб изображает развилку с результатами «да» и «нет».",
+          "variant": "theory",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m02-l01-q2",
+          "type": "matching",
+          "prompt": "[Task] Сопоставьте конструкцию алгоритма с её смыслом.",
+          "pairs": [
+            {
+              "id": "1",
+              "left": "Следование",
+              "right": "Шаги выполняются по порядку"
+            },
+            {
+              "id": "2",
+              "left": "Ветвление",
+              "right": "Выбор по условию"
+            },
+            {
+              "id": "3",
+              "left": "Цикл",
+              "right": "Повторение действий"
+            }
+          ],
+          "hint": "Consider где есть выбор, где повторение, а где только порядок.",
+          "explanation": "[Explanation] Любой из трёх видов управления меняет ход алгоритма по-своему.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m02-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Какую ветку выберет if (temperature < 0) при temperature = 0, если в else печатается «не мороз»?",
+          "options": [
+            {
+              "id": "a",
+              "label": "if: мороз"
+            },
+            {
+              "id": "b",
+              "label": "else: не мороз"
+            },
+            {
+              "id": "c",
+              "label": "обе ветки"
+            },
+            {
+              "id": "d",
+              "label": "ни одну"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Строгое < не включает граничное значение 0.",
+          "explanation": "[Explanation] Верно: else: не мороз. Строгое < не включает граничное значение 0."
+        },
+        {
+          "id": "m02-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m02-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Для int rain = 0 напишите if/else: при rain >= 1 выводите «Мокро», в ином случае — «Сухо». Проверьте, какая из двух веток сработает.",
+          "expectedOutput": "Сухо",
+          "hint": "[Hint] Сравнение даёт boolean; вывод должен находиться внутри правильной ветки, а не после обеих.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Сухо'. Сравнение даёт boolean; вывод должен находиться внутри правильной ветки, а не после обеих."
+        }
+      ]
+    },
+    {
+      "id": "m02-l02",
+      "title": "The if Conditional Statement",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Оператор if выполняет блок кода, только когда условие истинно. Необязательный блок else выполняется во всех остальных случаях. Фигурные скобки помогают явно обозначить границы блока — используйте их даже для одной строки.",
+          "[Theory] Для сравнения чисел применяйте ==, !=, <, <=, >, >=. Один знак = присваивает значение, два знака == сравнивают. Для ссылочных объектов, например строк, содержимое сравнивают методом equals, а не оператором ==."
+        ],
+        "code": "int age = 18;\nif (age >= 18) {\n    System.out.println(\"Доступ открыт\");\n} else {\n    System.out.println(\"Доступ закрыт\");\n}",
+        "caption": "Short snippet for main; below is a complete runnable example with output.",
+        "objective": "[Goal] Записать if/else и выбрать верный оператор сравнения для граничного значения.",
+        "walkthrough": "[Walkthrough] При age = 18 условие age >= 18 истинно, поэтому печатается «Доступ открыт»; else не выполняется. При 17 будет «Доступ закрыт».",
+        "pitfall": "[Common Pitfall] age = 18 присваивает значение, а не сравнивает; строки по содержимому сравнивайте equals, не ==.",
+        "deepDive": "[Deep Dive] Граница условия решает поведение именно на равном значении: age >= 18 включает 18, а age > 18 исключает его. Если одно из двух действий обязательно, if/else выражает эту взаимную исключительность яснее двух независимых if.",
+        "useCase": "[Real-World Case] Для формы регистрации явно перечислите допустимые и недопустимые возрасты. Отдельно проверьте 17 и 18 в тестах: большинство ошибок в условиях возникает на границе, а не далеко от неё.",
+        "guide": {
+          "why": "The condition if отвечает на конкретный вопрос с границей. Для проверки «не меньше порога» нужен >=, а не >: равное порогу значение тоже должно пройти.",
+          "steps": [
+            "Порог 60 включается в зачёт: score >= 60 истинно и для 60, и для 61. У score = 59 условие ложно.",
+            "println(\"Зачёт\") печатает текст в кавычках. Вторая ветка else выполняется только если условие первого if не прошло.",
+            "Check три случая: ниже границы, точно на границе и выше неё. Так проще заметить ошибку > вместо >=."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int score = 60;\n        if (score >= 60) {\n            System.out.println(\"Зачёт\");\n        } else {\n            System.out.println(\"Повторить\");\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Complete Main.java program — runnable",
+            "stdout": "Зачёт"
+          },
+          "result": "При score = 60 появится «Зачёт». Уберите знак = из условия: при том же значении сработает else — вот почему оператор важен.",
+          "bridge": "Мини-задание про совершеннолетие решается по той же схеме: вместо score и порога подставьте age и нужную границу, сохранив обе ветки."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m02-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int score = 60;\n        if (score >= 60) {\n            System.out.println(\"Зачёт\");\n        } else {\n            System.out.println(\"Повторить\");\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. При score = 60 появится «Зачёт». Уберите знак = из условия: при том же значении сработает else — вот почему оператор важен."
+        },
+        {
+          "id": "m02-l02-q1",
+          "type": "choice",
+          "prompt": "[Task] Что напечатает код из примера при age = 18?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Доступ закрыт"
+            },
+            {
+              "id": "b",
+              "label": "Доступ открыт"
+            },
+            {
+              "id": "c",
+              "label": "Обе строки"
+            },
+            {
+              "id": "d",
+              "label": "Ничего"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Оператор >= включает и число на границе.",
+          "explanation": "[Explanation] 18 >= 18 истинно, поэтому выполняется ветка if.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m02-l02-q2",
+          "type": "fill",
+          "prompt": "[Task] Допишите проверку совершеннолетия.",
+          "template": [
+            "if (age ",
+            " 18) {\n    System.out.println(\"Можно\");\n}"
+          ],
+          "blanks": [
+            {
+              "id": "op",
+              "kind": "select",
+              "options": [
+                ">",
+                ">=",
+                "==",
+                "<="
+              ],
+              "answer": ">="
+            }
+          ],
+          "hint": "[Hint] Возраст 18 тоже должен проходить проверку.",
+          "explanation": "[Explanation] >= возвращает true для 18 и любого большего числа.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m02-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Ученик набрал ровно 60 баллов. Какое из условий даст зачёт с порогом 60 включительно?",
+          "options": [
+            {
+              "id": "a",
+              "label": "score > 60"
+            },
+            {
+              "id": "b",
+              "label": "score < 60"
+            },
+            {
+              "id": "c",
+              "label": "score >= 60"
+            },
+            {
+              "id": "d",
+              "label": "score == 100"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] На границе равенство должно удовлетворять условию; >= включает само значение 60.",
+          "explanation": "[Explanation] Верно: score >= 60. На границе равенство должно удовлетворять условию; >= включает само значение 60."
+        },
+        {
+          "id": "m02-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m02-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Declare два результата: 59 и 60. Для каждого отдельно используйте if/else с границей >= 60 и выведите «Зачёт» либо «Повторить» на разных строках.",
+          "expectedOutput": "Повторить\nЗачёт",
+          "hint": "Check случай точно на границе: оператор > здесь недостаточен; не подменяйте if готовой печатью.",
+          "explanation": "Сопоставьте свой результат с ожидаемым выводом: 'Повторить\\nЗачёт'. Check случай точно на границе: оператор > здесь недостаточен; не подменяйте if готовой печатью."
+        }
+      ]
+    },
+    {
+      "id": "m02-l03",
+      "title": "Boolean Logic Operations",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Оператор && означает логическое «И»: оба условия должны быть истинны. Оператор || означает «ИЛИ»: достаточно одного. ! меняет true на false и наоборот. Скобки делают сложное условие легче для чтения.",
+          "[Theory] && и || вычисляют выражения слева направо и могут пропустить правую часть: у false && ... уже известен ответ. Это называется коротким замыканием. Не путайте && с ||, когда требуются сразу два ограничения."
+        ],
+        "code": "int age = 20;\nboolean hasTicket = true;\nif (age >= 18 && hasTicket) {\n    System.out.println(\"Проходите\");\n}",
+        "caption": "Short snippet for main; below is a complete runnable example with output.",
+        "objective": "[Goal] Составить условие из двух ограничений и объяснить короткое замыкание &&.",
+        "walkthrough": "[Walkthrough] Для age = 20 и hasTicket = true оба условия истинны — будет «Проходите». Если возраст меньше 18, правое условие у && не вычисляется.",
+        "pitfall": "[Common Pitfall] Замена && на || здесь пропустила бы человека без билета или младше 18 лет: достаточно было бы одного true.",
+        "deepDive": "[Deep Dive] У && при ложной левой части правая не вычисляется; это удобно для безопасной проверки x != null && x.isReady(). При смешивании && и || поставьте скобки, чтобы читатель сразу видел, какие требования обязательны.",
+        "useCase": "[Real-World Case] Пропуск на событие можно описать как (adult || withParent) && hasTicket: билет нужен каждому, а сопровождение заменяет возрастное условие. Подберите по одному примеру для каждой ложной причины и проверьте результат.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Когда решение зависит от нескольких требований одновременно, объедините проверки. Логическое && требует, чтобы обе части были true, и не вычисляет правую часть после ложной левой.",
+          "steps": [
+            "The condition open && seats > 0 читается как «открыто И есть свободные места». && возвращает boolean, поэтому подходит для if.",
+            "Если open = false, выражение сразу ложно: проверять seats уже не требуется. Если open = true, Java проверяет второе условие.",
+            "Use else, если нужен явный отказ; без него при ложном условии программа может вообще ничего не показать."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        boolean open = true;\n        int seats = 1;\n        if (open && seats > 0) {\n            System.out.println(\"Есть место\");\n        } else {\n            System.out.println(\"Нет мест или закрыто\");\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Complete Main.java program — runnable",
+            "stdout": "Есть место"
+          },
+          "result": "При указанных значениях появится «Есть место». Если seats станет 0, сработает else; изменение только open также меняет результат.",
+          "bridge": "В задании про билет используйте возраст и флаг hasTicket вместо open и seats. Не заменяйте && на ||: тогда достаточно одного выполненного требования."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m02-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        boolean open = true;\n        int seats = 1;\n        if (open && seats > 0) {\n            System.out.println(\"Есть место\");\n        } else {\n            System.out.println(\"Нет мест или закрыто\");\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. При указанных значениях появится «Есть место». Если seats станет 0, сработает else; изменение только open также меняет результат."
+        },
+        {
+          "id": "m02-l03-q1",
+          "type": "choice",
+          "prompt": "[Task] Когда выражение a && b истинно?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Когда истинно только a"
+            },
+            {
+              "id": "b",
+              "label": "Когда истинно только b"
+            },
+            {
+              "id": "c",
+              "label": "Когда истинны оба"
+            },
+            {
+              "id": "d",
+              "label": "Когда оба ложны"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Логическое И требует истинности каждой части.",
+          "explanation": "[Explanation] Для && оба операнда должны быть true.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m02-l03-q2",
+          "type": "fill",
+          "prompt": "[Task] Дополните условие: доступ есть только при наличии билета И возрасте от 18 лет.",
+          "template": [
+            "if (age >= 18 ",
+            " hasTicket) {\n    System.out.println(\"Вход\");\n}"
+          ],
+          "blanks": [
+            {
+              "id": "op",
+              "kind": "select",
+              "options": [
+                "||",
+                "&&",
+                "=="
+              ],
+              "answer": "&&"
+            }
+          ],
+          "hint": "[Hint] Здесь недостаточно только одного из условий.",
+          "explanation": "[Explanation] && объединяет два обязательных условия.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m02-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] При open=true и seats=0 чему равно open && seats > 0? Как это повлияет на if?",
+          "options": [
+            {
+              "id": "a",
+              "label": "true, ветка if"
+            },
+            {
+              "id": "b",
+              "label": "false, ветка else"
+            },
+            {
+              "id": "c",
+              "label": "true, ветка else"
+            },
+            {
+              "id": "d",
+              "label": "ошибка компиляции"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Одного истинного операнда для логического И недостаточно.",
+          "explanation": "[Explanation] Верно: false, ветка else. Одного истинного операнда для логического И недостаточно."
+        },
+        {
+          "id": "m02-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m02-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Есть boolean open = true и int seats = 0. Через if с && напечатайте «Вход» только если открыто И места есть, иначе напечатайте «Нет входа».",
+          "expectedOutput": "Нет входа",
+          "hint": "[Hint] Сравните seats с нулём и соедините это условие с open логическим И; для отказа нужна else-ветка.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Нет входа'. Сравните seats с нулём и соедините это условие с open логическим И; для отказа нужна else-ветка."
+        }
+      ]
+    },
+    {
+      "id": "m02-l04",
+      "title": "The switch-case Statement",
+      "duration": 8,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Когда одно значение сравнивается с несколькими константами, удобно использовать switch. Метка case обозначает вариант, default — случай, не совпавший ни с одним вариантом.",
+          "[Theory] В классическом switch после каждого case обычно ставят break: без него выполнение «провалится» в следующий вариант. Это не относится к современному синтаксису со стрелками, но здесь мы учимся классической форме."
+        ],
+        "code": "int day = 2;\nswitch (day) {\n    case 1: System.out.println(\"Пн\"); break;\n    case 2: System.out.println(\"Вт\"); break;\n    default: System.out.println(\"Другой день\");\n}",
+        "caption": "Short snippet for main; below is a complete runnable example with output.",
+        "objective": "[Goal] Различить case и default и предсказать поведение классического switch с break.",
+        "walkthrough": "[Walkthrough] day равен 2: выполняется case 2, печатается «Вт» и break прерывает switch. Без совпадения с case сработает default.",
+        "pitfall": "[Common Pitfall] Если убрать break после case 2, выполнение провалится в default и выведет ещё «Другой день».",
+        "deepDive": "[Deep Dive] Классический switch начинает выполнение на совпавшей метке и идёт дальше до break или конца блока. Несколько меток могут намеренно разделять одно действие; default обрабатывает неизвестные значения и делает решение полным.",
+        "useCase": "[Real-World Case] В меню приложения перечислите поддерживаемые команды и отдельно обработайте неожиданный код. Пройдите мысленно путь от case до break: случайный провал особенно опасен, если соседняя ветка меняет данные.",
+        "guide": {
+          "why": "[Step-by-Step Guide] switch удобен для выбора действия по одному значению из набора вариантов. В классической форме break завершает выбранную ветку, иначе исполнение перейдёт к следующей.",
+          "steps": [
+            "switch (tier) сравнивает текущее значение tier с метками case. Важно писать двоеточие после case и заключать весь switch в фигурные скобки.",
+            "При tier = 1 выполняется первый case. После println вызывается break, поэтому соседняя ветка не печатает дополнительную строку.",
+            "default обрабатывает число, для которого нет отдельного case; это особенно важно для неизвестного значения из внешнего ввода."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int tier = 1;\n        switch (tier) {\n            case 1: System.out.println(\"Базовый\"); break;\n            case 2: System.out.println(\"Расширенный\"); break;\n            default: System.out.println(\"Неизвестный тариф\");\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Complete Main.java program — runnable",
+            "stdout": "Базовый"
+          },
+          "result": "The program prints «Базовый» один раз. Если tier = 7, попадём в default; без break после case 1 вывод оказался бы лишним.",
+          "bridge": "При сборке switch в уроке определите порядок: switch → case → действие → break → default → закрывающая скобка. Практика использует ту же схему для дней недели."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m02-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int tier = 1;\n        switch (tier) {\n            case 1: System.out.println(\"Базовый\"); break;\n            case 2: System.out.println(\"Расширенный\"); break;\n            default: System.out.println(\"Неизвестный тариф\");\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. The program prints «Базовый» один раз. Если tier = 7, попадём в default; без break после case 1 вывод оказался бы лишним."
+        },
+        {
+          "id": "m02-l04-q1",
+          "type": "choice",
+          "prompt": "[Task] Зачем в классическом switch нужен break после case?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Чтобы завершить программу"
+            },
+            {
+              "id": "b",
+              "label": "Чтобы не выполнять следующие case"
+            },
+            {
+              "id": "c",
+              "label": "Чтобы сравнить два значения"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы создать переменную"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Без break выполнение продолжится с кода ниже.",
+          "explanation": "[Explanation] break предотвращает «проваливание» в следующий case.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m02-l04-q2",
+          "type": "parsons",
+          "prompt": "[Task] Соберите простой switch. Расставьте строки и отступы.",
+          "lines": [
+            {
+              "id": "a",
+              "text": "switch (day) {"
+            },
+            {
+              "id": "b",
+              "text": "case 1:"
+            },
+            {
+              "id": "c",
+              "text": "System.out.println(\"Пн\");"
+            },
+            {
+              "id": "d",
+              "text": "break;"
+            },
+            {
+              "id": "e",
+              "text": "default:"
+            },
+            {
+              "id": "f",
+              "text": "System.out.println(\"Не понедельник\");"
+            },
+            {
+              "id": "g",
+              "text": "}"
+            }
+          ],
+          "solution": [
+            {
+              "id": "a",
+              "indent": 0
+            },
+            {
+              "id": "b",
+              "indent": 1
+            },
+            {
+              "id": "c",
+              "indent": 2
+            },
+            {
+              "id": "d",
+              "indent": 2
+            },
+            {
+              "id": "e",
+              "indent": 1
+            },
+            {
+              "id": "f",
+              "indent": 2
+            },
+            {
+              "id": "g",
+              "indent": 0
+            }
+          ],
+          "hint": "[Hint] Сначала switch, затем case и break, после них default.",
+          "explanation": "[Explanation] Метка default выполняется, если case 1 не подошёл.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m02-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] В switch case 2 совпал, но break нет. Что произойдёт после выполнения case 2?",
+          "options": [
+            {
+              "id": "a",
+              "label": "switch завершится сразу"
+            },
+            {
+              "id": "b",
+              "label": "выполнится следующий case независимо от его метки"
+            },
+            {
+              "id": "c",
+              "label": "запустится новый switch"
+            },
+            {
+              "id": "d",
+              "label": "ошибка компиляции"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Классический switch без break продолжает выполнение следующих операторов.",
+          "explanation": "[Explanation] Верно: выполнится следующий case независимо от его метки. Классический switch без break продолжает выполнение следующих операторов."
+        },
+        {
+          "id": "m02-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m02-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Declare int day = 4. Напишите классический switch с case 1 → «Пн», case 4 → «Чт» и default → «?», затем выведите ровно один результат.",
+          "expectedOutput": "Чт",
+          "hint": "[Hint] После подходящего case поставьте break, иначе switch может перейти к следующей ветке.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Чт'. После подходящего case поставьте break, иначе switch может перейти к следующей ветке."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "id": "m02-practice",
+    "title": "Module 2 Final Practice",
+    "description": "Проверим условия, логические операторы и switch на реальных примерах.",
+    "tasks": [
+      {
+        "id": "m02-p01",
+        "type": "choice",
+        "prompt": "[Task] Какие выражения истинны при int x = 7?",
+        "options": [
+          {
+            "id": "a",
+            "label": "x > 5 && x < 10"
+          },
+          {
+            "id": "b",
+            "label": "x < 5 || x == 7"
+          },
+          {
+            "id": "c",
+            "label": "x == 5"
+          },
+          {
+            "id": "d",
+            "label": "!(x > 10)"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hint] Подставьте 7 в каждую часть и вычислите выражения по порядку.",
+        "explanation": "[Explanation] Первые два и последнее выражения истинны; x == 5 ложно."
+      },
+      {
+        "id": "m02-p02",
+        "type": "fill",
+        "prompt": "[Task] Проверьте, что score равен 100, и выведите «Максимум» только при равенстве.",
+        "template": [
+          "if (score ",
+          " 100) {\n    System.out.println(\"Максимум\");\n}"
+        ],
+        "blanks": [
+          {
+            "id": "op",
+            "kind": "select",
+            "options": [
+              "=",
+              "==",
+              "!=",
+              ">="
+            ],
+            "answer": "=="
+          }
+        ],
+        "hint": "[Hint] Один знак = изменяет значение; два сравнивают.",
+        "explanation": "[Explanation] == проверяет равенство score и 100."
+      },
+      {
+        "id": "m02-p03",
+        "type": "matching",
+        "prompt": "[Task] Соедините оператор с описанием.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "&&",
+            "right": "И: оба условия true"
+          },
+          {
+            "id": "2",
+            "left": "||",
+            "right": "ИЛИ: хотя бы одно true"
+          },
+          {
+            "id": "3",
+            "left": "!",
+            "right": "НЕ: меняет логическое значение"
+          },
+          {
+            "id": "4",
+            "left": "==",
+            "right": "Сравнение на равенство"
+          }
+        ],
+        "hint": "[Hint] Помните о разнице между сравнением и логическими связками.",
+        "explanation": "[Explanation] Каждый оператор решает отдельную задачу."
+      },
+      {
+        "id": "m02-p04",
+        "type": "parsons",
+        "prompt": "[Task] Соберите if/else, который выводит «Плюс» для положительного n. Выставьте отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "if (n > 0) {"
+          },
+          {
+            "id": "b",
+            "text": "System.out.println(\"Плюс\");"
+          },
+          {
+            "id": "c",
+            "text": "} else {"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(\"Не плюс\");"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] После условия идёт ветка if, затем } else { и альтернативная ветка.",
+        "explanation": "[Explanation] Выполняется ровно одна из двух веток."
+      },
+      {
+        "id": "m02-p05",
+        "type": "choice",
+        "prompt": "[Task] Каков результат выражения true || false && false?",
+        "options": [
+          {
+            "id": "a",
+            "label": "true"
+          },
+          {
+            "id": "b",
+            "label": "false"
+          },
+          {
+            "id": "c",
+            "label": "Ошибка компиляции"
+          },
+          {
+            "id": "d",
+            "label": "Зависит от скобок в if"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hint] У && приоритет выше, чем у ||.",
+        "explanation": "[Explanation] Сначала false && false → false, затем true || false → true."
+      },
+      {
+        "id": "m02-p06",
+        "type": "code",
+        "prompt": "Declare int temperature = 18. Если температура ниже 20, выведите «Надень куртку», иначе — «Можно без куртки».",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        int temperature = 18;\n        // Добавьте условие и вывод\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Надень куртку",
+        "hint": "Use if (temperature < 20) { ... } else { ... }.",
+        "explanation": "[Explanation] При 18 градусах выполняется первая ветка."
+      },
+      {
+        "id": "m02-p07",
+        "type": "code",
+        "prompt": "Declare int day = 2. С помощью классического switch выведите «Вторник» для значения 2. Для остальных значений предусмотрите default.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        int day = 2;\n        // Добавьте switch по переменной day\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Вторник",
+        "hint": "[Hint] В case 2 выведите «Вторник» и завершите ветку оператором break.",
+        "explanation": "[Explanation] Ветка case 2 выводит «Вторник»."
+      }
+    ],
+    "primer": {
+      "why": "В заданиях на ветвление сначала выпишите словами границу и возможные результаты. Затем отдельно превратите правило в if/else или в switch и проверьте случай точно на границе.",
+      "steps": [
+        "Сравнение rating >= 1 возвращает boolean; if выполняет только одну подходящую ветку. println с текстом использует кавычки, с именем переменной — нет.",
+        "switch выбирает case по значению rating. После подходящего case нужен break, а default отвечает за остальные значения. Это другая конструкция, не вложенный if."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        int rating = 2;\n        if (rating >= 1) {\n            System.out.println(\"Оценка есть\");\n        } else {\n            System.out.println(\"Оценки нет\");\n        }\n        switch (rating) {\n            case 2: System.out.println(\"Вторая\"); break;\n            default: System.out.println(\"Другая\");\n        }\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "Оценка есть\nВторая"
+      },
+      "result": "Сначала появится «Оценка есть», затем «Вторая». Это два независимых выбора, а не четыре строки подряд.",
+      "hints": [
+        {
+          "taskId": "m02-p06",
+          "text": "Для температуры проверьте строгое «ниже»: сравнение < отличается от <= в точке 20. Выведите строку ровно из той ветки, которая сработала."
+        },
+        {
+          "taskId": "m02-p07",
+          "text": "Для дня недели используйте классический switch с case, break и default. В примере rating служит лишь другим входным значением."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m02-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 320,
+    "tasks": [
+      {
+        "id": "m-exam-02-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] В switch case 2 совпал, но break нет. Что произойдёт после выполнения case 2?",
+        "options": [
+          {
+            "id": "a",
+            "label": "switch завершится сразу"
+          },
+          {
+            "id": "b",
+            "label": "выполнится следующий case независимо от его метки"
+          },
+          {
+            "id": "c",
+            "label": "запустится новый switch"
+          },
+          {
+            "id": "d",
+            "label": "ошибка компиляции"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Классический switch без break продолжает выполнение следующих операторов.",
+        "explanation": "[Explanation] Верно: выполнится следующий case независимо от его метки. Классический switch без break продолжает выполнение следующих операторов."
+      },
+      {
+        "id": "m-exam-02-02",
+        "type": "fill",
+        "prompt": "[Task] Допишите проверку совершеннолетия.",
+        "template": [
+          "if (age ",
+          " 18) {\n    System.out.println(\"Можно\");\n}"
+        ],
+        "blanks": [
+          {
+            "id": "op",
+            "kind": "select",
+            "options": [
+              ">",
+              ">=",
+              "==",
+              "<="
+            ],
+            "answer": ">="
+          }
+        ],
+        "hint": "[Hint] Возраст 18 тоже должен проходить проверку.",
+        "explanation": "[Explanation] >= возвращает true для 18 и любого большего числа.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "m-exam-02-03",
+        "type": "matching",
+        "prompt": "[Task] Соедините оператор с описанием.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "&&",
+            "right": "И: оба условия true"
+          },
+          {
+            "id": "2",
+            "left": "||",
+            "right": "ИЛИ: хотя бы одно true"
+          },
+          {
+            "id": "3",
+            "left": "!",
+            "right": "НЕ: меняет логическое значение"
+          },
+          {
+            "id": "4",
+            "left": "==",
+            "right": "Сравнение на равенство"
+          }
+        ],
+        "hint": "[Hint] Помните о разнице между сравнением и логическими связками.",
+        "explanation": "[Explanation] Каждый оператор решает отдельную задачу.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "m-exam-02-04",
+        "type": "parsons",
+        "prompt": "[Task] Соберите if/else, который выводит «Плюс» для положительного n. Выставьте отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "if (n > 0) {"
+          },
+          {
+            "id": "b",
+            "text": "System.out.println(\"Плюс\");"
+          },
+          {
+            "id": "c",
+            "text": "} else {"
+          },
+          {
+            "id": "d",
+            "text": "System.out.println(\"Не плюс\");"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] После условия идёт ветка if, затем } else { и альтернативная ветка.",
+        "explanation": "[Explanation] Выполняется ровно одна из двух веток.",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Write a program расчёта доставки. Сумма заказа = 1 * 600, участник клуба = true.\nПри сумме >= 1000 доставка бесплатна, иначе стоит 150. Скидка участнику клуба — 100,\nно только при сумме >= 1000. Статус заказа выбирается классическим switch:\n1 → «Создан», 2 → «Собран», прочее → «В пути»; код статуса = 1.\nPrint статус, стоимость доставки, скидку, итог (сумма + доставка - скидка),\nа затем «Бесплатно» или «Платно» в зависимости от доставки — на отдельных строках.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Создан\n150\n0\n750\nПлатно",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nСоздан\n150\n0\n750\nПлатно",
+        "id": "m-exam-02-05"
+      }
+    ]
+  }
+}

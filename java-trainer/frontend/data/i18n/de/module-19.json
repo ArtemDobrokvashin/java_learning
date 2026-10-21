@@ -1,0 +1,990 @@
+{
+  "id": 19,
+  "title": "Einführung in Spring REST",
+  "lessons": [
+    {
+      "id": "m19-l01",
+      "title": "Netzwerkprotokolle & Client-Server-Apps",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Клиент отправляет HTTP-запрос серверу, сервер возвращает ответ со статусом, заголовками и телом. HTTP обычно работает поверх TCP; HTTPS добавляет TLS для шифрования соединения.",
+          "[Theorie] Метод и адрес описывают намерение запроса, код 2xx означает успешную обработку, 4xx — ошибку клиента, 5xx — сбой сервера. Браузер и сервер — разные процессы, поэтому не обращайтесь к localhost браузера как к серверу на другом компьютере."
+        ],
+        "code": "GET /users/42 HTTP/1.1\nHost: example.com\n\nHTTP/1.1 200 OK\nContent-Type: application/json",
+        "caption": "Запрос и ответ — разные сообщения.",
+        "language": "text",
+        "objective": "[Lernziel] Разобрать HTTP-запрос и ответ на метод, путь, заголовки и статус.",
+        "walkthrough": "[Durchgang] Клиент посылает GET /users/42 с Host, сервер отвечает отдельным сообщением HTTP/1.1 200 OK и заголовком Content-Type: application/json.",
+        "pitfall": "[Typischer Fehler] Это два сообщения, показанные подряд для удобства: заголовок ответа не является частью запроса. 404 означает отсутствие ресурса.",
+        "deepDive": "[Vertiefung] HTTP — обмен отдельными сообщениями: метод и путь находятся в запросе, статус и заголовки — в ответе. TCP доставляет поток байтов, а HTTPS добавляет защиту TLS; прикладной код всё равно должен трактовать коды 2xx, 4xx и 5xx.",
+        "useCase": "[Praxisfall] Для GET /users/42 разберите запрос и ответ по частям, затем смоделируйте 404 и 500. Если клиент запущен на другом устройстве, его localhost указывает на него самого, а не на компьютер с вашим сервером.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] HTTP-запрос состоит из метода, пути, заголовков и иногда тела. Ответ содержит статус и данные; маршрут отвечает не на любую строку, а на сочетание метода и пути.",
+          "steps": [
+            "В строке GET /status HTTP/1.1 слово GET описывает действие, /status — ресурс, HTTP/1.1 — версию протокола.",
+            "Ответ 200 OK говорит об успехе, 404 Not Found — что адрес не найден. Тело может быть JSON, но само название маршрута его не определяет."
+          ],
+          "example": {
+            "code": "GET /status HTTP/1.1\nHost: example.com\n\nHTTP/1.1 200 OK\nContent-Type: text/plain\n\nready",
+            "language": "text",
+            "runnable": false,
+            "label": "Учебное HTTP-сообщение; не Java-код"
+          },
+          "result": "Это иллюстрация сообщения, а не код Java. Клиент читает статус отдельно от тела «ready».",
+          "bridge": "В практической симуляции без сети храните строку маршрута как ключ Map и ответ как значение; учитывайте и HTTP-метод."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m19-l01-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "GET /status HTTP/1.1\nHost: example.com\n\nHTTP/1.1 200 OK\nContent-Type: text/plain\n\nready",
+          "language": "text",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Это иллюстрация сообщения, а не код Java. Клиент читает статус отдельно от тела «ready»."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Что обозначает HTTP-статус из диапазона 4xx?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Успешный ответ"
+            },
+            {
+              "id": "b",
+              "label": "Ошибка запроса клиента"
+            },
+            {
+              "id": "c",
+              "label": "Ошибка сервера 5xx"
+            },
+            {
+              "id": "d",
+              "label": "Формат Java-кода"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] 4xx и 5xx обозначают ошибки разных сторон.",
+          "explanation": "[Erklärung] 4xx означает проблему в запросе клиента.",
+          "id": "m19-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Укажите метод чтения ресурса.",
+          "template": [
+            "",
+            " /users/42 HTTP/1.1"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "GET",
+              "options": [
+                "GET",
+                "POST",
+                "DELETE"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Запрос не должен менять данные.",
+          "explanation": "[Erklärung] GET обычно используется для чтения ресурса.",
+          "id": "m19-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m19-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] В HTTP-запросе GET /users какая часть выражает действие, а какая путь к ресурсу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "GET — путь, /users — метод"
+            },
+            {
+              "id": "b",
+              "label": "GET — метод, /users — путь"
+            },
+            {
+              "id": "c",
+              "label": "обе части — статус ответа"
+            },
+            {
+              "id": "d",
+              "label": "обе части — тело ответа"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Метод и URL-путь отвечают на разные вопросы.",
+          "explanation": "[Erklärung] Верно: GET — метод, /users — путь. Метод и URL-путь отвечают на разные вопросы."
+        },
+        {
+          "id": "m19-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m19-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Смоделируйте клиент-серверное сообщение без сети: record Request(String method,String path). Для GET и /users выведите одну строку «GET /users».",
+          "expectedOutput": "GET /users",
+          "hint": "[Hinweis] Метод и путь передаются вместе в запросе; серверные порты и реальный HTTP здесь не нужны.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'GET /users'. Метод и путь передаются вместе в запросе; серверные порты и реальный HTTP здесь не нужны."
+        }
+      ]
+    },
+    {
+      "id": "m19-l02",
+      "title": "Einführung in Spring REST",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] REST строит API вокруг ресурсов: /users/42 обозначает пользователя, а не вызов функции getUser. GET читает, POST создаёт, PUT заменяет, PATCH частично меняет, DELETE удаляет.",
+          "[Theorie] Сервер должен получать достаточно данных в каждом запросе: REST стремится к отсутствию серверного состояния сессии между запросами. Повторный PUT с тем же телом идемпотентен по конечному состоянию; POST не обязан быть идемпотентным."
+        ],
+        "code": "GET    /users/42\nPOST   /users\nPUT    /users/42\nDELETE /users/42",
+        "caption": "URI описывает ресурс, метод — действие.",
+        "language": "text",
+        "objective": "[Lernziel] Выбрать URI и HTTP-метод для CRUD-операции над ресурсом.",
+        "walkthrough": "[Durchgang] GET /users/42 читает пользователя 42, POST /users создаёт нового, PUT /users/42 заменяет состояние, DELETE /users/42 удаляет его.",
+        "pitfall": "[Typischer Fehler] Идемпотентность PUT означает одинаковое конечное состояние при повторе с тем же телом; код ответа при этом может различаться.",
+        "deepDive": "[Vertiefung] REST описывает ресурсы через адреса и действия через HTTP-методы. Идемпотентность означает одинаковое конечное состояние при повторе одного запроса, но не обещает одинаковый код ответа или отсутствие записей в логах.",
+        "useCase": "[Praxisfall] Для /orders/7 проверьте повторный PUT с тем же телом и два POST на создание. Продумайте, какой запрос безопасно повторять после потери ответа; это влияет на поведение клиента при сетевом сбое.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] REST-маршрут называет ресурс существительным, а действие передаётся методом HTTP. Один URL может обрабатываться по-разному для GET и DELETE.",
+          "steps": [
+            "GET /books/7 читает книгу 7, а DELETE /books/7 удаляет её. В обоих случаях id берут из сегмента после последнего /.",
+            "POST /books обычно получает новую книгу в теле запроса. Не извлекайте её данные из имени маршрута и не путайте HTTP-статус с id."
+          ],
+          "example": {
+            "code": "GET    /books/7     → прочитать\nDELETE /books/7     → удалить\nPOST   /books       → создать из тела",
+            "language": "text",
+            "runnable": false,
+            "label": "Схема маршрутов HTTP; не Java-код"
+          },
+          "result": "Различие между первыми двумя командами — метод, а не путь. В симуляции Map ключ можно составить из обоих значений.",
+          "bridge": "В практике извлеките id из строки GET /users/42 и проверьте, что в выводе присутствуют отдельно статус ответа и id."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m19-l02-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "GET    /books/7     → прочитать\nDELETE /books/7     → удалить\nPOST   /books       → создать из тела",
+          "language": "text",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Различие между первыми двумя командами — метод, а не путь. В симуляции Map ключ можно составить из обоих значений."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Какой метод обычно идемпотентно заменяет ресурс целиком?",
+          "options": [
+            {
+              "id": "a",
+              "label": "POST"
+            },
+            {
+              "id": "b",
+              "label": "PUT"
+            },
+            {
+              "id": "c",
+              "label": "CONNECT"
+            },
+            {
+              "id": "d",
+              "label": "TRACE"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Повторное выполнение приводит к тому же состоянию ресурса.",
+          "explanation": "[Erklärung] PUT обычно заменяет состояние ресурса и идемпотентен.",
+          "id": "m19-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Какой адрес обозначает конкретного пользователя 42?",
+          "template": [
+            "GET /users/",
+            ""
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "42",
+              "options": [
+                "42",
+                "new",
+                "all"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Идентификатор ресурса — часть URI.",
+          "explanation": "[Erklärung] /users/42 указывает на пользователя с id 42.",
+          "id": "m19-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m19-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Какой HTTP-статус корректно сообщит клиенту, что новый ресурс создан?",
+          "options": [
+            {
+              "id": "a",
+              "label": "200 обязательно при любой операции"
+            },
+            {
+              "id": "b",
+              "label": "201 Created"
+            },
+            {
+              "id": "c",
+              "label": "404 Not Found"
+            },
+            {
+              "id": "d",
+              "label": "500 Server Error"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Код 201 означает успешное создание ресурса.",
+          "explanation": "[Erklärung] Верно: 201 Created. Код 201 означает успешное создание ресурса."
+        },
+        {
+          "id": "m19-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m19-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Смоделируйте REST-ответ без Spring: record Response(int status,String body). Для нового ресурса задайте 201 и «created», выведите «201:created».",
+          "expectedOutput": "201:created",
+          "hint": "[Hinweis] Статус 201 означает создание; тело и статус — разные компоненты ответа.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '201:created'. Статус 201 означает создание; тело и статус — разные компоненты ответа."
+        }
+      ]
+    },
+    {
+      "id": "m19-l03",
+      "title": "REST-Controller",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] @RestController помечает Spring-контроллер, методы которого возвращают тело HTTP-ответа. @RequestMapping задаёт общий префикс, @GetMapping — маршрут чтения, @PathVariable извлекает часть пути.",
+          "[Theorie] Для точного статуса и заголовков можно вернуть ResponseEntity<T>. Валидируйте входные данные, не возвращайте детали внутренней ошибки клиенту и используйте подходящие HTTP-статусы, например 404 для отсутствующего ресурса."
+        ],
+        "code": "@RestController\n@RequestMapping(\"/users\")\nclass UserController {\n    @GetMapping(\"/{id}\") User find(@PathVariable long id) { /* ... */ }\n}",
+        "caption": "Контроллер связывает HTTP и сервисный слой.",
+        "language": "java",
+        "objective": "[Lernziel] Сопоставить @RestController, общий маршрут и переменную пути с обработчиком.",
+        "walkthrough": "[Durchgang] @RequestMapping(\"/users\") задаёт префикс, @GetMapping(\"/{id}\") дополняет его; GET /users/42 передаст 42 параметру id.",
+        "pitfall": "[Typischer Fehler] Тело find с /* ... */ — неполный фрагмент. В реальном проекте вызовите сервис, обработайте отсутствие данных и верните 404.",
+        "deepDive": "[Vertiefung] @RestController связывает запрос с Java-методом и сериализует возвращаемые данные; он не заменяет проверку входа и выбор статуса ответа. DTO помогает задать публичный контракт, не раскрывая напрямую поля JPA-сущности.",
+        "useCase": "[Praxisfall] Для неизвестного /users/42 верните 404 вместо null или сырого stack trace; для найденного — нужный DTO и 200. Добавьте тест на некорректный ID и проверьте, что сообщение не выдаёт внутренние детали сервера.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Контроллер принимает сетевые данные и передаёт работу сервису. Аннотации Spring связывают URL с методом, но корректность id и отсутствие объекта всё ещё нужно обработать.",
+          "steps": [
+            "@RequestMapping задаёт общий префикс /books, @GetMapping(\"/{id}\") дополняет путь динамическим сегментом.",
+            "@PathVariable связывает значение сегмента с параметром long id. Затем сервис ищет книгу; когда её нет, следует возвращать подходящий HTTP-статус."
+          ],
+          "example": {
+            "code": "@RestController\n@RequestMapping(\"/books\")\nclass BookController {\n    private final BookService service;\n    BookController(BookService service) { this.service = service; }\n    @GetMapping(\"/{id}\")\n    Book get(@PathVariable long id) { return service.find(id); }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Spring-фрагмент: модель и сервис объявляются отдельно"
+          },
+          "result": "GET /books/7 передаст 7 в find. Требуются Spring, Book/BookService и отдельная обработка «не найдено».",
+          "bridge": "В задании про контроллер проследите путь переменной id. В практике без Spring повторите извлечение id обычными строковыми методами Java."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m19-l03-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "@RestController\n@RequestMapping(\"/books\")\nclass BookController {\n    private final BookService service;\n    BookController(BookService service) { this.service = service; }\n    @GetMapping(\"/{id}\")\n    Book get(@PathVariable long id) { return service.find(id); }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. GET /books/7 передаст 7 в find. Требуются Spring, Book/BookService и отдельная обработка «не найдено»."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Что делает @PathVariable в Spring REST?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Создаёт таблицу"
+            },
+            {
+              "id": "b",
+              "label": "Читает значение из URI-маршрута"
+            },
+            {
+              "id": "c",
+              "label": "Компилирует Maven"
+            },
+            {
+              "id": "d",
+              "label": "Меняет Java-версию"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Значение находится в /users/{id}.",
+          "explanation": "[Erklärung] @PathVariable связывает часть пути с аргументом метода.",
+          "id": "m19-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Пометьте класс контроллера, возвращающего тело ответа.",
+          "template": [
+            "",
+            "\nclass UserController { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "@RestController",
+              "options": [
+                "@RestController",
+                "@Entity",
+                "@Test"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Нужна аннотация REST-контроллера.",
+          "explanation": "[Erklärung] @RestController возвращает данные в тело HTTP-ответа.",
+          "id": "m19-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m19-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Сервер поддерживает GET /items, но не DELETE /items. Какой ответ логичен для DELETE на существующем пути?",
+          "options": [
+            {
+              "id": "a",
+              "label": "200 с данными"
+            },
+            {
+              "id": "b",
+              "label": "201 создано"
+            },
+            {
+              "id": "c",
+              "label": "405 Method Not Allowed"
+            },
+            {
+              "id": "d",
+              "label": "никогда не отвечать"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Путь существует, но метод для него не разрешён.",
+          "explanation": "[Erklärung] Верно: 405 Method Not Allowed. Путь существует, но метод для него не разрешён."
+        },
+        {
+          "id": "m19-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m19-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте REST-контроллер: handle(\"GET\", \"/items\") возвращает «200:items», а handle(\"DELETE\", \"/items\") — «405:method not allowed». Geben Sie aus: оба ответа по строке.",
+          "expectedOutput": "200:items\n405:method not allowed",
+          "hint": "[Hinweis] Разделяйте путь и HTTP-метод; неподдерживаемую операцию не выдавайте за успешную.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '200:items\\n405:method not allowed'. Разделяйте путь и HTTP-метод; неподдерживаемую операцию не выдавайте за успешную."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Abschlusspraxis Modul 19",
+    "description": "Разберите HTTP и смоделируйте маршруты на чистой Java без Spring-драйверов.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Что обычно отвечает сервер, если ресурс не найден?",
+        "options": [
+          {
+            "id": "a",
+            "label": "200 OK"
+          },
+          {
+            "id": "b",
+            "label": "201 Created"
+          },
+          {
+            "id": "c",
+            "label": "404 Not Found"
+          },
+          {
+            "id": "d",
+            "label": "500 всегда"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Это ошибка запроса к отсутствующему ресурсу.",
+        "explanation": "[Erklärung] 404 сообщает, что запрошенный ресурс не найден.",
+        "id": "m19-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Aufgabe] Выберите метод для частичного изменения ресурса.",
+        "template": [
+          "",
+          " /users/42 HTTP/1.1"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "PATCH",
+            "options": [
+              "GET",
+              "PATCH",
+              "OPTIONS"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Нужен метод частичного обновления.",
+        "explanation": "[Erklärung] PATCH обычно описывает частичное изменение.",
+        "id": "m19-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините HTTP-метод и действие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "GET",
+            "right": "Получить ресурс"
+          },
+          {
+            "id": "2",
+            "left": "POST",
+            "right": "Создать ресурс или запустить операцию"
+          },
+          {
+            "id": "3",
+            "left": "PUT",
+            "right": "Заменить ресурс"
+          },
+          {
+            "id": "4",
+            "left": "DELETE",
+            "right": "Удалить ресурс"
+          }
+        ],
+        "hint": "[Hinweis] Посмотрите на создание, чтение, замену и удаление.",
+        "explanation": "[Erklärung] Метод сообщает намерение HTTP-запроса.",
+        "id": "m19-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите минимальный Spring REST-контроллер как концептуальный пример.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "@RestController"
+          },
+          {
+            "id": "b",
+            "text": "class HealthController {"
+          },
+          {
+            "id": "c",
+            "text": "@GetMapping(\"/health\")"
+          },
+          {
+            "id": "d",
+            "text": "String health() { return \"OK\"; }"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Аннотация класса идёт перед class, аннотация метода — перед методом.",
+        "explanation": "[Erklärung] GET /health вернёт строку OK в теле ответа.",
+        "id": "m19-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "HTTPS использует шифрование TLS"
+          },
+          {
+            "id": "b",
+            "label": "POST всегда идемпотентен"
+          },
+          {
+            "id": "c",
+            "label": "Код 4xx указывает на ошибку клиента"
+          },
+          {
+            "id": "d",
+            "label": "@PathVariable читает значение из пути"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hinweis] Повторный POST может создать вторую запись.",
+        "explanation": "[Erklärung] TLS, статусы и переменные пути имеют разные роли.",
+        "id": "m19-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Aufgabe] Без Spring смоделируйте обработчик GET /users/42: из строки пути извлеките id после последнего / и выведите \"200 42\".",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        String path = \"/users/42\";\n        // Извлеките id и выведите 200 42\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "200 42",
+        "hint": "Verwenden Sie lastIndexOf(\"/\") и substring(...), затем System.out.println(\"200 \" + id).",
+        "explanation": "[Erklärung] URI был разобран, сформирован условный HTTP-ответ.",
+        "id": "m19-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Без веб-сервера смоделируйте маршрут: Map<String,String> содержит GET /health → 200 OK и GET /missing → 404 Not Found. Geben Sie aus: ответ для GET /missing.",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, String> routes = new HashMap<>();\n        // Зарегистрируйте два маршрута и выведите ответ для GET /missing\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "404 Not Found",
+        "hint": "[Hinweis] Положите обе пары в Map, получите значение по ключу \"GET /missing\".",
+        "explanation": "[Erklärung] Маршрутизатор вернул статус отсутствующего ресурса.",
+        "id": "m19-p07"
+      }
+    ],
+    "id": "m19-practice",
+    "primer": {
+      "why": "Веб-сервер не нужен для понимания REST-маршрута. Вы можете разобрать путь как обычную строку и хранить ответ по ключу «метод пробел путь».",
+      "steps": [
+        "lastIndexOf('/') даёт индекс последнего разделителя. substring(pos + 1) берёт следующую часть, которую можно преобразовать в число через Long.parseLong.",
+        "Map<String,String> сопоставляет полный маршрут с ответом. При неизвестном ключе get вернёт null, а не автоматически 404; такую ветку нужно добавить при необходимости."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        String path = \"/books/7\";\n        long id = Long.parseLong(path.substring(path.lastIndexOf('/') + 1));\n        System.out.println(\"id=\" + id);\n        java.util.Map<String, String> routes = java.util.Map.of(\"GET /ping\", \"200 pong\");\n        System.out.println(routes.get(\"GET /ping\"));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная Java-программа без веб-сервера",
+        "stdout": "id=7\n200 pong"
+      },
+      "result": "Выводятся «id=7» и «200 pong». Для настоящего HTTP понадобится сервер, но принцип разбора пути уже виден.",
+      "hints": [
+        {
+          "taskId": "m19-p06",
+          "text": "Для GET /users/42 извлеките число после последнего / и отдельно добавьте требуемый статус в строку вывода."
+        },
+        {
+          "taskId": "m19-p07",
+          "text": "Для GET /missing внесите обе пары в Map и прочитайте именно ключ с методом GET; значение 404 — обычная строка, заданная вами."
+        }
+      ]
+    }
+  },
+  "boss": {
+    "id": "m19-boss",
+    "title": "Kontrolllektion",
+    "description": "Мини-экзамен: четыре верных ответа из пяти для зачёта.",
+    "passingScore": 0.8,
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какая часть HTTP-ответа сообщает результат обработки?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Код статуса"
+          },
+          {
+            "id": "b",
+            "label": "Имя Java-класса"
+          },
+          {
+            "id": "c",
+            "label": "Порт редактора"
+          },
+          {
+            "id": "d",
+            "label": "Индекс массива"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Например 200 или 404.",
+        "explanation": "[Erklärung] HTTP-статус сообщает итог запроса.",
+        "id": "m19-b01"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой метод предназначен для чтения ресурса?",
+        "options": [
+          {
+            "id": "a",
+            "label": "POST"
+          },
+          {
+            "id": "b",
+            "label": "GET"
+          },
+          {
+            "id": "c",
+            "label": "PATCH"
+          },
+          {
+            "id": "d",
+            "label": "DELETE"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Это безопасный (safe) метод.",
+        "explanation": "[Erklärung] GET запрашивает состояние ресурса.",
+        "id": "m19-b02"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой код означает, что ресурс не найден?",
+        "options": [
+          {
+            "id": "a",
+            "label": "201"
+          },
+          {
+            "id": "b",
+            "label": "302"
+          },
+          {
+            "id": "c",
+            "label": "404"
+          },
+          {
+            "id": "d",
+            "label": "503"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Это клиентская ошибка диапазона 4xx.",
+        "explanation": "[Erklärung] 404 Not Found означает отсутствие ресурса.",
+        "id": "m19-b03"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Что в Spring извлекает id из /users/{id}?",
+        "options": [
+          {
+            "id": "a",
+            "label": "@PathVariable"
+          },
+          {
+            "id": "b",
+            "label": "@Entity"
+          },
+          {
+            "id": "c",
+            "label": "@Autowired"
+          },
+          {
+            "id": "d",
+            "label": "@Test"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Значение находится в URI.",
+        "explanation": "[Erklärung] @PathVariable передаёт параметр пути методу.",
+        "id": "m19-b04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какой метод обычно идемпотентно заменяет ресурс?",
+        "options": [
+          {
+            "id": "a",
+            "label": "POST"
+          },
+          {
+            "id": "b",
+            "label": "PUT"
+          },
+          {
+            "id": "c",
+            "label": "CONNECT"
+          },
+          {
+            "id": "d",
+            "label": "TRACE"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Повтор с тем же телом сохраняет то же конечное состояние.",
+        "explanation": "[Erklärung] PUT обычно заменяет ресурс идемпотентно.",
+        "id": "m19-b05"
+      }
+    ]
+  },
+  "exam": {
+    "id": "m19-exam",
+    "title": "Mini-Prüfung",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 490,
+    "tasks": [
+      {
+        "id": "m-exam-19-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Aufgabe] Сервер поддерживает GET /items, но не DELETE /items. Какой ответ логичен для DELETE на существующем пути?",
+        "options": [
+          {
+            "id": "a",
+            "label": "200 с данными"
+          },
+          {
+            "id": "b",
+            "label": "201 создано"
+          },
+          {
+            "id": "c",
+            "label": "405 Method Not Allowed"
+          },
+          {
+            "id": "d",
+            "label": "никогда не отвечать"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Путь существует, но метод для него не разрешён.",
+        "explanation": "[Erklärung] Верно: 405 Method Not Allowed. Путь существует, но метод для него не разрешён."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Aufgabe] Укажите метод чтения ресурса.",
+        "template": [
+          "",
+          " /users/42 HTTP/1.1"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "GET",
+            "options": [
+              "GET",
+              "POST",
+              "DELETE"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Запрос не должен менять данные.",
+        "explanation": "[Erklärung] GET обычно используется для чтения ресурса.",
+        "id": "m-exam-19-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Соедините HTTP-метод и действие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "GET",
+            "right": "Получить ресурс"
+          },
+          {
+            "id": "2",
+            "left": "POST",
+            "right": "Создать ресурс или запустить операцию"
+          },
+          {
+            "id": "3",
+            "left": "PUT",
+            "right": "Заменить ресурс"
+          },
+          {
+            "id": "4",
+            "left": "DELETE",
+            "right": "Удалить ресурс"
+          }
+        ],
+        "hint": "[Hinweis] Посмотрите на создание, чтение, замену и удаление.",
+        "explanation": "[Erklärung] Метод сообщает намерение HTTP-запроса.",
+        "id": "m-exam-19-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите минимальный Spring REST-контроллер как концептуальный пример.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "@RestController"
+          },
+          {
+            "id": "b",
+            "text": "class HealthController {"
+          },
+          {
+            "id": "c",
+            "text": "@GetMapping(\"/health\")"
+          },
+          {
+            "id": "d",
+            "text": "String health() { return \"OK\"; }"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Аннотация класса идёт перед class, аннотация метода — перед методом.",
+        "explanation": "[Erklärung] GET /health вернёт строку OK в теле ответа.",
+        "id": "m-exam-19-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Без веб-сервера создайте Response(status,body), Repository с Map {1:«Аня»} и\nController с внедрённым репозиторием. get(String id) возвращает 200 и имя для\nсуществующего положительного id; 404 и «Нет» для отсутствующего; 400 и «Ошибка»\nдля нечислового или неположительного id. В main запросите \"1\", \"1+1\", \"oops\", \"0\".\nGeben Sie aus: каждую пару status body одной строкой. Перехватывайте NumberFormatException.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "200 Аня\n404 Нет\n400 Ошибка\n400 Ошибка",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n200 Аня\n404 Нет\n400 Ошибка\n400 Ошибка",
+        "id": "m-exam-19-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез веб-сервера создайте Response(status,body), Repository с Map {1:«Аня»} и\nController с внедрённым репозиторием. get(String id) возвращает 200 и имя для\nсуществующего положительного id; 404 и «Нет» для отсутствующего; 400 и «Ошибка»\nдля нечислового или неположительного id. В main запросите \"1\", \"2+1\", \"oops\", \"0\".\nGeben Sie aus: каждую пару status body одной строкой. Перехватывайте NumberFormatException.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "200 Аня\n404 Нет\n400 Ошибка\n400 Ошибка",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n200 Аня\n404 Нет\n400 Ошибка\n400 Ошибка",
+        "id": "m-exam-19-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез веб-сервера создайте Response(status,body), Repository с Map {1:«Аня»} и\nController с внедрённым репозиторием. get(String id) возвращает 200 и имя для\nсуществующего положительного id; 404 и «Нет» для отсутствующего; 400 и «Ошибка»\nдля нечислового или неположительного id. В main запросите \"1\", \"3+1\", \"oops\", \"0\".\nGeben Sie aus: каждую пару status body одной строкой. Перехватывайте NumberFormatException.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 200 Аня\nОтчёт: 404 Нет\nОтчёт: 400 Ошибка\nОтчёт: 400 Ошибка\nСтрок: 4",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 200 Аня\nОтчёт: 404 Нет\nОтчёт: 400 Ошибка\nОтчёт: 400 Ошибка\nСтрок: 4",
+        "id": "m-exam-19-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез веб-сервера создайте Response(status,body), Repository с Map {1:«Аня»} и\nController с внедрённым репозиторием. get(String id) возвращает 200 и имя для\nсуществующего положительного id; 404 и «Нет» для отсутствующего; 400 и «Ошибка»\nдля нечислового или неположительного id. В main запросите \"1\", \"4+1\", \"oops\", \"0\".\nGeben Sie aus: каждую пару status body одной строкой. Перехватывайте NumberFormatException.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: 200 Аня\nОтчёт: 404 Нет\nОтчёт: 400 Ошибка\nОтчёт: 400 Ошибка\nСтрок: 4\nАудит: 10/2",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: 200 Аня\nОтчёт: 404 Нет\nОтчёт: 400 Ошибка\nОтчёт: 400 Ошибка\nСтрок: 4\nАудит: 10/2",
+        "id": "m-exam-19-08"
+      }
+    ]
+  }
+}

@@ -30,6 +30,7 @@ sealed class AppScreen {
 }
 
 data class JavadaUiState(
+    val lang: String = "ru",
     val catalog: CourseCatalog = CourseCatalog(),
     val profile: ProgressProfile = ProgressProfile(),
     val screen: AppScreen = AppScreen.CourseMap,
@@ -57,6 +58,22 @@ class JavadaViewModel(application: Application) : AndroidViewModel(application) 
         )
     )
     val uiState: StateFlow<JavadaUiState> = _uiState.asStateFlow()
+
+    private val supportedLangs = listOf("ru", "en", "es", "de", "zh")
+
+    fun cycleLanguage() {
+        val current = _uiState.value.lang
+        val nextIdx = (supportedLangs.indexOf(current) + 1) % supportedLangs.size
+        val nextLang = supportedLangs[nextIdx]
+        val localizedCatalog = courseRepository.loadCatalog(nextLang)
+        _uiState.update {
+            it.copy(
+                lang = nextLang,
+                catalog = localizedCatalog,
+                lastValidation = null
+            )
+        }
+    }
 
     fun navigateTo(screen: AppScreen) {
         _uiState.update {

@@ -1,0 +1,673 @@
+{
+  "id": 7,
+  "title": "Kapselung",
+  "lessons": [
+    {
+      "id": "m07-l01",
+      "title": "Einführung in die Kapselung",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Инкапсуляция объединяет состояние и поведение и защищает инварианты объекта. Если любой код меняет баланс счёта напрямую, объект не сможет запретить отрицательный остаток.",
+          "[Theorie] Скрывайте внутренние поля и предоставляйте операции, выражающие смысл задачи: deposit(amount), withdraw(amount). Геттер нужен не для каждого поля; открывайте лишь то, что действительно требуется клиенту."
+        ],
+        "code": "class Account {\n    private int balance;\n    void deposit(int amount) { if (amount > 0) balance += amount; }\n}",
+        "caption": "У объекта должен оставаться корректный баланс.",
+        "language": "java",
+        "objective": "[Lernziel] Скрыть баланс и разрешать его изменение только через проверенный метод.",
+        "walkthrough": "[Durchgang] private balance недоступен вызывающему коду. deposit(20) проверяет положительную сумму и затем меняет состояние; проверку выполняет сам Account.",
+        "pitfall": "[Typischer Fehler] Публичный сеттер balance без проверки обходит инвариант. Проверяйте также недостаточность средств в withdraw.",
+        "deepDive": "[Vertiefung] Инвариант — правило, истинное до и после каждой публичной операции объекта. private-поле предотвращает запись в обход методов; deposit может отказаться от отрицательной суммы, сохраняя баланс согласованным.",
+        "useCase": "[Praxisfall] У банковского счёта протестируйте внесение нуля, отрицательной суммы и нормального платежа. Отдавайте наружу безопасное значение баланса, а не прямой доступ к полю, которое клиент способен изменить.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Закрытое поле защищает инвариант: баланс меняется только разрешёнными действиями. Иначе любой клиент сможет поставить отрицательное число без проверки.",
+          "steps": [
+            "Поместите balance внутрь Account с модификатором private. Из main читать его напрямую уже нельзя.",
+            "Метод deposit проверяет amount > 0 до изменения поля. Метод balance() предоставляет безопасное чтение результата."
+          ],
+          "example": {
+            "code": "class Account {\n    private int balance = 10;\n    void deposit(int amount) { if (amount > 0) balance += amount; }\n    int balance() { return balance; }\n}\n// внутри main:\nAccount account = new Account();\naccount.deposit(5);\naccount.deposit(-2);\nSystem.out.println(account.balance());",
+            "language": "java",
+            "runnable": false,
+            "label": "Ограниченный доступ и проверка ввода"
+          },
+          "result": "Получится 15: отрицательная сумма отклонена, поле не изменилось. Доступ account.balance без метода запрещён.",
+          "bridge": "В мини-задании выберите подходящий модификатор поля, а в практике добавьте проверку достаточности средств ДО снятия денег."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m07-l01-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "class Account {\n    private int balance = 10;\n    void deposit(int amount) { if (amount > 0) balance += amount; }\n    int balance() { return balance; }\n}\n// внутри main:\nAccount account = new Account();\naccount.deposit(5);\naccount.deposit(-2);\nSystem.out.println(account.balance());",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Получится 15: отрицательная сумма отклонена, поле не изменилось. Доступ account.balance без метода запрещён."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Зачем обычно делают поле balance private?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Чтобы изменить его из любого класса"
+            },
+            {
+              "id": "b",
+              "label": "Чтобы контролировать изменение через методы"
+            },
+            {
+              "id": "c",
+              "label": "Чтобы сделать его static"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы запретить конструкторы"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Метод может проверить корректность операции.",
+          "explanation": "[Erklärung] private защищает состояние от внешнего прямого присваивания.",
+          "id": "m07-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Скройте поле от других классов.",
+          "template": [
+            "",
+            " int balance;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "private",
+              "options": [
+                "public",
+                "private",
+                "static"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Нужен самый закрытый модификатор доступа.",
+          "explanation": "[Erklärung] private ограничивает доступ текущим классом.",
+          "id": "m07-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m07-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] При балансе 10 вызваны deposit(-3), deposit(8), withdraw(50). Корректные методы отвергают неверные суммы. Итог?",
+          "options": [
+            {
+              "id": "a",
+              "label": "-35"
+            },
+            {
+              "id": "b",
+              "label": "10"
+            },
+            {
+              "id": "c",
+              "label": "18"
+            },
+            {
+              "id": "d",
+              "label": "15"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Отрицательное пополнение и снятие сверх остатка не меняют баланс.",
+          "explanation": "[Erklärung] Верно: 18. Отрицательное пополнение и снятие сверх остатка не меняют баланс."
+        },
+        {
+          "id": "m07-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m07-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Erstellen Sie Account с private balance = 10, проверенным deposit(int) и withdraw(int). Попробуйте deposit(-3), deposit(8), withdraw(5) и withdraw(50); выведите итог.",
+          "expectedOutput": "13",
+          "hint": "[Hinweis] Проверяйте положительность суммы и достаточность средств внутри методов; неверный вызов не должен менять баланс.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '13'. Проверяйте положительность суммы и достаточность средств внутри методов; неверный вызов не должен менять баланс."
+        }
+      ]
+    },
+    {
+      "id": "m07-l02",
+      "title": "Kapselung in Java",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "In Java private ограничивает доступ классом, public открывает API, protected доступен также подклассам, а отсутствие модификатора даёт доступ в пакете. Поля обычно private, методы — ровно настолько открыты, насколько нужно.",
+          "[Theorie] Инвариант можно поддерживать проверкой в конструкторе и методах. Неизменяемый объект помогает избежать неожиданных изменений: поля final, отсутствие сеттеров и осторожность с изменяемыми ссылочными полями."
+        ],
+        "code": "class User {\n    private final String name;\n    User(String name) { this.name = name; }\n    String getName() { return name; }\n}",
+        "caption": "Неизменяемость делает состояние предсказуемым.",
+        "language": "java",
+        "objective": "[Lernziel] Подобрать уровень доступа и обеспечить корректное состояние после конструктора.",
+        "walkthrough": "[Durchgang] private final name устанавливается в конструкторе User; getName() только читает его. Отсутствие сеттера исключает повторное присваивание поля.",
+        "pitfall": "[Typischer Fehler] final не делает вложенные изменяемые объекты безопасными: если вернуть внутренний List, его могут изменить без сеттера.",
+        "deepDive": "[Vertiefung] Модификатор доступа ограничивает не только чтение, но и то, кто может нарушить правила объекта. final для коллекции фиксирует ссылку, но не содержимое; для настоящей неизменяемости нужны защитные копии изменяемых данных.",
+        "useCase": "[Praxisfall] Если профиль возвращает список ролей, сравните возврат собственной коллекции и List.copyOf(roles). Изменение полученного списка не должно незаметно менять внутреннее состояние профиля.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Неизменяемый объект предсказуем: обязательное значение задаётся при создании и не меняется позже. Геттер читает поле, но не даёт клиенту новый способ записать его.",
+          "steps": [
+            "Сделайте name полем private final, передайте значение в конструктор и присвойте ровно один раз.",
+            "Добавьте getName(), возвращающий строку. В main вызывайте getter у объекта, а не пытайтесь обратиться к private name."
+          ],
+          "example": {
+            "code": "class User {\n    private final String name;\n    User(String name) { this.name = name; }\n    String getName() { return name; }\n}\n// внутри main:\nUser user = new User(\"Олег\");\nSystem.out.println(user.getName());",
+            "language": "java",
+            "runnable": false,
+            "label": "Неизменяемый User и вызов геттера"
+          },
+          "result": "Появится «Олег». Присвоить другое значение user.name после создания нельзя ни из main, ни повторно внутри конструктора.",
+          "bridge": "В мини-задании верните поле через геттер; в практике передайте нужное имя в конструктор и напечатайте результат getter в main."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m07-l02-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "class User {\n    private final String name;\n    User(String name) { this.name = name; }\n    String getName() { return name; }\n}\n// внутри main:\nUser user = new User(\"Олег\");\nSystem.out.println(user.getName());",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Появится «Олег». Присвоить другое значение user.name после создания нельзя ни из main, ни повторно внутри конструктора."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Aufgabe] Что запрещает final для поля name после конструктора?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Чтение поля"
+            },
+            {
+              "id": "b",
+              "label": "Повторное присваивание"
+            },
+            {
+              "id": "c",
+              "label": "Создание объекта"
+            },
+            {
+              "id": "d",
+              "label": "Вызов метода"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Речь о ссылке в поле, а не о существовании объекта.",
+          "explanation": "[Erklärung] final не позволяет повторно присвоить значение полю.",
+          "id": "m07-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Aufgabe] Верните закрытое поле через геттер.",
+          "template": [
+            "String getName() { return ",
+            "; }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "name",
+              "options": [
+                "name",
+                "this",
+                "void"
+              ]
+            }
+          ],
+          "hint": "[Hinweis] Верните само значение String.",
+          "explanation": "[Erklärung] Геттер возвращает сохранённое имя.",
+          "id": "m07-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m07-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Как обеспечить, чтобы после конструктора у User нельзя было заменить значение name извне?",
+          "options": [
+            {
+              "id": "a",
+              "label": "public String name"
+            },
+            {
+              "id": "b",
+              "label": "private final String name и геттер"
+            },
+            {
+              "id": "c",
+              "label": "static String name"
+            },
+            {
+              "id": "d",
+              "label": "protected String name без методов"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] private исключает внешний доступ к полю, final исключает повторное присваивание.",
+          "explanation": "[Erklärung] Верно: private final String name и геттер. private исключает внешний доступ к полю, final исключает повторное присваивание."
+        },
+        {
+          "id": "m07-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m07-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Erstellen Sie неизменяемый User с private final name, заданным в конструкторе, и getName(). Erstellen Sie User(\"Мира\") и выведите имя дважды через двоеточие.",
+          "expectedOutput": "Мира:Мира",
+          "hint": "[Hinweis] Поле присваивается один раз в конструкторе; для чтения за пределами класса используйте геттер.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: 'Мира:Мира'. Поле присваивается один раз в конструкторе; для чтения за пределами класса используйте геттер."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Abschlusspraxis Modul 7",
+    "description": "Скрывайте поля и защищайте правила предметной области.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какое API лучше описывает пополнение счёта?",
+        "options": [
+          {
+            "id": "a",
+            "label": "account.balance = -100;"
+          },
+          {
+            "id": "b",
+            "label": "account.deposit(100);"
+          },
+          {
+            "id": "c",
+            "label": "account.balance++;"
+          },
+          {
+            "id": "d",
+            "label": "Account.balance = 100;"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] Операция должна позволять проверить сумму.",
+        "explanation": "[Erklärung] deposit позволяет инкапсулировать проверку и обновление.",
+        "id": "m07-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "Deklarieren Sie неизменяемое скрытое поле.",
+        "template": [
+          "",
+          " String name;"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "private final",
+            "options": [
+              "private final",
+              "public",
+              "static"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Сочетайте скрытие и запрет повторного присваивания.",
+        "explanation": "[Erklärung] private final оставляет поле закрытым и неизменяемым после инициализации.",
+        "id": "m07-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Сопоставьте модификатор и смысл.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "private",
+            "right": "Доступ только внутри класса"
+          },
+          {
+            "id": "2",
+            "left": "public",
+            "right": "Доступ отовсюду"
+          },
+          {
+            "id": "3",
+            "left": "protected",
+            "right": "Доступ из подклассов и пакета"
+          },
+          {
+            "id": "4",
+            "left": "final",
+            "right": "Запрет повторного присваивания поля"
+          }
+        ],
+        "hint": "[Hinweis] Не путайте модификаторы доступа с модификатором неизменяемости.",
+        "explanation": "[Erklärung] private, public и protected регулируют видимость; final — присваивание.",
+        "id": "m07-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите метод, который добавляет положительную сумму.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "void deposit(int amount) {"
+          },
+          {
+            "id": "b",
+            "text": "if (amount > 0) {"
+          },
+          {
+            "id": "c",
+            "text": "balance += amount;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 2
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Проверка идёт до изменения баланса.",
+        "explanation": "[Erklärung] Только положительное amount изменяет balance.",
+        "id": "m07-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Aufgabe] Какие решения поддерживают инкапсуляцию?",
+        "options": [
+          {
+            "id": "a",
+            "label": "private-поля"
+          },
+          {
+            "id": "b",
+            "label": "Проверка аргументов в методах"
+          },
+          {
+            "id": "c",
+            "label": "Публичное изменяемое поле для всех"
+          },
+          {
+            "id": "d",
+            "label": "Методы, выражающие действия объекта"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hinweis] Состояние должно изменяться контролируемо.",
+        "explanation": "[Erklärung] Скрытые поля, проверки и осмысленные методы защищают объект.",
+        "id": "m07-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Erstellen Sie Account с private int balance = 100 и методами deposit(int) и withdraw(int), проверяющими положительную сумму и достаточность баланса. Пополните на 20, снимите 50, выведите остаток.",
+        "starterCode": "class Account {\n    private int balance = 100;\n    void deposit(int amount) { /* проверка и пополнение */ }\n    void withdraw(int amount) { /* проверка и снятие */ }\n    int getBalance() { return balance; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Account account = new Account();\n        // Выполните операции и выведите balance\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "70",
+        "hint": "[Hinweis] В withdraw проверяйте amount > 0 && amount <= balance; затем уменьшайте поле.",
+        "explanation": "[Erklärung] Итоговый баланс: 100 + 20 − 50 = 70.",
+        "id": "m07-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Erstellen Sie неизменяемый Person с private final String name, конструктором и getName(). В main создайте Person(\"Лена\") и выведите имя.",
+        "starterCode": "class Person {\n    private final String name;\n    Person(String name) {\n        this.name = name;\n    }\n    String getName() {\n        // Верните поле\n        return \"\";\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Создайте Person и выведите имя\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Лена",
+        "hint": "[Hinweis] Инициализируйте поле один раз в конструкторе через this.name = name;.",
+        "explanation": "[Erklärung] Значение доступно через геттер, а не прямое изменение поля.",
+        "id": "m07-p07"
+      }
+    ],
+    "id": "m07-practice",
+    "primer": {
+      "why": "Инкапсуляция — не просто слово private: публичные операции должны сохранять правила объекта. Для баланса проверяют знак и наличие средств, для имени после создания запрещают изменение.",
+      "steps": [
+        "Внутри Wallet поле amount закрыто. Метод add отвергает нулевой и отрицательный аргумент; метод spend не тратит больше доступного.",
+        "Проверяйте состояние методом getter после действий. Для неизменяемого объекта задайте private final-поле в конструкторе и не добавляйте setter."
+      ],
+      "example": {
+        "code": "class Wallet {\n    private int amount = 9;\n    void add(int value) { if (value > 0) amount += value; }\n    void spend(int value) { if (value > 0 && value <= amount) amount -= value; }\n    int getAmount() { return amount; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Wallet wallet = new Wallet();\n        wallet.add(3); wallet.spend(4);\n        System.out.println(wallet.getAmount());\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "8"
+      },
+      "result": "В примере выводится 8. Вызов wallet.spend(100) оставил бы значение прежним, потому что проверка не пройдена.",
+      "hints": [
+        {
+          "taskId": "m07-p06",
+          "text": "Для Account перенесите оба ограничения внутрь deposit и withdraw. В main выполните действия из условия и распечатайте остаток через метод."
+        },
+        {
+          "taskId": "m07-p07",
+          "text": "Для Person используйте final-поле и конструктор: геттер возвращает поле, но не открывает возможность менять его после new."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m07-exam",
+    "title": "Mini-Prüfung",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 370,
+    "tasks": [
+      {
+        "id": "m-exam-07-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Aufgabe] Как обеспечить, чтобы после конструктора у User нельзя было заменить значение name извне?",
+        "options": [
+          {
+            "id": "a",
+            "label": "public String name"
+          },
+          {
+            "id": "b",
+            "label": "private final String name и геттер"
+          },
+          {
+            "id": "c",
+            "label": "static String name"
+          },
+          {
+            "id": "d",
+            "label": "protected String name без методов"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] private исключает внешний доступ к полю, final исключает повторное присваивание.",
+        "explanation": "[Erklärung] Верно: private final String name и геттер. private исключает внешний доступ к полю, final исключает повторное присваивание."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Aufgabe] Скройте поле от других классов.",
+        "template": [
+          "",
+          " int balance;"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "private",
+            "options": [
+              "public",
+              "private",
+              "static"
+            ]
+          }
+        ],
+        "hint": "[Hinweis] Нужен самый закрытый модификатор доступа.",
+        "explanation": "[Erklärung] private ограничивает доступ текущим классом.",
+        "id": "m-exam-07-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Aufgabe] Сопоставьте модификатор и смысл.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "private",
+            "right": "Доступ только внутри класса"
+          },
+          {
+            "id": "2",
+            "left": "public",
+            "right": "Доступ отовсюду"
+          },
+          {
+            "id": "3",
+            "left": "protected",
+            "right": "Доступ из подклассов и пакета"
+          },
+          {
+            "id": "4",
+            "left": "final",
+            "right": "Запрет повторного присваивания поля"
+          }
+        ],
+        "hint": "[Hinweis] Не путайте модификаторы доступа с модификатором неизменяемости.",
+        "explanation": "[Erklärung] private, public и protected регулируют видимость; final — присваивание.",
+        "id": "m-exam-07-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите метод, который добавляет положительную сумму.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "void deposit(int amount) {"
+          },
+          {
+            "id": "b",
+            "text": "if (amount > 0) {"
+          },
+          {
+            "id": "c",
+            "text": "balance += amount;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 2
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hinweis] Проверка идёт до изменения баланса.",
+        "explanation": "[Erklärung] Только положительное amount изменяет balance.",
+        "id": "m-exam-07-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Erstellen Sie Account с private int balance и неизменяемым private final String owner.\nКонструктор получает владельца и начальный баланс. deposit(int) принимает только положительные\nсуммы; withdraw(int) возвращает true и списывает деньги, только если сумма положительна\nи не превышает баланс. Геттеры не меняют состояние. Для Account(\"Ира\", 1 * 100)\nвыполните deposit(50), deposit(-10), withdraw(120), withdraw(1000).\nGeben Sie aus: владельца, результаты двух снятий и конечный баланс — четыре строки.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Ира\ntrue\nfalse\n30",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nИра\ntrue\nfalse\n30",
+        "id": "m-exam-07-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nErstellen Sie Account с private int balance и неизменяемым private final String owner.\nКонструктор получает владельца и начальный баланс. deposit(int) принимает только положительные\nсуммы; withdraw(int) возвращает true и списывает деньги, только если сумма положительна\nи не превышает баланс. Геттеры не меняют состояние. Для Account(\"Ира\", 2 * 100)\nвыполните deposit(50), deposit(-10), withdraw(120), withdraw(1000).\nGeben Sie aus: владельца, результаты двух снятий и конечный баланс — четыре строки.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Ира\ntrue\nfalse\n130",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nИра\ntrue\nfalse\n130",
+        "id": "m-exam-07-06"
+      }
+    ]
+  }
+}

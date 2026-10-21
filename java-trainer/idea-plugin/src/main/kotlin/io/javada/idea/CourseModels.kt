@@ -198,10 +198,17 @@ object CourseRepository {
     }
 
     /**
-     * Загружает все 22 модуля, 99 уроков, 825 заданий, 22 мини-экзамена и 5 лабораторных работ.
+     * Загружает все 22 модуля, 99 уроков, 825 заданий, 22 мини-экзамена и 5 лабораторных работ
+     * на выбранном языке (ru, en, es, de, zh).
      */
-    fun loadCatalog(trainerRoot: Path): FullCourseCatalog {
-        val dataDir = trainerRoot.resolve("frontend/data")
+    fun loadCatalog(trainerRoot: Path, langCode: String = JavadaI18n.currentLang.code): FullCourseCatalog {
+        val baseDataDir = trainerRoot.resolve("frontend/data")
+        val i18nDataDir = baseDataDir.resolve("i18n").resolve(langCode)
+        val dataDir = if (langCode != "ru" && Files.isRegularFile(i18nDataDir.resolve("modules.json"))) {
+            i18nDataDir
+        } else {
+            baseDataDir
+        }
         val privateDir = trainerRoot.resolve("private")
         val modulesIndexFile = dataDir.resolve("modules.json")
 
@@ -366,16 +373,7 @@ object CourseRepository {
                 arrEl.asJsonArray.map { it.asString }
             } ?: emptyList()
 
-            val titleLabel = when (type) {
-                "copy" -> "Образец кода ($id)"
-                "code" -> if (obj.stringOrEmpty("difficulty") == "hardcore") "Хард-задача ($id)" else "Код ($id)"
-                "junit" -> "JUnit-задача ($id)"
-                "choice" -> "Тест #${idx + 1} ($id)"
-                "fill" -> "Пропуски #${idx + 1} ($id)"
-                "matching" -> "Пары #${idx + 1} ($id)"
-                "parsons" -> "Конструктор кода #${idx + 1} ($id)"
-                else -> "Задание $id"
-            }
+            val titleLabel = JavadaI18n.taskTitle(type, id, obj.stringOrEmpty("difficulty").ifEmpty { null }, idx)
 
             result.add(
                 CourseTask(

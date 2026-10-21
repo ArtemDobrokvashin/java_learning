@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "labs": [
+    {
+      "id": "lab-array-report",
+      "type": "code",
+      "mode": "run",
+      "title": "数组统计：最小值、最大值与总和",
+      "goal": "单次遍历数据、处理边界情况并防止 int 溢出。",
+      "description": "从标准输入读取 n 个整数（n 从 1 到 100）。以空格分隔输出最小值、最大值和总和。总和请存储在 long 类型中。",
+      "prerequisites": [
+        1,
+        2,
+        3
+      ],
+      "skills": [
+        "数组与循环",
+        "边界处理",
+        "使用 long 防溢出"
+      ],
+      "inputFormat": "第一行为整数 n，随后是 n 个以空格或换行分隔的整数。",
+      "outputFormat": "单行输出：min max sum。",
+      "sampleInput": "5\n5 -2 9 9 0\n",
+      "sampleOutput": "-2 9 21",
+      "hint": "先读取第一个元素作为 min、max 和 sum 的初始值，再用循环处理剩余的 n - 1 个数字。",
+      "starterCode": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        int first = in.nextInt();\n        int min = first, max = first;\n        long sum = first;\n        // TODO: обработайте остальные n - 1 чисел.\n        System.out.println(min + \" \" + max + \" \" + sum);\n    }\n}\n"
+    },
+    {
+      "id": "lab-user-lookup",
+      "type": "code",
+      "mode": "run",
+      "title": "用户目录查询",
+      "goal": "数据建模、Map 索引及缺失键的显式处理。",
+      "description": "读取 n 行格式为 id;姓名;true|false 的数据（ID 唯一且为正整数），再读取要查询的 ID。若用户激活则输出姓名；未激活输出 INACTIVE；不存在输出 NOT_FOUND。",
+      "prerequisites": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "skills": [
+        "类或 record",
+        "Map 映射",
+        "条件分支"
+      ],
+      "inputFormat": "第一行为 n (0..100)，随后 n 行为 id;name;active，最后一行为待查 ID。",
+      "outputFormat": "单行输出：姓名、INACTIVE 或 NOT_FOUND。",
+      "sampleInput": "3\n1;Анна;true\n2;Борис;false\n10;Лена;true\n10\n",
+      "sampleOutput": "Лена",
+      "hint": "将 User 对象存入 Map<Integer, User>；用 split(\";\", -1) 拆分字符串，先判断键是否存在，再检查 active。",
+      "starterCode": "import java.io.*;\nimport java.util.*;\n\nrecord User(int id, String name, boolean active) { }\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        Map<Integer, User> users = new HashMap<>();\n        // TODO: прочитайте n записей id;имя;true|false.\n        // TODO: прочитайте искомый ID и выведите один ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-import-report",
+      "type": "code",
+      "mode": "run",
+      "title": "数据导入：容错解析脏数据",
+      "goal": "字符串解析、输入校验以及异常捕获，保证程序不中断。",
+      "description": "读取 n 行格式为 姓名,年龄 的数据。若姓名 trim 后非空、恰有一个逗号且年龄为 0 到 120 之间的整数，则视为有效记录。跳过无效行，输出有效记录数与年龄总和。",
+      "prerequisites": [
+        10,
+        11,
+        13
+      ],
+      "skills": [
+        "CSV 格式解析",
+        "NumberFormatException",
+        "边界校验"
+      ],
+      "inputFormat": "第一行为 n (0..100)，随后为 n 行 name,age 数据。",
+      "outputFormat": "单行输出：有效记录数 年龄总和。",
+      "sampleInput": "5\nАнна,25\nБорис,abc\n,20\nИгорь,17\nЗоя,30\n",
+      "sampleOutput": "3 72",
+      "hint": "使用 split(\",\", -1)，检查数组长度是否为 2 且姓名非空；解析年龄时捕获 NumberFormatException。",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        int count = 0;\n        long totalAge = 0;\n        for (int i = 0; i < n; i++) {\n            String row = in.readLine();\n            // TODO: разберите row, проверьте диапазон и обновите счётчики.\n        }\n        System.out.println(count + \" \" + totalAge);\n    }\n}\n"
+    },
+    {
+      "id": "lab-order-totals",
+      "type": "code",
+      "mode": "run",
+      "title": "订单汇总：不依赖数据库的 GROUP BY",
+      "goal": "按 ID 聚合求和、过滤分组并按确定顺序输出。",
+      "description": "读取 n 条形如 userId amount 的订单记录以及一个阈值。用 long 累加每个用户的总额，保留总额 >= 阈值的用户，按 ID 升序排列并以英文逗号连接输出 id:总额（若无匹配则输出 -）。",
+      "prerequisites": [
+        9,
+        13,
+        16
+      ],
+      "skills": [
+        "Map 与排序",
+        "long 聚合累加",
+        "格式化输出"
+      ],
+      "inputFormat": "第一行为 n (0..100)，随后 n 行为 userId amount，最后一行为阈值。",
+      "outputFormat": "单行输出：id1:sum1,id2:sum2 或 -。",
+      "sampleInput": "4\n1 30\n2 70\n1 80\n3 100\n100\n",
+      "sampleOutput": "1:110,3:100",
+      "hint": "使用 TreeMap<Integer, Long> 配合 merge(id, amount, Long::sum) 可自动按 ID 升序排列。",
+      "starterCode": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = in.nextInt();\n        Map<Integer, Long> totals = new HashMap<>();\n        // TODO: прочитайте n пар ID / сумма.\n        long threshold = in.nextLong();\n        // TODO: отсортируйте ID, оставьте подходящие группы и выведите ответ.\n    }\n}\n"
+    },
+    {
+      "id": "lab-rest-router",
+      "type": "code",
+      "mode": "run",
+      "title": "迷你 HTTP 路由分发器",
+      "goal": "匹配 HTTP 方法与路径、校验路径数值参数并返回对应状态码。",
+      "description": "读取 n 行形如 METHOD /path 的请求：GET /health 返回 200 OK；POST /users 返回 201 CREATED；GET /users/{id}（id 为正 long 整数）返回 200 USER {id}；其余情况返回 404 NOT_FOUND。",
+      "prerequisites": [
+        16,
+        17,
+        19
+      ],
+      "skills": [
+        "HTTP 路由匹配",
+        "字符串解析",
+        "HTTP 状态码"
+      ],
+      "inputFormat": "第一行为 n (1..100)，随后 n 行为 METHOD /path。",
+      "outputFormat": "输出 n 行对应的路由响应。",
+      "sampleInput": "4\nGET /health\nGET /users/42\nPOST /users\nDELETE /users/42\n",
+      "sampleOutput": "200 OK\n200 USER 42\n201 CREATED\n404 NOT_FOUND",
+      "hint": "先匹配固定路径，再检查 /users/ 前缀并验证 id 是否为大于 0 的 64 位十进制整数。",
+      "starterCode": "import java.io.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        for (int i = 0; i < n; i++) {\n            String request = in.readLine();\n            String[] parts = request.split(\" \", 2);\n            // TODO: выберите ответ по методу и пути.\n            System.out.println(\"404 NOT_FOUND\");\n        }\n    }\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,1389 @@
+{
+  "id": 16,
+  "title": "Databases & SQL",
+  "lessons": [
+    {
+      "id": "m16-l01",
+      "title": "Introduction to SQL",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] SQL — декларативный язык запросов к реляционной базе: вы описываете нужные строки, а СУБД выбирает план выполнения. SELECT выбирает столбцы, FROM — таблицу, WHERE фильтрует, ORDER BY сортирует.",
+          "Use явный список столбцов вместо SELECT * в прикладных запросах. LIMIT/другая форма ограничения зависит от СУБД. SQL обычно не различает регистр ключевых слов, но типы и имена таблиц имеют значение."
+        ],
+        "code": "SELECT name, age\nFROM users\nWHERE age >= 18\nORDER BY name;",
+        "caption": "SQL описывает желаемый результат.",
+        "language": "sql",
+        "objective": "[Goal] Составить SELECT с фильтром WHERE и сортировкой ORDER BY.",
+        "walkthrough": "The query/request берёт name и age из users, сначала оставляет людей не младше 18, затем сортирует выбранные строки по name. Самих данных он не изменяет.",
+        "pitfall": "[Common Pitfall] Не путайте WHERE с ORDER BY: первое исключает строки, второе лишь меняет порядок уже выбранных результатов.",
+        "deepDive": "[Deep Dive] SQL описывает результат, а не конкретный порядок обхода строк движком. WHERE удаляет неподходящие строки до сортировки; сравнение с NULL требует IS NULL, потому что выражение = NULL не даёт обычного true.",
+        "useCase": "Для списка взрослых пользователей явно назовите столбцы и добавьте ORDER BY, если интерфейсу нужен устойчивый порядок. Check запись с отсутствующим возрастом отдельно: обычное >= 18 её не выберет.",
+        "guide": {
+          "why": "[Step-by-Step Guide] SQL выбирает и фильтрует строки таблицы; SELECT перечисляет нужные столбцы, WHERE отбирает записи, ORDER BY управляет порядком результата.",
+          "steps": [
+            "Начните с FROM users, затем ограничьте строки WHERE active = true — в Java-модели этому соответствует проверка флага.",
+            "SELECT name возвращает только имена, а ORDER BY name сортирует выбранные строки; без него порядок ответа SQL не гарантирован."
+          ],
+          "example": {
+            "code": "SELECT name\nFROM users\nWHERE active = TRUE\nORDER BY name;",
+            "language": "sql",
+            "runnable": false,
+            "label": "SQL для таблицы users; не Java"
+          },
+          "result": "При активных Anna и Bob результат содержит их имена в алфавитном порядке; сам запрос требует существующей таблицы users.",
+          "bridge": "В практическом Java-задании БД нет: замените WHERE перебором строк List<Map<String,Object>> и отфильтруйте active перед печатью."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "SELECT name\nFROM users\nWHERE active = TRUE\nORDER BY name;",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. При активных Anna и Bob результат содержит их имена в алфавитном порядке; сам запрос требует существующей таблицы users."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какая часть SELECT-запроса фильтрует строки?",
+          "options": [
+            {
+              "id": "a",
+              "label": "FROM"
+            },
+            {
+              "id": "b",
+              "label": "WHERE"
+            },
+            {
+              "id": "c",
+              "label": "ORDER BY"
+            },
+            {
+              "id": "d",
+              "label": "SELECT"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Нужна проверка условия для каждой строки.",
+          "explanation": "[Explanation] WHERE оставляет строки, удовлетворяющие условию.",
+          "id": "m16-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Допишите фильтр по возрасту.",
+          "template": [
+            "SELECT name FROM users ",
+            " age >= 18;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "WHERE",
+              "options": [
+                "WHERE",
+                "ORDER BY",
+                "GROUP BY"
+              ]
+            }
+          ],
+          "hint": "[Hint] Нужна часть запроса с условием.",
+          "explanation": "[Explanation] WHERE ограничивает множество выбранных строк.",
+          "id": "m16-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Как безопаснее передавать id пользователя в SQL-запрос, а не соединять его со строкой запроса?",
+          "options": [
+            {
+              "id": "a",
+              "label": "через плейсхолдер ? и отдельный параметр"
+            },
+            {
+              "id": "b",
+              "label": "через произвольную конкатенацию"
+            },
+            {
+              "id": "c",
+              "label": "только как текст комментария"
+            },
+            {
+              "id": "d",
+              "label": "поместить id в имя таблицы"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Подготовленный запрос отделяет структуру SQL от пользовательских данных.",
+          "explanation": "[Explanation] Верно: через плейсхолдер ? и отдельный параметр. Подготовленный запрос отделяет структуру SQL от пользовательских данных."
+        },
+        {
+          "id": "m16-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Без установки СУБД создайте String query = \"SELECT name FROM users WHERE id = ?\". Print true, если в строке есть SELECT и параметр ?, иначе false.",
+          "expectedOutput": "true",
+          "hint": "[Hint] Это упражнение про структуру параметризованного SQL; не выполняйте запрос и не склеивайте пользовательский ввод.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'true'. Это упражнение про структуру параметризованного SQL; не выполняйте запрос и не склеивайте пользовательский ввод."
+        }
+      ]
+    },
+    {
+      "id": "m16-l02",
+      "title": "Database Normalization",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Нормализация уменьшает избыточность и аномалии обновления. В первой нормальной форме поля таблицы содержат атомарные значения, а повторяющиеся группы вынесены в отдельные строки.",
+          "[Theory] Во второй нормальной форме неключевые поля зависят от всего составного ключа, в третьей — не зависят транзитивно от других неключевых полей. Не дробите схему механически: проектируйте отношения по функциональным зависимостям."
+        ],
+        "code": "users(id, name)\norders(id, user_id, total)\n-- Заказы ссылаются на пользователя по user_id.",
+        "caption": "Нормализация основывается на зависимостях.",
+        "language": "sql",
+        "objective": "[Goal] Выделить отдельные таблицы пользователей и заказов и указать их связь.",
+        "walkthrough": "[Walkthrough] Схема users(id, name) хранит имя один раз; orders(id, user_id, total) ссылается на пользователя по user_id. При смене имени не нужно править все заказы.",
+        "pitfall": "[Common Pitfall] Запись users(id, name) здесь только схема для объяснения, не готовый SQL CREATE TABLE. Продумайте ключи и ограничения в реальной БД.",
+        "deepDive": "[Deep Dive] Разделение users и orders исключает многократную запись имени для каждого заказа. Внешний ключ хранит связь по ID, а не дублирует весь профиль; нормальные формы помогают обнаруживать зависимости полей не от того ключа.",
+        "useCase": "[Real-World Case] Если клиент изменил имя, обновите одну строку users, а не все заказы. Продумайте, что делать при удалении пользователя с заказами: ограничить действие или выбрать явное правило для внешнего ключа.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Нормализация уменьшает повторение сведений: имя клиента хранится один раз, а заказы указывают на него через стабильный id.",
+          "steps": [
+            "В users храните id и name, в orders — собственный id, user_id и total. Не дублируйте name в каждом заказе.",
+            "order.user_id ссылается на users.id. Тогда изменение имени не требует обновлять все строки orders; ссылочную целостность поддержит внешний ключ."
+          ],
+          "example": {
+            "code": "CREATE TABLE users (id INTEGER PRIMARY KEY, name VARCHAR(100));\nCREATE TABLE orders (\n    id INTEGER PRIMARY KEY,\n    user_id INTEGER REFERENCES users(id),\n    total INTEGER\n);",
+            "language": "sql",
+            "runnable": false,
+            "label": "Схема двух таблиц SQL; запуск требует СУБД"
+          },
+          "result": "Один users.id может встретиться во многих orders.user_id. Название клиента останется в единственной записи users.",
+          "bridge": "В мини-задании определите, почему для связи нужен ключ, а не повтор имени. В практике Java Map<Integer,String> сыграет роль таблицы."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "CREATE TABLE users (id INTEGER PRIMARY KEY, name VARCHAR(100));\nCREATE TABLE orders (\n    id INTEGER PRIMARY KEY,\n    user_id INTEGER REFERENCES users(id),\n    total INTEGER\n);",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Один users.id может встретиться во многих orders.user_id. Название клиента останется в единственной записи users."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Зачем выносить повторяющиеся данные в отдельную таблицу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Чтобы увеличить дублирование"
+            },
+            {
+              "id": "b",
+              "label": "Чтобы уменьшить аномалии обновления"
+            },
+            {
+              "id": "c",
+              "label": "Чтобы отменить ключи"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы запретить JOIN"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Один факт лучше хранить в одном месте.",
+          "explanation": "[Explanation] Нормализация снижает избыточность данных.",
+          "id": "m16-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Какая из перечисленных нормальных форм первой требует атомарных значений в ячейках?",
+          "template": [
+            "",
+            " нормальная форма"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Первая",
+              "options": [
+                "Первая",
+                "Третья",
+                "Нулевая"
+              ]
+            }
+          ],
+          "hint": "[Hint] Это базовое требование нормализации.",
+          "explanation": "[Explanation] 1НФ предполагает атомарные значения полей.",
+          "id": "m16-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Почему в таблице orders лучше хранить user_id, а не переписывать имя пользователя в каждом заказе?",
+          "options": [
+            {
+              "id": "a",
+              "label": "меньше дублирования и проще обновить имя"
+            },
+            {
+              "id": "b",
+              "label": "чтобы все заказы стали одним"
+            },
+            {
+              "id": "c",
+              "label": "чтобы отказаться от ключей"
+            },
+            {
+              "id": "d",
+              "label": "потому что SQL не умеет хранить строки"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Внешний ключ связывает сущности, а данные пользователя остаются в одном месте.",
+          "explanation": "[Explanation] Верно: меньше дублирования и проще обновить имя. Внешний ключ связывает сущности, а данные пользователя остаются в одном месте."
+        },
+        {
+          "id": "m16-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Смоделируйте две таблицы: User(int id,String name) и Order(int userId,int amount). Для заказа пользователя с id=2 найдите имя в списке пользователей и выведите «Мира:15».",
+          "expectedOutput": "Мира:15",
+          "hint": "[Hint] Связывайте данные по id, а не дублируйте имя в заказе; это смысл нормализации.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира:15'. Связывайте данные по id, а не дублируйте имя в заказе; это смысл нормализации."
+        }
+      ]
+    },
+    {
+      "id": "m16-l03",
+      "title": "Using JDBC",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] JDBC — стандартный API Java для связи с реляционной БД. Connection представляет сеанс, PreparedStatement задаёт параметризованный запрос, ResultSet позволяет прочитать строки результата.",
+          "[Theory] Для конкретной СУБД нужен JDBC-драйвер: одного JDK недостаточно для реального подключения. Значения передавайте параметрами setString/setInt, а не вставляйте ввод пользователя в SQL-строку — это защита от SQL-инъекций."
+        ],
+        "code": "String sql = \"SELECT name FROM users WHERE id = ?\";\ntry (PreparedStatement ps = conn.prepareStatement(sql)) {\n    ps.setInt(1, userId);\n    try (ResultSet rows = ps.executeQuery()) { /* чтение */ }\n}",
+        "caption": "Реальный JDBC требует отдельного драйвера и базы.",
+        "language": "java",
+        "objective": "[Goal] Безопасно связать параметр PreparedStatement и закрыть JDBC-ресурсы.",
+        "walkthrough": "[Walkthrough] Знак ? обозначает параметр номер 1; ps.setInt(1, userId) передаёт число отдельно от SQL. try-with-resources закрывает ps и ResultSet после чтения.",
+        "pitfall": "[Common Pitfall] Конкатенация \"WHERE id = \" + input небезопасна для непроверенного ввода. ? подходит для значений, но не для имён таблиц.",
+        "deepDive": "[Deep Dive] PreparedStatement разделяет текст SQL и данные: драйвер передаёт значение параметра, не превращая его в часть синтаксиса запроса. Connection и ResultSet — ресурсы с ограниченным сроком жизни, их нужно закрывать.",
+        "useCase": "[Real-World Case] Для поиска по пользовательскому ID сравните запрос с ? и строковую конкатенацию на некорректном вводе. Имена таблиц нельзя подставлять через ?: для них выбирайте заранее разрешённые значения.",
+        "guide": {
+          "why": "[Step-by-Step Guide] JDBC соединяет Java с SQL-драйвером. Значения пользователя передаются параметрами PreparedStatement, а не приклеиваются к строке запроса.",
+          "steps": [
+            "В SQL оставьте знак ? на месте значения. Индексы параметров setInt начинаются с 1 — не с 0, как в Java-массиве.",
+            "executeQuery() вернёт ResultSet. Читайте rows.next() перед обращением к колонкам и закрывайте ресурсы через try-with-resources."
+          ],
+          "example": {
+            "code": "String sql = \"SELECT name FROM users WHERE id = ?\";\ntry (var ps = connection.prepareStatement(sql)) {\n    ps.setInt(1, id);\n    try (var rows = ps.executeQuery()) {\n        if (rows.next()) System.out.println(rows.getString(\"name\"));\n    }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "JDBC-фрагмент: требуются connection, id и драйвер"
+          },
+          "result": "Если запись с таким id есть, на экран попадёт её name. connection и id нужно получить ранее; без JDBC-драйвера и СУБД пример не запускается.",
+          "bridge": "В практическом модуле подключение к СУБД не требуется: сохраните принцип «сопоставить ключ → значение» с помощью Java Map."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "String sql = \"SELECT name FROM users WHERE id = ?\";\ntry (var ps = connection.prepareStatement(sql)) {\n    ps.setInt(1, id);\n    try (var rows = ps.executeQuery()) {\n        if (rows.next()) System.out.println(rows.getString(\"name\"));\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если запись с таким id есть, на экран попадёт её name. connection и id нужно получить ранее; без JDBC-драйвера и СУБД пример не запускается."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Зачем в JDBC использовать PreparedStatement и параметр ?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Для склейки строк"
+            },
+            {
+              "id": "b",
+              "label": "Для безопасной передачи значений"
+            },
+            {
+              "id": "c",
+              "label": "Для создания потока Thread"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы избежать драйвера"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Параметры не должны становиться частью SQL-синтаксиса.",
+          "explanation": "[Explanation] PreparedStatement отделяет SQL от пользовательских значений.",
+          "id": "m16-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Привяжите целочисленный параметр номер 1.",
+          "template": [
+            "statement.",
+            "(1, userId);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "setInt",
+              "options": [
+                "setInt",
+                "execute",
+                "getString"
+              ]
+            }
+          ],
+          "hint": "[Hint] У PreparedStatement есть сеттер с типом числа.",
+          "explanation": "[Explanation] setInt(1, userId) передаёт значение отдельно от текста SQL.",
+          "id": "m16-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Какому интерфейсу JDBC соответствует идея «запрос с ? и установка id отдельно»?",
+          "options": [
+            {
+              "id": "a",
+              "label": "PreparedStatement"
+            },
+            {
+              "id": "b",
+              "label": "PrintStream"
+            },
+            {
+              "id": "c",
+              "label": "Runnable"
+            },
+            {
+              "id": "d",
+              "label": "Iterator"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] PreparedStatement принимает параметры отдельно от текста SQL.",
+          "explanation": "[Explanation] Верно: PreparedStatement. PreparedStatement принимает параметры отдельно от текста SQL."
+        },
+        {
+          "id": "m16-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте подготовленный JDBC-запрос строкой «SELECT * FROM users WHERE id = ?» и int id = 7. Print текст запроса и отдельно id; не подставляйте значение внутрь SQL.",
+          "expectedOutput": "SELECT * FROM users WHERE id = ?\n7",
+          "hint": "[Hint] Знак вопроса остаётся в PreparedStatement, а параметр передаётся отдельно через setInt.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'SELECT * FROM users WHERE id = ?\\n7'. Знак вопроса остаётся в PreparedStatement, а параметр передаётся отдельно через setInt."
+        }
+      ]
+    },
+    {
+      "id": "m16-l04",
+      "title": "Working with Users and Roles",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] CRUD описывает создание, чтение, изменение и удаление записей: INSERT, SELECT, UPDATE, DELETE. Обновление и удаление без WHERE могут затронуть все строки — это опасная ошибка.",
+          "[Theory] Для пользователей отдельно продумайте уникальный идентификатор, ограничения и защиту персональных данных. Пароли не хранят в открытом виде: используют специализированное адаптивное хеширование с солью на стороне приложения."
+        ],
+        "code": "INSERT INTO users (name) VALUES (?);\nUPDATE users SET name = ? WHERE id = ?;",
+        "caption": "DELETE без WHERE удаляет все строки.",
+        "language": "sql",
+        "objective": "[Goal] Отличить INSERT от UPDATE и ограничить изменение строки условием WHERE.",
+        "walkthrough": "[Walkthrough] Первый запрос добавляет пользователя, второй меняет name у записи с нужным id. Оба знака ? заполняются значениями через драйвер при выполнении запроса.",
+        "pitfall": "[Common Pitfall] Не выполняйте UPDATE или DELETE без WHERE, если не хотите затронуть все строки. ? — не буквальный текст для SQL-консоли.",
+        "deepDive": "[Deep Dive] INSERT создаёт запись, UPDATE меняет уже найденную. После executeUpdate проверяйте число затронутых строк: ноль означает, что запись могла не существовать; несколько строк вместо одной сигнализируют о неверном условии WHERE.",
+        "useCase": "[Real-World Case] При смене имени пользователя привяжите новое имя и ID по порядку параметров, затем проверьте результат update. Если вместе обновляются ещё связанные записи, рассмотрите транзакцию, чтобы не оставить данные наполовину изменёнными.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Для изменения данных SQL использует отдельные команды. UPDATE без WHERE обычно обновляет каждую строку — прежде чем выполнять запрос, убедитесь в границе.",
+          "steps": [
+            "INSERT добавляет новую запись с name. Значение передавайте параметром, если запрос запускается из Java.",
+            "UPDATE меняет существующую запись, а WHERE id = ? ограничивает изменение нужным пользователем. WHERE не обязателен синтаксически, но критичен по смыслу."
+          ],
+          "example": {
+            "code": "INSERT INTO users (id, name) VALUES (3, 'Мира');\nUPDATE users SET name = 'Мирослава' WHERE id = 3;\nSELECT name FROM users WHERE id = 3;",
+            "language": "sql",
+            "runnable": false,
+            "label": "SQL для учебной таблицы users; запуск требует СУБД"
+          },
+          "result": "Если id = 3 до вставки не существовал, последний SELECT вернёт «Мирослава». В JDBC вместо строковых значений используйте параметры.",
+          "bridge": "В мини-задании расположите условие обновления после SET. В практической модели запись Map.put заменит значение только выбранного ключа."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "INSERT INTO users (id, name) VALUES (3, 'Мира');\nUPDATE users SET name = 'Мирослава' WHERE id = 3;\nSELECT name FROM users WHERE id = 3;",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если id = 3 до вставки не существовал, последний SELECT вернёт «Мирослава». В JDBC вместо строковых значений используйте параметры."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что произойдёт при UPDATE users SET name = ? без WHERE?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Изменится только первая строка"
+            },
+            {
+              "id": "b",
+              "label": "Могут обновиться все строки"
+            },
+            {
+              "id": "c",
+              "label": "The query/request не скомпилируется в Java"
+            },
+            {
+              "id": "d",
+              "label": "СУБД всегда добавит WHERE"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Нет условия отбора строк.",
+          "explanation": "[Explanation] Без WHERE UPDATE затрагивает все подходящие строки таблицы.",
+          "id": "m16-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Добавьте условие к удалению пользователя.",
+          "template": [
+            "DELETE FROM users ",
+            " id = ?;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "WHERE",
+              "options": [
+                "WHERE",
+                "ORDER BY",
+                "JOIN"
+              ]
+            }
+          ],
+          "hint": "[Hint] Без него удалятся все записи.",
+          "explanation": "[Explanation] WHERE ограничивает DELETE одним идентификатором.",
+          "id": "m16-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Какой идентификатор использовать при выборе User(2,\"Мира\") из списка по условию id == 2?",
+          "options": [
+            {
+              "id": "a",
+              "label": "имя первого User"
+            },
+            {
+              "id": "b",
+              "label": "значение поля id"
+            },
+            {
+              "id": "c",
+              "label": "позицию в списке без проверки"
+            },
+            {
+              "id": "d",
+              "label": "hashCode строки имени"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Идентификатор сущности не обязан совпадать с индексом списка.",
+          "explanation": "[Explanation] Верно: значение поля id. Идентификатор сущности не обязан совпадать с индексом списка."
+        },
+        {
+          "id": "m16-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create record User(int id,String name), список из User(1,\"Лена\") и User(2,\"Мира\"). Через stream/filter по id=2 найдите пользователя и выведите имя.",
+          "expectedOutput": "Мира",
+          "hint": "[Hint] Поиск по id отделён от хранения пользователей; Optional.orElseThrow() явно обрабатывает отсутствие записи.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира'. Поиск по id отделён от хранения пользователей; Optional.orElseThrow() явно обрабатывает отсутствие записи."
+        }
+      ]
+    },
+    {
+      "id": "m16-l05",
+      "title": "Table Relationships (JOIN)",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Внешний ключ связывает строку одной таблицы со строкой другой. Например, orders.user_id указывает на users.id; ограничение FOREIGN KEY поддерживает ссылочную целостность.",
+          "[Theory] JOIN объединяет строки по условию. INNER JOIN оставит совпадения в обеих таблицах, LEFT JOIN сохранит также строки левой таблицы без пары, подставив NULL для правых столбцов."
+        ],
+        "code": "SELECT u.name, o.total\nFROM users u\nJOIN orders o ON o.user_id = u.id;",
+        "caption": "Связи между таблицами задаются ключами.",
+        "language": "sql",
+        "objective": "[Goal] Соединить две таблицы по внешнему ключу и понять, какие строки пропадут.",
+        "walkthrough": "[Walkthrough] JOIN orders o ON o.user_id = u.id выдаёт пару name/total для каждого заказа с подходящим пользователем. Заказы без соответствующего user не попадут в INNER JOIN.",
+        "pitfall": "[Common Pitfall] Если нужны пользователи без заказов, начните с users и используйте LEFT JOIN: их правые поля будут NULL.",
+        "deepDive": "[Deep Dive] INNER JOIN оставляет пары строк, для которых условие соединения истинно. Если у пользователя три заказа, он появится в результате три раза; LEFT JOIN оставит и пользователей без заказов, заполнив правые столбцы NULL.",
+        "useCase": "Для отчёта о всех клиентах начните с users и используйте LEFT JOIN orders. Check клиента без покупок и клиента с несколькими: количество строк важно до применения агрегатов.",
+        "guide": {
+          "why": "[Step-by-Step Guide] JOIN связывает строки разных таблиц по условию, а не по совпадающим номерам их позиций. Одному клиенту могут соответствовать несколько заказов.",
+          "steps": [
+            "Псевдонимы u и o сокращают обращение к таблицам. The condition ON o.user_id = u.id связывает внешний ключ с первичным.",
+            "INNER JOIN возвращает только пары с совпавшим ключом. Если нужен клиент без заказа, понадобится LEFT JOIN — результат отличается."
+          ],
+          "example": {
+            "code": "SELECT u.name, o.total\nFROM users AS u\nJOIN orders AS o ON o.user_id = u.id\nWHERE o.total > 5;",
+            "language": "sql",
+            "runnable": false,
+            "label": "INNER JOIN учебных таблиц; запуск требует СУБД"
+          },
+          "result": "Если у Мира есть заказы на 3 и 8, запрос покажет только строку «Мира, 8»; настоящие данные и порядок не заданы.",
+          "bridge": "В практическом упражнении реализуйте сходную логику через два Map с одинаковым Integer-ключом; здесь SQL-сервер не используется."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l05-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "SELECT u.name, o.total\nFROM users AS u\nJOIN orders AS o ON o.user_id = u.id\nWHERE o.total > 5;",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если у Мира есть заказы на 3 и 8, запрос покажет только строку «Мира, 8»; настоящие данные и порядок не заданы."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какие заказы вернёт INNER JOIN пользователей и заказов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Только с совпавшим пользователем"
+            },
+            {
+              "id": "b",
+              "label": "Все строки orders без проверки"
+            },
+            {
+              "id": "c",
+              "label": "Только пользователей без заказа"
+            },
+            {
+              "id": "d",
+              "label": "Ни одной строки никогда"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] INNER JOIN требует соответствия ON.",
+          "explanation": "[Explanation] Совпадающие ключи связывают строки двух таблиц.",
+          "id": "m16-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Укажите условие связи таблиц.",
+          "template": [
+            "JOIN orders o ",
+            " o.user_id = u.id"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "ON",
+              "options": [
+                "ON",
+                "WHERE",
+                "VALUES"
+              ]
+            }
+          ],
+          "hint": "[Hint] У JOIN после таблицы следует условие соединения.",
+          "explanation": "[Explanation] ON описывает сопоставление ключей.",
+          "id": "m16-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] User id=1 имеет заказы с userId=1 на 8 и 12 и чужой заказ userId=2 на 50. Какова сумма его заказов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "70"
+            },
+            {
+              "id": "b",
+              "label": "50"
+            },
+            {
+              "id": "c",
+              "label": "20"
+            },
+            {
+              "id": "d",
+              "label": "8"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Соедините записи по совпадению ключа; чужой заказ в сумму не входит.",
+          "explanation": "[Explanation] Верно: 20. Соедините записи по совпадению ключа; чужой заказ в сумму не входит."
+        },
+        {
+          "id": "m16-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Есть User(1,\"Мира\"), Order(1,8) и Order(1,12). Сопоставьте userId заказов с id пользователя, суммируйте его заказы и выведите «Мира:20».",
+          "expectedOutput": "Мира:20",
+          "hint": "[Hint] Это учебный аналог JOIN по внешнему ключу; суммируйте только заказы нужного пользователя.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира:20'. Это учебный аналог JOIN по внешнему ключу; суммируйте только заказы нужного пользователя."
+        }
+      ]
+    },
+    {
+      "id": "m16-l06",
+      "title": "Advanced SQL Queries",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Агрегаты COUNT, SUM, AVG вычисляют сводные значения. GROUP BY группирует строки по указанным полям, а HAVING фильтрует уже полученные группы; WHERE отбирает строки до группировки.",
+          "[Theory] Для подсчёта заказов каждого пользователя сгруппируйте по user_id. Не смешивайте агрегаты с негруппированными столбцами: большинство СУБД требуют, чтобы остальные выбранные поля были в GROUP BY."
+        ],
+        "code": "SELECT user_id, COUNT(*) AS orders_count\nFROM orders\nGROUP BY user_id\nHAVING COUNT(*) > 1;",
+        "caption": "WHERE — строки, HAVING — группы.",
+        "language": "sql",
+        "objective": "[Goal] Сгруппировать заказы и отобрать группы по агрегату COUNT.",
+        "walkthrough": "[Walkthrough] GROUP BY user_id собирает заказы каждого пользователя; HAVING COUNT(*) > 1 оставляет лишь тех, у кого есть минимум два заказа.",
+        "pitfall": "[Common Pitfall] WHERE не умеет фильтровать результат COUNT группы до группировки. Пользователи без заказов не появятся без LEFT JOIN с users.",
+        "deepDive": "[Deep Dive] GROUP BY формирует набор строк на каждый ключ, агрегат COUNT вычисляется по группе, а HAVING фильтрует уже полученные группы. WHERE действует раньше группировки и подходит для отбора отдельных заказов.",
+        "useCase": "[Real-World Case] Постройте список пользователей с двумя и более заказами за период: дату фильтруйте в WHERE, количество — в HAVING. Учитывайте, что COUNT(*) на LEFT JOIN посчитает и строку без заказа; иногда нужен COUNT(o.id).",
+        "guide": {
+          "why": "[Step-by-Step Guide] Группировка сворачивает несколько строк в одну строку на каждый ключ; HAVING фильтрует уже сформированные группы, а WHERE — исходные строки.",
+          "steps": [
+            "GROUP BY user_id разбивает заказы по клиентам. COUNT(*) считает строки в группе и не требует отдельного счётчика в запросе.",
+            "HAVING COUNT(*) >= 2 оставляет только клиентов с как минимум двумя заказами. The condition на отдельный заказ ставят в WHERE перед GROUP BY."
+          ],
+          "example": {
+            "code": "SELECT user_id, COUNT(*) AS order_count\nFROM orders\nGROUP BY user_id\nHAVING COUNT(*) >= 2;",
+            "language": "sql",
+            "runnable": false,
+            "label": "Группировка SQL; запуск требует таблицы orders"
+          },
+          "result": "Для пользователя с двумя заказами вернётся одна строка с order_count = 2; клиент с одним заказом не попадёт в ответ.",
+          "bridge": "В мини-задании выберите HAVING для проверки числа заказов. В Java-модели такой подсчёт можно хранить в Map<Integer,Integer>."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l06-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "SELECT user_id, COUNT(*) AS order_count\nFROM orders\nGROUP BY user_id\nHAVING COUNT(*) >= 2;",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Для пользователя с двумя заказами вернётся одна строка с order_count = 2; клиент с одним заказом не попадёт в ответ."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Чем HAVING отличается от WHERE?",
+          "options": [
+            {
+              "id": "a",
+              "label": "HAVING фильтрует группы после GROUP BY"
+            },
+            {
+              "id": "b",
+              "label": "HAVING создаёт таблицу"
+            },
+            {
+              "id": "c",
+              "label": "WHERE всегда выполняется после HAVING"
+            },
+            {
+              "id": "d",
+              "label": "Разницы нет"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Нужно отобрать группы по результату COUNT.",
+          "explanation": "[Explanation] HAVING применяется к агрегированным группам.",
+          "id": "m16-l06-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Посчитайте количество заказов по пользователю.",
+          "template": [
+            "SELECT user_id, ",
+            "(*) FROM orders GROUP BY user_id;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "COUNT",
+              "options": [
+                "COUNT",
+                "WHERE",
+                "ORDER"
+              ]
+            }
+          ],
+          "hint": "[Hint] Нужна агрегатная функция количества строк.",
+          "explanation": "[Explanation] COUNT(*) считает записи в каждой группе.",
+          "id": "m16-l06-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l06-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Что останется после фильтра >= 10 и сортировки DESC для сумм 5, 12, 20, 7?",
+          "options": [
+            {
+              "id": "a",
+              "label": "5,7,12,20"
+            },
+            {
+              "id": "b",
+              "label": "12,20"
+            },
+            {
+              "id": "c",
+              "label": "20,12"
+            },
+            {
+              "id": "d",
+              "label": "20,12,7,5"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Сначала фильтр, затем сортировка оставшихся значений по убыванию.",
+          "explanation": "[Explanation] Верно: 20,12. Сначала фильтр, затем сортировка оставшихся значений по убыванию."
+        },
+        {
+          "id": "m16-l06-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l06",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "The list заказов содержит суммы 5, 12, 20, 7. Отфильтруйте суммы >= 10, отсортируйте по убыванию и выведите их через запятую без пробелов.",
+          "expectedOutput": "20,12",
+          "hint": "[Hint] Порядок операций соответствует WHERE, ORDER BY; выводите только строки, прошедшие фильтр.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '20,12'. Порядок операций соответствует WHERE, ORDER BY; выводите только строки, прошедшие фильтр."
+        }
+      ]
+    },
+    {
+      "id": "m16-l07",
+      "title": "Database Indexes",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Индекс помогает СУБД находить строки по ключу, не просматривая всю таблицу. B-деревья часто используются для поиска и сортировки, но план запроса зависит от данных и СУБД.",
+          "[Theory] Индекс не бесплатен: он занимает место и замедляет изменения данных, потому что его приходится обновлять. Проверяйте реальную пользу по плану выполнения (EXPLAIN), а не добавляйте индекс на каждый столбец."
+        ],
+        "code": "CREATE INDEX idx_orders_user_id ON orders(user_id);\n-- Индекс может помочь JOIN и фильтрации по user_id.",
+        "caption": "Оптимизируйте по измерениям, а не догадкам.",
+        "language": "sql",
+        "objective": "[Goal] Оценить пользу индекса для фильтрации и цену поддержки при записи.",
+        "walkthrough": "[Walkthrough] Индекс по orders.user_id может ускорить поиск заказов пользователя и соединение таблиц. СУБД всё же сама выбирает план с учётом объёма данных.",
+        "pitfall": "[Common Pitfall] Не делайте вывод по одному CREATE INDEX: сравните EXPLAIN и время реального запроса; на маленькой таблице сканирование может быть быстрее.",
+        "deepDive": "[Deep Dive] Индекс ускоряет доступ не всегда: он хранит отдельную структуру, которую нужно обновлять при записи. Составной индекс по (user_id, created_at) полезен при определённых фильтрах; порядок столбцов влияет на подходящие планы.",
+        "useCase": "[Real-World Case] Для медленного поиска заказов по пользователю соберите реальный запрос и EXPLAIN, затем сравните до и после индекса. На маленькой таблице последовательный просмотр может оказаться выгоднее.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Индекс ускоряет некоторые поиски по столбцу, но замедляет запись и занимает место. Его создают для реально используемых условий и проверяют планом запроса.",
+          "steps": [
+            "Для поиска по orders.user_id создайте индекс именно на этом поле. Это может помочь JOIN, который сравнивает user_id с users.id.",
+            "Check план через EXPLAIN в своей СУБД: на маленькой таблице оптимизатор вправе выбрать полный просмотр, и это не ошибка."
+          ],
+          "example": {
+            "code": "CREATE INDEX idx_orders_user ON orders(user_id);\nSELECT id, total FROM orders WHERE user_id = 3;",
+            "language": "sql",
+            "runnable": false,
+            "label": "Индекс для учебной БД; запуск требует СУБД"
+          },
+          "result": "Индекс не меняет строки результата SELECT. Отличаться может способ доступа к ним; конкретную выгоду покажут измерения и план.",
+          "bridge": "В мини-задании выберите индекс по столбцу фильтрации или связи. В практике в Java по ключу помогает Map, но она не заменяет SQL-индекс."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m16-l07-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "CREATE INDEX idx_orders_user ON orders(user_id);\nSELECT id, total FROM orders WHERE user_id = 3;",
+          "language": "sql",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Индекс не меняет строки результата SELECT. Отличаться может способ доступа к ним; конкретную выгоду покажут измерения и план."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какой компромисс связан с индексом?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Меньше места и мгновенная запись"
+            },
+            {
+              "id": "b",
+              "label": "Быстрее поиск, но дороже запись и хранение"
+            },
+            {
+              "id": "c",
+              "label": "Индекс заменяет первичный ключ"
+            },
+            {
+              "id": "d",
+              "label": "Индекс не занимает память"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Индекс нужно хранить и обновлять.",
+          "explanation": "[Explanation] Индексы ускоряют отдельные запросы за счёт ресурсов.",
+          "id": "m16-l07-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Посмотрите план запроса в СУБД.",
+          "template": [
+            "",
+            " SELECT * FROM orders WHERE user_id = 1;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "EXPLAIN",
+              "options": [
+                "EXPLAIN",
+                "INSERT",
+                "VALUES"
+              ]
+            }
+          ],
+          "hint": "[Hint] Это ключевое слово выводит план выполнения.",
+          "explanation": "[Explanation] EXPLAIN помогает понять, используется ли индекс.",
+          "id": "m16-l07-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m16-l07-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Что оптимизирует индекс на поле id в таблице при поиске WHERE id = 7?",
+          "options": [
+            {
+              "id": "a",
+              "label": "поиск строк по ключу"
+            },
+            {
+              "id": "b",
+              "label": "значения всех id меняются на 7"
+            },
+            {
+              "id": "c",
+              "label": "автоматическую валидацию Java"
+            },
+            {
+              "id": "d",
+              "label": "запуск приложения без БД"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Индекс ускоряет чтение по ключу, но требует места и обновления при записи.",
+          "explanation": "[Explanation] Верно: поиск строк по ключу. Индекс ускоряет чтение по ключу, но требует места и обновления при записи."
+        },
+        {
+          "id": "m16-l07-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m16-l07",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create Map<Integer,String> как учебный индекс по id. Добавьте (2,\"Мира\") и (7,\"Лена\"), затем получите запись для ключа 7 и выведите её значение.",
+          "expectedOutput": "Лена",
+          "hint": "[Hint] HashMap моделирует быстрый поиск по ключу, но не создаёт индекс в настоящей базе данных.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Лена'. HashMap моделирует быстрый поиск по ключу, но не создаёт индекс в настоящей базе данных."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Module 16 Final Practice",
+    "description": "Соберите запросы и обработайте результат в чистой Java без драйвера БД.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Task] Какой запрос вернёт имена пользователей старше 18?",
+        "options": [
+          {
+            "id": "a",
+            "label": "SELECT name FROM users WHERE age > 18;"
+          },
+          {
+            "id": "b",
+            "label": "SELECT age WHERE users;"
+          },
+          {
+            "id": "c",
+            "label": "DELETE FROM users WHERE age > 18;"
+          },
+          {
+            "id": "d",
+            "label": "INSERT INTO users(age) VALUES(18);"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Нужны SELECT, FROM и условие WHERE.",
+        "explanation": "The query/request выбирает name из users с фильтрацией age.",
+        "id": "m16-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Отберите группы с более чем двумя заказами.",
+        "template": [
+          "GROUP BY user_id ",
+          " COUNT(*) > 2"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "HAVING",
+            "options": [
+              "HAVING",
+              "WHERE",
+              "ORDER BY"
+            ]
+          }
+        ],
+        "hint": "[Hint] Сначала агрегируйте, затем отфильтруйте группы.",
+        "explanation": "[Explanation] HAVING проверяет условие над COUNT каждой группы.",
+        "id": "m16-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте часть SQL и действие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "SELECT",
+            "right": "Выбор столбцов"
+          },
+          {
+            "id": "2",
+            "left": "WHERE",
+            "right": "Фильтрация отдельных строк"
+          },
+          {
+            "id": "3",
+            "left": "GROUP BY",
+            "right": "Группировка строк"
+          },
+          {
+            "id": "4",
+            "left": "JOIN",
+            "right": "Соединение таблиц"
+          }
+        ],
+        "hint": "[Hint] Отличите выбор столбцов от фильтрации и соединения.",
+        "explanation": "[Explanation] Каждая часть запроса решает отдельную задачу.",
+        "id": "m16-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите параметризованный JDBC-запрос по идентификатору.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "String sql = \"SELECT name FROM users WHERE id = ?\";"
+          },
+          {
+            "id": "b",
+            "text": "PreparedStatement ps = conn.prepareStatement(sql);"
+          },
+          {
+            "id": "c",
+            "text": "ps.setInt(1, userId);"
+          },
+          {
+            "id": "d",
+            "text": "ResultSet rows = ps.executeQuery();"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Параметр передаётся после подготовки, но до выполнения.",
+        "explanation": "[Explanation] Порядок: SQL → подготовка → параметр → запрос.",
+        "id": "m16-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Task] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "UPDATE без WHERE может изменить все строки"
+          },
+          {
+            "id": "b",
+            "label": "PreparedStatement отделяет параметры от SQL"
+          },
+          {
+            "id": "c",
+            "label": "JDK сам содержит драйвер любой СУБД"
+          },
+          {
+            "id": "d",
+            "label": "Индекс требует места и обновления"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hint] Для подключения к конкретной БД нужен отдельный драйвер.",
+        "explanation": "[Explanation] UPDATE, параметры и индексы требуют внимательности.",
+        "id": "m16-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Без подключения к БД смоделируйте результат SQL-запроса: создайте List<Map<String,Object>> с двумя строками {name:Alice,active:true} и {name:Bob,active:true}. Print имена активных через запятую: \"Alice,Bob\".",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        List<Map<String, Object>> rows = List.of(\n            Map.of(\"name\", \"Alice\", \"active\", true),\n            Map.of(\"name\", \"Bob\", \"active\", true));\n        // Модель обработки результата SELECT: выведите имена активных\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Alice,Bob",
+        "hint": "Create строки через Map.of, переберите List, соберите имена активных и String.join(\",\", names).",
+        "explanation": "[Explanation] Результат выборки преобразован в текст без внешнего JDBC-драйвера.",
+        "id": "m16-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Без БД смоделируйте JOIN: Map<Integer,String> users связывает id 1 с \"Alice\", Map<Integer,String> cities связывает id 1 с \"Berlin\". Print \"Alice:Berlin\" по совпадающему ключу.",
+        "starterCode": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Map<Integer, String> users = Map.of(1, \"Alice\");\n        Map<Integer, String> cities = Map.of(1, \"Berlin\");\n        // Получите оба значения по ключу 1 и выведите name:city\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Alice:Berlin",
+        "hint": "[Hint] Получите значение из каждой карты по одному id и соедините двоеточием.",
+        "explanation": "[Explanation] Совпадающий ключ имитирует соединение таблиц.",
+        "id": "m16-p07"
+      }
+    ],
+    "id": "m16-practice",
+    "primer": {
+      "why": "Теория объясняет SQL, но практические задачи выполняются без базы данных. Сопоставьте SQL-операции с Java: строки → List<Map<...>>, WHERE → if, JOIN по id → чтение двух Map по ключу.",
+      "steps": [
+        "Запись Map<String,Object> хранит поле active как Boolean. Boolean.TRUE.equals(row.get(\"active\")) безопаснее прямого приведения, если поля нет.",
+        "Для аналога JOIN создайте две Map с одинаковым типом ключа Integer. Перебирайте ключи одной и ищите второй с containsKey, не соединяйте по случайной позиции."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        java.util.List<java.util.Map<String, Object>> rows = java.util.List.of(\n            java.util.Map.of(\"name\", \"Мира\", \"active\", true),\n            java.util.Map.of(\"name\", \"Олег\", \"active\", false));\n        for (var row : rows) {\n            if (Boolean.TRUE.equals(row.get(\"active\"))) System.out.println(row.get(\"name\"));\n        }\n        var names = java.util.Map.of(3, \"Мира\");\n        var cities = java.util.Map.of(3, \"Рига\");\n        for (int id : names.keySet()) {\n            if (cities.containsKey(id)) System.out.println(names.get(id) + \":\" + cities.get(id));\n        }\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная Java-программа: модель WHERE без БД",
+        "stdout": "Мира\nМира:Рига"
+      },
+      "result": "Программа покажет «Мира» после отбора и «Мира:Рига» после сопоставления по id 3. JDBC и СУБД здесь не нужны.",
+      "hints": [
+        {
+          "taskId": "m16-p06",
+          "text": "Для имён активных строк соберите прошедшие фильтр значения и соедините их через запятую без лишнего разделителя в конце."
+        },
+        {
+          "taskId": "m16-p07",
+          "text": "Для смоделированного JOIN найдите один id, который есть в обеих Map, и прочитайте имя и город через один и тот же ключ."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m16-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 460,
+    "tasks": [
+      {
+        "id": "m-exam-16-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] Что оптимизирует индекс на поле id в таблице при поиске WHERE id = 7?",
+        "options": [
+          {
+            "id": "a",
+            "label": "поиск строк по ключу"
+          },
+          {
+            "id": "b",
+            "label": "значения всех id меняются на 7"
+          },
+          {
+            "id": "c",
+            "label": "автоматическую валидацию Java"
+          },
+          {
+            "id": "d",
+            "label": "запуск приложения без БД"
+          }
+        ],
+        "correct": [
+          "a"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Индекс ускоряет чтение по ключу, но требует места и обновления при записи.",
+        "explanation": "[Explanation] Верно: поиск строк по ключу. Индекс ускоряет чтение по ключу, но требует места и обновления при записи."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Допишите фильтр по возрасту.",
+        "template": [
+          "SELECT name FROM users ",
+          " age >= 18;"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "WHERE",
+            "options": [
+              "WHERE",
+              "ORDER BY",
+              "GROUP BY"
+            ]
+          }
+        ],
+        "hint": "[Hint] Нужна часть запроса с условием.",
+        "explanation": "[Explanation] WHERE ограничивает множество выбранных строк.",
+        "id": "m-exam-16-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте часть SQL и действие.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "SELECT",
+            "right": "Выбор столбцов"
+          },
+          {
+            "id": "2",
+            "left": "WHERE",
+            "right": "Фильтрация отдельных строк"
+          },
+          {
+            "id": "3",
+            "left": "GROUP BY",
+            "right": "Группировка строк"
+          },
+          {
+            "id": "4",
+            "left": "JOIN",
+            "right": "Соединение таблиц"
+          }
+        ],
+        "hint": "[Hint] Отличите выбор столбцов от фильтрации и соединения.",
+        "explanation": "[Explanation] Каждая часть запроса решает отдельную задачу.",
+        "id": "m-exam-16-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите параметризованный JDBC-запрос по идентификатору.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "String sql = \"SELECT name FROM users WHERE id = ?\";"
+          },
+          {
+            "id": "b",
+            "text": "PreparedStatement ps = conn.prepareStatement(sql);"
+          },
+          {
+            "id": "c",
+            "text": "ps.setInt(1, userId);"
+          },
+          {
+            "id": "d",
+            "text": "ResultSet rows = ps.executeQuery();"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 0
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Параметр передаётся после подготовки, но до выполнения.",
+        "explanation": "[Explanation] Порядок: SQL → подготовка → параметр → запрос.",
+        "id": "m-exam-16-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Без БД смоделируйте JOIN, GROUP BY и HAVING. users связывает 1→«Аня», 2→«Борис».\nЗаказы: (userId=1, amount=1*100), (1,50), (2,70), (3,500). Create a class Order.\nИгнорируйте заказы без пользователя (INNER JOIN), сгруппируйте суммы по userId.\nОставьте группы с суммой >= 150. Print имя:сумма в порядке userId, затем\n«Групп: X». Use Map и цикл, а не готовый результат SQL.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Аня:150\nГрупп: 1",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nАня:150\nГрупп: 1",
+        "id": "m-exam-16-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nБез БД смоделируйте JOIN, GROUP BY и HAVING. users связывает 1→«Аня», 2→«Борис».\nЗаказы: (userId=1, amount=2*100), (1,50), (2,70), (3,500). Create a class Order.\nИгнорируйте заказы без пользователя (INNER JOIN), сгруппируйте суммы по userId.\nОставьте группы с суммой >= 150. Print имя:сумма в порядке userId, затем\n«Групп: X». Use Map и цикл, а не готовый результат SQL.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Аня:250\nГрупп: 1",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nАня:250\nГрупп: 1",
+        "id": "m-exam-16-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез БД смоделируйте JOIN, GROUP BY и HAVING. users связывает 1→«Аня», 2→«Борис».\nЗаказы: (userId=1, amount=3*100), (1,50), (2,70), (3,500). Create a class Order.\nИгнорируйте заказы без пользователя (INNER JOIN), сгруппируйте суммы по userId.\nОставьте группы с суммой >= 150. Print имя:сумма в порядке userId, затем\n«Групп: X». Use Map и цикл, а не готовый результат SQL.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: Аня:350\nОтчёт: Групп: 1\nСтрок: 2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: Аня:350\nОтчёт: Групп: 1\nСтрок: 2",
+        "id": "m-exam-16-07"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nБез БД смоделируйте JOIN, GROUP BY и HAVING. users связывает 1→«Аня», 2→«Борис».\nЗаказы: (userId=1, amount=4*100), (1,50), (2,70), (3,500). Create a class Order.\nИгнорируйте заказы без пользователя (INNER JOIN), сгруппируйте суммы по userId.\nОставьте группы с суммой >= 150. Print имя:сумма в порядке userId, затем\n«Групп: X». Use Map и цикл, а не готовый результат SQL.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.\nДополнительно обработайте строки {\"4\", \"oops\", \"-1\", \"6\"}: Integer.parseInt и проверка отрицательных значений через IllegalArgumentException. Суммируйте только неотрицательные числа, посчитайте отклонённые строки. ДОПИШИТЕ в тот же файл строку «Аудит: сумма/ошибки». После основного вывода прочитайте файл повторно и выведите только последнюю строку (строку аудита).",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: Аня:450\nОтчёт: Групп: 1\nСтрок: 2\nАудит: 10/2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: Аня:450\nОтчёт: Групп: 1\nСтрок: 2\nАудит: 10/2",
+        "id": "m-exam-16-08"
+      }
+    ]
+  }
+}

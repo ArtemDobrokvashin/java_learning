@@ -165,14 +165,24 @@ fun JavadaAppRoot(
                 title = {
                     Column {
                         Text("☕ JavaДа Mobile", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        val statLine = when (state.lang) {
+                            "en" -> "Lvl $level · $xp XP · 🔥 ${streak}d"
+                            "es" -> "Niv $level · $xp XP · 🔥 ${streak}d"
+                            "de" -> "Lvl $level · $xp XP · 🔥 ${streak}T"
+                            "zh" -> "等级 $level · $xp XP · 🔥 ${streak}天"
+                            else -> "Уровень $level · $xp XP · 🔥 $streak дн."
+                        }
                         Text(
-                            "Уровень $level · $xp XP · 🔥 $streak дн.",
+                            statLine,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
                 actions = {
+                    TextButton(onClick = { viewModel.cycleLanguage() }) {
+                        Text("🌐 ${state.lang.uppercase()}", fontWeight = FontWeight.Bold)
+                    }
                     IconButton(onClick = onImportProgress) {
                         Icon(Icons.Default.FileUpload, contentDescription = "Импорт progress.json")
                     }

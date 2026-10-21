@@ -1,0 +1,968 @@
+{
+  "id": 15,
+  "title": "MVC Pattern & Simple Application",
+  "lessons": [
+    {
+      "id": "m15-l01",
+      "title": "Introduction to the MVC Pattern",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] MVC разделяет приложение на Model (данные и правила), View (представление) и Controller (обработка действий). Такое разделение облегчает изменение интерфейса и проверку бизнес-правил без UI.",
+          "[Theory] Направление взаимодействия простое: контроллер получает действие, вызывает модель, затем выбирает, что показать. MVC — способ организации, а не обязательный набор классов с фиксированными именами."
+        ],
+        "code": "class CounterModel { int value; }\nclass CounterView { void show(int value) { System.out.println(value); } }",
+        "caption": "Разделение обязанностей упрощает изменения.",
+        "language": "java",
+        "objective": "[Goal] Разделить состояние, представление и обработку действия по ролям MVC.",
+        "walkthrough": "[Walkthrough] CounterModel хранит число, CounterView умеет печатать полученное значение. Controller свяжет их: вызовет модель и передаст результат представлению.",
+        "pitfall": "[Common Pitfall] Не переносите бизнес-правило изменения счётчика в View: иначе смена интерфейса заставит переписывать логику.",
+        "deepDive": "[Deep Dive] Разделение MVC задаёт границы изменения: интерфейс можно заменить, не меняя правила счётчика, а модель можно протестировать без вывода на экран. Контроллер связывает одно действие пользователя с вызовами модели и представления.",
+        "useCase": "[Real-World Case] Возьмите один и тот же CounterModel и покажите его как текст и как веб-страницу. Если для этого приходится менять increment(), правило попало не в тот слой.",
+        "guide": {
+          "why": "[Step-by-Step Guide] MVC разделяет правило, способ показа и реакцию на действие. Благодаря этому изменение оформления не должно менять саму бизнес-логику счётчика.",
+          "steps": [
+            "Модель хранит value и метод increment(). View знает только как напечатать значение, полученное от модели.",
+            "Контроллер вызывает increment(), затем передаёт обновлённое значение в View. Эти роли можно реализовать маленькими классами без Spring."
+          ],
+          "example": {
+            "code": "class Model { int value; void increment() { value++; } }\nclass View { void show(int value) { System.out.println(\"Значение: \" + value); } }\n// Controller вызывает model.increment(); view.show(model.value);",
+            "language": "java",
+            "runnable": false,
+            "label": "Схема классов Model, View и Controller"
+          },
+          "result": "После одного действия с начальным нулём видна строка «Значение: 1». Ни модель, ни View не решают за контроллер, когда происходит действие.",
+          "bridge": "В практике создайте свои три класса и проверьте, что вывод можно поменять отдельно от правила изменения value."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m15-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Model { int value; void increment() { value++; } }\nclass View { void show(int value) { System.out.println(\"Значение: \" + value); } }\n// Controller вызывает model.increment(); view.show(model.value);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. После одного действия с начальным нулём видна строка «Значение: 1». Ни модель, ни View не решают за контроллер, когда происходит действие."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Где в MVC обычно находятся правила предметной области?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Model"
+            },
+            {
+              "id": "b",
+              "label": "View"
+            },
+            {
+              "id": "c",
+              "label": "CSS"
+            },
+            {
+              "id": "d",
+              "label": "Контроллер без модели"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Эти правила должны работать без интерфейса.",
+          "explanation": "[Explanation] Model хранит состояние и правила его изменения.",
+          "id": "m15-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Допишите компонент, отвечающий за данные.",
+          "template": [
+            "MVC: ",
+            " → View → Controller"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Model",
+              "options": [
+                "Model",
+                "Build",
+                "Docker"
+              ]
+            }
+          ],
+          "hint": "[Hint] Первая буква M расшифровывается как модель.",
+          "explanation": "[Explanation] Model описывает состояние и бизнес-правила.",
+          "id": "m15-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m15-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] В MVC кто принимает действие пользователя и координирует изменение Model с обновлением View?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Model"
+            },
+            {
+              "id": "b",
+              "label": "Controller"
+            },
+            {
+              "id": "c",
+              "label": "View"
+            },
+            {
+              "id": "d",
+              "label": "компилятор"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Контроллер организует поток данных между моделью и отображением.",
+          "explanation": "[Explanation] Верно: Controller. Контроллер организует поток данных между моделью и отображением."
+        },
+        {
+          "id": "m15-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m15-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Смоделируйте MVC без внешних библиотек: Model хранит int count = 2, View.format(int) возвращает «Счёт: 2», Controller передаёт значение модели во View. Print ответ контроллера.",
+          "expectedOutput": "Счёт: 2",
+          "hint": "[Hint] Controller связывает Model и View; модель не должна печатать напрямую, представление только форматирует.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Счёт: 2'. Controller связывает Model и View; модель не должна печатать напрямую, представление только форматирует."
+        }
+      ]
+    },
+    {
+      "id": "m15-l02",
+      "title": "The View Layer",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] View показывает состояние пользователю: текст, форму или HTML. Она может форматировать данные, но не должна решать, когда менять баланс счёта или как сохранять заказ.",
+          "[Theory] В простом консольном упражнении View всего лишь печатает значение. В веб-приложении View может быть шаблоном; принцип один: представление не хранит бизнес-правила."
+        ],
+        "code": "class CounterView {\n    void show(int value) { System.out.println(\"Счёт: \" + value); }\n}",
+        "caption": "View можно заменить без переделки модели.",
+        "language": "java",
+        "objective": "[Goal] Отформатировать число во View, не меняя состояние модели.",
+        "walkthrough": "[Walkthrough] show(5) печатает «Счёт: 5», ничего не обновляя. Те же данные можно показать в HTML или другом формате без изменения CounterModel.",
+        "pitfall": "[Common Pitfall] View не должна сама решать, увеличивать ли счётчик: команду передаёт Controller, а состояние изменяет Model.",
+        "deepDive": "[Deep Dive] View превращает подготовленные данные в видимый формат, не принимая бизнес-решение о допустимости изменения. В веб-приложении она может быть шаблоном или клиентским экраном; консольный println — минимальный аналог.",
+        "useCase": "[Real-World Case] Поменяйте формат вывода числа с «Счёт: 5» на «5 действий» без правок CounterModel. Значение по-прежнему приходит извне, а не вычисляется внутри View.",
+        "guide": {
+          "why": "[Step-by-Step Guide] View отвечает за представление значения, но не за его изменение: вычислить количество должен кто-то другой, а ей достаточно готового числа.",
+          "steps": [
+            "The method show принимает int как параметр и составляет текст для пользователя с помощью +.",
+            "В main вызовите View.show(7). Это изменение оформления не должно менять состояние модели; вызов дважды только напечатает две строки."
+          ],
+          "example": {
+            "code": "class View {\n    void show(int value) { System.out.println(\"Очки: \" + value); }\n}\n// внутри main:\nnew View().show(7);",
+            "language": "java",
+            "runnable": false,
+            "label": "The class View и вызов из main"
+          },
+          "result": "На экран попадёт «Очки: 7». Сам вызов ничего не прибавляет: это просто вывод готового значения.",
+          "bridge": "В мини-задании вызовите метод View с уже вычисленным числом. В практике формат вывода можно заменить без изменения модели."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m15-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class View {\n    void show(int value) { System.out.println(\"Очки: \" + value); }\n}\n// внутри main:\nnew View().show(7);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. На экран попадёт «Очки: 7». Сам вызов ничего не прибавляет: это просто вывод готового значения."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какая задача относится к View?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Проверять инвариант банковского счёта"
+            },
+            {
+              "id": "b",
+              "label": "Отображать текущее значение"
+            },
+            {
+              "id": "c",
+              "label": "Открывать транзакцию БД"
+            },
+            {
+              "id": "d",
+              "label": "Рассчитывать налог"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Представление отвечает за формат вывода.",
+          "explanation": "[Explanation] View показывает состояние, не изменяя правила модели.",
+          "id": "m15-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Вызовите метод отображения значения.",
+          "template": [
+            "view.",
+            "(model.value);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "show",
+              "options": [
+                "show",
+                "save",
+                "increment"
+              ]
+            }
+          ],
+          "hint": "The method View форматирует и выводит число.",
+          "explanation": "[Explanation] show отображает состояние модели.",
+          "id": "m15-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m15-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Какой результат должна возвращать View.render(\"Мира\", 3), если представление форматирует имя и число?",
+          "options": [
+            {
+              "id": "a",
+              "label": "3:Мира"
+            },
+            {
+              "id": "b",
+              "label": "Мира:3"
+            },
+            {
+              "id": "c",
+              "label": "null"
+            },
+            {
+              "id": "d",
+              "label": "только число 3"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] View собирает строку для показа из уже переданных данных.",
+          "explanation": "[Explanation] Верно: Мира:3. View собирает строку для показа из уже переданных данных."
+        },
+        {
+          "id": "m15-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m15-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите View с методом render(String name,int count), возвращающим «Мира:3». Create View и выведите результат render(\"Мира\",3) без println внутри render.",
+          "expectedOutput": "Мира:3",
+          "hint": "[Hint] View получает готовые данные и возвращает отображение; побочный вывод оставьте в main.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира:3'. View получает готовые данные и возвращает отображение; побочный вывод оставьте в main."
+        }
+      ]
+    },
+    {
+      "id": "m15-l03",
+      "title": "The Model Layer",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Model хранит данные и операции, поддерживающие корректное состояние. Например, метод increment() увеличивает счётчик, а метод setValue может проверять допустимый диапазон.",
+          "[Theory] Модель не должна обращаться к System.out для общения с пользователем: это сделает тесты и повторное использование сложнее. Если интерфейс изменится, модель по-прежнему должна вести себя корректно."
+        ],
+        "code": "class CounterModel {\n    private int value;\n    void increment() { value++; }\n    int getValue() { return value; }\n}",
+        "caption": "Модель живёт независимо от способа показа.",
+        "language": "java",
+        "objective": "[Goal] Поместить изменение счётчика и чтение его значения в Model.",
+        "walkthrough": "[Walkthrough] У нового CounterModel value равно 0; increment() увеличивает поле, getValue() возвращает актуальное значение. Модель работает без UI.",
+        "pitfall": "[Common Pitfall] Открытое для всех поле value позволило бы обойти правила модели. Сделайте поле private и меняйте его через методы.",
+        "deepDive": "[Deep Dive] Модель владеет данными и правилами их изменения. Ограничив доступ к полю, можно гарантировать, что после increment состояние остаётся корректным; UI узнаёт результат через метод чтения или подготовленный ответ.",
+        "useCase": "[Real-World Case] Напишите тест CounterModel, вызывая её без Controller и View: начальное значение, два увеличения, недопустимый ввод. Такой тест должен проходить без Spring, браузера и System.out.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Модель хранит состояние и инварианты независимо от того, показывают ли его в консоли, веб-форме или тесте. Публичный API должен сохранять корректность.",
+          "steps": [
+            "Поле value спрячьте за private. The method add(int amount) проверяет аргумент и меняет состояние только при положительной величине.",
+            "The method getValue() возвращает текущее значение, не форматируя строку для интерфейса. Проверить модель можно вообще без View."
+          ],
+          "example": {
+            "code": "class Model {\n    private int value;\n    void add(int amount) { if (amount > 0) value += amount; }\n    int getValue() { return value; }\n}\n// внутри main:\nModel m = new Model();\nm.add(4);\nSystem.out.println(m.getValue());",
+            "language": "java",
+            "runnable": false,
+            "label": "Модель с проверкой и вызов из main"
+          },
+          "result": "Вывод 4. m.add(-1) не изменит значение, и для этого не требуется ни браузер, ни контроллер.",
+          "bridge": "В мини-задании получите данные модели через метод. В практике протестируйте отрицательный аргумент, прежде чем подключать View."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m15-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Model {\n    private int value;\n    void add(int amount) { if (amount > 0) value += amount; }\n    int getValue() { return value; }\n}\n// внутри main:\nModel m = new Model();\nm.add(4);\nSystem.out.println(m.getValue());",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Вывод 4. m.add(-1) не изменит значение, и для этого не требуется ни браузер, ни контроллер."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Почему модель лучше не привязывать к консольному выводу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Она перестанет компилироваться"
+            },
+            {
+              "id": "b",
+              "label": "Чтобы использовать её с разными представлениями"
+            },
+            {
+              "id": "c",
+              "label": "Чтобы все поля стали static"
+            },
+            {
+              "id": "d",
+              "label": "Чтобы убрать методы"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Одна модель может работать с консолью или веб-интерфейсом.",
+          "explanation": "[Explanation] Независимость от View делает модель переносимой и тестируемой.",
+          "id": "m15-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Получите значение из модели через метод.",
+          "template": [
+            "int value = model.",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "getValue",
+              "options": [
+                "getValue",
+                "show",
+                "render"
+              ]
+            }
+          ],
+          "hint": "[Hint] Ищите геттер модели, не метод View.",
+          "explanation": "[Explanation] getValue возвращает текущее состояние.",
+          "id": "m15-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m15-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Где хранить правило изменения private balance после add(7), если исходное значение было 10?",
+          "options": [
+            {
+              "id": "a",
+              "label": "в классе Model"
+            },
+            {
+              "id": "b",
+              "label": "только в View"
+            },
+            {
+              "id": "c",
+              "label": "внутри HTML"
+            },
+            {
+              "id": "d",
+              "label": "в комментарии к Controller"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Бизнес-состояние и инварианты принадлежат модели.",
+          "explanation": "[Explanation] Верно: в классе Model. Бизнес-состояние и инварианты принадлежат модели."
+        },
+        {
+          "id": "m15-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m15-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Опишите Model с private int balance = 10, методом add(int delta) и геттером. Добавьте 7, затем выведите значение через геттер.",
+          "expectedOutput": "17",
+          "hint": "[Hint] Состояние и логика его изменения живут в Model; напрямую менять приватное поле нельзя.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '17'. Состояние и логика его изменения живут в Model; напрямую менять приватное поле нельзя."
+        }
+      ]
+    },
+    {
+      "id": "m15-l04",
+      "title": "The Controller Layer",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Controller принимает действие и координирует другие части: вызвать model.increment(), затем view.show(model.getValue()). Он не должен дублировать бизнес-правила, принадлежащие модели.",
+          "[Theory] В веб-приложении контроллер связывает HTTP-запрос с моделью и ответом; в консольном приложении может реагировать на вызов метода. Старайтесь держать его тонким: сложные вычисления вынесите в сервис/модель."
+        ],
+        "code": "class CounterController {\n    void click() { model.increment(); view.show(model.getValue()); }\n}",
+        "caption": "Тонкий контроллер проще тестировать.",
+        "language": "java",
+        "objective": "[Goal] Обработать действие в Controller, делегируя изменение модели и вывод представлению.",
+        "walkthrough": "[Walkthrough] click() вызывает model.increment(), затем считывает model.getValue() и передаёт его в view.show(). Одна роль координирует две другие.",
+        "pitfall": "[Common Pitfall] Не дублируйте расчёт внутри Controller и Model: тогда две копии правила рано или поздно начнут различаться.",
+        "deepDive": "[Deep Dive] Контроллер — граница внешнего действия: он принимает вход, вызывает нужную операцию модели и выбирает ответ. Он не должен копировать вычисление, уже определённое моделью, иначе два слоя начнут расходиться.",
+        "useCase": "[Real-World Case] Для кнопки «+» сравните последовательность: click → model.increment → view.show. В HTTP-варианте добавьте обработку ошибочного запроса и нужный статус, но само правило увеличения оставьте в модели.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Контроллер координирует части приложения: получает действие, вызывает правило модели, читает результат и передаёт его представлению.",
+          "steps": [
+            "В обработчике click не дублируйте вычисление value: вызовите готовую операцию модели.",
+            "После изменения прочитайте model.getValue() и передайте в view.show(...). Тогда порядок событий можно проверить без реального интерфейса."
+          ],
+          "example": {
+            "code": "class Controller {\n    private final Model model;\n    private final View view;\n    Controller(Model m, View v) { model = m; view = v; }\n    void click() { model.increment(); view.show(model.getValue()); }\n}",
+            "language": "java",
+            "runnable": false,
+            "label": "Фрагмент для Model и View из предыдущих уроков"
+          },
+          "result": "Если Model начинает с нуля, один click показывает 1. Нужны определения Model и View из предыдущих шагов — этот фрагмент не является отдельной программой.",
+          "bridge": "В задании расставьте операции контроллера по порядку. В практике передайте ему модель и представление, прежде чем обрабатывать нажатия."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m15-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Controller {\n    private final Model model;\n    private final View view;\n    Controller(Model m, View v) { model = m; view = v; }\n    void click() { model.increment(); view.show(model.getValue()); }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Если Model начинает с нуля, один click показывает 1. Нужны определения Model и View из предыдущих шагов — этот фрагмент не является отдельной программой."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какая последовательность подходит для Controller?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Показать View, забыть Model"
+            },
+            {
+              "id": "b",
+              "label": "Принять действие → обновить Model → показать View"
+            },
+            {
+              "id": "c",
+              "label": "Хранить всю БД внутри View"
+            },
+            {
+              "id": "d",
+              "label": "Изменять CSS из Model"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Контроллер координирует действия, а не подменяет остальные слои.",
+          "explanation": "[Explanation] Controller связывает пользовательское действие, модель и отображение.",
+          "id": "m15-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Print обновлённое значение из контроллера.",
+          "template": [
+            "view.show(model.",
+            "());"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "getValue",
+              "options": [
+                "getValue",
+                "show",
+                "put"
+              ]
+            }
+          ],
+          "hint": "[Hint] После обновления считайте состояние модели.",
+          "explanation": "[Explanation] Controller передаёт результат Model в View.",
+          "id": "m15-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m15-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Контроллер дважды вызывает Model.increase() при начальном 2. Какое значение передать View?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2"
+            },
+            {
+              "id": "b",
+              "label": "3"
+            },
+            {
+              "id": "c",
+              "label": "4"
+            },
+            {
+              "id": "d",
+              "label": "0"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Каждый вызов меняет модель на единицу: 2 → 3 → 4.",
+          "explanation": "[Explanation] Верно: 4. Каждый вызов меняет модель на единицу: 2 → 3 → 4."
+        },
+        {
+          "id": "m15-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m15-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create Model с числом 2 и Controller с методом increase(), увеличивающим его на 1. Дважды вызовите increase и выведите результат через View, возвращающий «Значение: 4».",
+          "expectedOutput": "Значение: 4",
+          "hint": "[Hint] Пользовательское действие идёт через Controller к Model; View получает итог после двух операций.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Значение: 4'. Пользовательское действие идёт через Controller к Model; View получает итог после двух операций."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Module 15 Final Practice",
+    "description": "Разделите хранение, отображение и обработку действий.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Task] Куда поместить правило «значение счётчика не может быть отрицательным»?",
+        "options": [
+          {
+            "id": "a",
+            "label": "View"
+          },
+          {
+            "id": "b",
+            "label": "Model"
+          },
+          {
+            "id": "c",
+            "label": "CSS"
+          },
+          {
+            "id": "d",
+            "label": "Файл README"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Правило должно выполняться при любом интерфейсе.",
+        "explanation": "[Explanation] Model отвечает за инварианты данных.",
+        "id": "m15-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Допишите тип компонента, который форматирует вывод.",
+        "template": [
+          "Counter",
+          " view = new CounterView();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "View",
+            "options": [
+              "View",
+              "Model",
+              "Controller"
+            ]
+          }
+        ],
+        "hint": "[Hint] Это компонент представления.",
+        "explanation": "[Explanation] CounterView отображает состояние.",
+        "id": "m15-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Соедините часть MVC с ролью.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Model",
+            "right": "Состояние и бизнес-правила"
+          },
+          {
+            "id": "2",
+            "left": "View",
+            "right": "Представление данных"
+          },
+          {
+            "id": "3",
+            "left": "Controller",
+            "right": "Обработка действия и координация"
+          },
+          {
+            "id": "4",
+            "left": "Сервис",
+            "right": "Повторно используемая бизнес-операция"
+          }
+        ],
+        "hint": "[Hint] Контроллер связывает действия, но не заменяет модель.",
+        "explanation": "[Explanation] Каждая часть имеет отдельную ответственность.",
+        "id": "m15-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите обработчик действия контроллера.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "void click() {"
+          },
+          {
+            "id": "b",
+            "text": "model.increment();"
+          },
+          {
+            "id": "c",
+            "text": "int value = model.getValue();"
+          },
+          {
+            "id": "d",
+            "text": "view.show(value);"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Сначала измените модель, затем получите и покажите значение.",
+        "explanation": "[Explanation] Контроллер передал View обновлённое состояние.",
+        "id": "m15-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Task] Какие утверждения верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "View может форматировать вывод"
+          },
+          {
+            "id": "b",
+            "label": "Model должна знать HTML каждого экрана"
+          },
+          {
+            "id": "c",
+            "label": "Controller получает действия"
+          },
+          {
+            "id": "d",
+            "label": "Model полезно проверять без UI"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hint] Модель должна быть независима от конкретного вида интерфейса.",
+        "explanation": "[Explanation] MVC разделяет показ, данные и управление.",
+        "id": "m15-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "[Task] Соберите простой MVC: Model хранит счётчик, Controller увеличивает его три раза, View выводит строку \"Счёт: 3\".",
+        "starterCode": "class CounterModel {\n    private int value = 0;\n    void increment() { value++; }\n    int getValue() { return value; }\n}\nclass CounterView {\n    void show(int value) { System.out.println(\"Счёт: \" + value); }\n}\nclass CounterController {\n    private final CounterModel model; private final CounterView view;\n    CounterController(CounterModel m, CounterView v) { model = m; view = v; }\n    void click() { /* обновите model и покажите результат */ }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Создайте три части и сделайте три click()\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Счёт: 3",
+        "hint": "[Hint] Model.increment() меняет поле; Controller трижды вызывает метод и передаёт getValue() во View.",
+        "explanation": "[Explanation] Три действия привели к счётчику 3.",
+        "id": "m15-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Create Model со значением 5 и методом setValue(int), который игнорирует отрицательные числа. Controller попробует установить -2, View выведет \"Счёт: 5\".",
+        "starterCode": "class Model {\n    private int value = 5;\n    void setValue(int candidate) { /* проверьте кандидат */ }\n    int getValue() { return value; }\n}\nclass View { void show(int value) { System.out.println(\"Счёт: \" + value); } }\nclass Controller {\n    Model model; View view;\n    Controller(Model m, View v) { model = m; view = v; }\n    void update(int n) { /* обновите Model, затем вызовите View */ }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Controller.update(-2)\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Счёт: 5",
+        "hint": "[Hint] В Model выполняйте присваивание только при value >= 0; View лишь отображает.",
+        "explanation": "[Explanation] Модель сохранила допустимое значение 5.",
+        "id": "m15-p07"
+      }
+    ],
+    "id": "m15-practice",
+    "primer": {
+      "why": "Чтобы MVC не оказался тремя названиями для одного класса, храните правило в Model, печать — в View, а порядок действий — в Controller. Начните с минимального действия.",
+      "steps": [
+        "Model.increment() меняет число и get() читает его. View.show(value) получает готовое число и отвечает только за строку вывода.",
+        "Controller принимает готовые Model и View в конструкторе. На действие он вызывает модель, получает текущее число и передаёт в View; проверка отрицательного значения принадлежит модели."
+      ],
+      "example": {
+        "code": "class Model {\n    private int count;\n    void increment() { count++; }\n    int get() { return count; }\n}\nclass View { void show(int n) { System.out.println(\"Итого: \" + n); } }\nclass Controller {\n    private final Model model; private final View view;\n    Controller(Model m, View v) { model = m; view = v; }\n    void click() { model.increment(); view.show(model.get()); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Controller(new Model(), new View()).click();\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная программа из трёх ролей MVC",
+        "stdout": "Итого: 1"
+      },
+      "result": "Получится «Итого: 1». Контроллер меняет данные до вывода, View не обновляет модель самостоятельно.",
+      "hints": [
+        {
+          "taskId": "m15-p06",
+          "text": "Для задачи со счётчиком используйте нужное число действий, а View пусть печатает точный формат из условия только после завершения изменений."
+        },
+        {
+          "taskId": "m15-p07",
+          "text": "При отрицательном аргументе метод модели не должен менять значение. Контроллер вызывает метод, а View показывает сохранившееся состояние."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m15-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 450,
+    "tasks": [
+      {
+        "id": "m-exam-15-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] Контроллер дважды вызывает Model.increase() при начальном 2. Какое значение передать View?",
+        "options": [
+          {
+            "id": "a",
+            "label": "2"
+          },
+          {
+            "id": "b",
+            "label": "3"
+          },
+          {
+            "id": "c",
+            "label": "4"
+          },
+          {
+            "id": "d",
+            "label": "0"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Каждый вызов меняет модель на единицу: 2 → 3 → 4.",
+        "explanation": "[Explanation] Верно: 4. Каждый вызов меняет модель на единицу: 2 → 3 → 4."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Допишите компонент, отвечающий за данные.",
+        "template": [
+          "MVC: ",
+          " → View → Controller"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "Model",
+            "options": [
+              "Model",
+              "Build",
+              "Docker"
+            ]
+          }
+        ],
+        "hint": "[Hint] Первая буква M расшифровывается как модель.",
+        "explanation": "[Explanation] Model описывает состояние и бизнес-правила.",
+        "id": "m-exam-15-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Соедините часть MVC с ролью.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Model",
+            "right": "Состояние и бизнес-правила"
+          },
+          {
+            "id": "2",
+            "left": "View",
+            "right": "Представление данных"
+          },
+          {
+            "id": "3",
+            "left": "Controller",
+            "right": "Обработка действия и координация"
+          },
+          {
+            "id": "4",
+            "left": "Сервис",
+            "right": "Повторно используемая бизнес-операция"
+          }
+        ],
+        "hint": "[Hint] Контроллер связывает действия, но не заменяет модель.",
+        "explanation": "[Explanation] Каждая часть имеет отдельную ответственность.",
+        "id": "m-exam-15-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите обработчик действия контроллера.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "void click() {"
+          },
+          {
+            "id": "b",
+            "text": "model.increment();"
+          },
+          {
+            "id": "c",
+            "text": "int value = model.getValue();"
+          },
+          {
+            "id": "d",
+            "text": "view.show(value);"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 1
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Сначала измените модель, затем получите и покажите значение.",
+        "explanation": "[Explanation] Контроллер передал View обновлённое состояние.",
+        "id": "m-exam-15-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Разделите приложение на Model, View и Controller. Model хранит список задач,\nadd(String) игнорирует пустую строку, count() возвращает размер. View.render(int)\nвозвращает «Задач: X». Controller получает model и view через конструктор,\nобрабатывает add и возвращает show(). В main добавьте «Java» 1 раз и пустую строку.\nPrint show(), затем count(). Модель не печатает, представление не меняет модель.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Задач: 1\n1",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nЗадач: 1\n1",
+        "id": "m-exam-15-05"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Расширенный сценарий. Реализуйте программу заново для изменённых данных; проверьте граничные условия и не подменяйте вычисления печатью констант.\n\nРазделите приложение на Model, View и Controller. Model хранит список задач,\nadd(String) игнорирует пустую строку, count() возвращает размер. View.render(int)\nвозвращает «Задач: X». Controller получает model и view через конструктор,\nобрабатывает add и возвращает show(). В main добавьте «Java» 2 раз и пустую строку.\nPrint show(), затем count(). Модель не печатает, представление не меняет модель.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Задач: 2\n2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nЗадач: 2\n2",
+        "id": "m-exam-15-06"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "complex",
+        "prompt": "Мини-проект: предметная логика + коллекции + UTF-8 файл.\n\nРазделите приложение на Model, View и Controller. Model хранит список задач,\nadd(String) игнорирует пустую строку, count() возвращает размер. View.render(int)\nвозвращает «Задач: X». Controller получает model и view через конструктор,\nобрабатывает add и возвращает show(). В main добавьте «Java» 3 раз и пустую строку.\nPrint show(), затем count(). Модель не печатает, представление не меняет модель.\n\nНе печатайте предметный результат сразу. Соберите его строки в List<String>, запишите в относительный exam-report.txt (UTF-8), затем прочитайте файл. Если список пуст, бросьте IllegalStateException. Печатайте только прочитанные строки, добавляя перед каждой «Отчёт: ». Последняя строка — «Строк: X», где X — число строк файла. Обрабатывайте ресурсы безопасно. Внешние файлы и сервисы не нужны.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Отчёт: Задач: 3\nОтчёт: 3\nСтрок: 2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nОтчёт: Задач: 3\nОтчёт: 3\nСтрок: 2",
+        "id": "m-exam-15-07"
+      }
+    ]
+  }
+}

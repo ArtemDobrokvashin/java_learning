@@ -148,6 +148,9 @@ class JavadaWorkspacePanel(private val project: Project) : SimpleToolWindowPanel
     private val hintBtn = JButton("Подсказка", AllIcons.Actions.IntentionBulb)
     private val examNextBtn = JButton("Следующий вопрос →").apply { isVisible = false }
     private val syncBtn = JButton("Синхронизировать", AllIcons.Actions.Refresh)
+    private val langCombo = JComboBox(PluginLang.entries.toTypedArray()).apply {
+        selectedItem = JavadaI18n.currentLang
+    }
 
     // Виджеты ответов для не-кодовых задач
     private val choiceButtons = mutableListOf<AbstractButton>()
@@ -176,12 +179,16 @@ class JavadaWorkspacePanel(private val project: Project) : SimpleToolWindowPanel
     }
 
     private fun buildLayout() {
-        // Верхняя панель статуса и поиска
+        // Верхняя панель статуса, выбора языка и поиска
         val headerPanel = JPanel(BorderLayout(8, 4)).apply {
             border = JBUI.Borders.empty(6, 8)
+            val rightControls = JPanel(FlowLayout(FlowLayout.RIGHT, 4, 0)).apply {
+                add(langCombo)
+                add(syncBtn)
+            }
             val topStatusRow = JPanel(BorderLayout()).apply {
                 add(xpBadgeLabel, BorderLayout.WEST)
-                add(syncBtn, BorderLayout.EAST)
+                add(rightControls, BorderLayout.EAST)
             }
             add(topStatusRow, BorderLayout.NORTH)
             add(searchField, BorderLayout.SOUTH)
@@ -262,23 +269,58 @@ class JavadaWorkspacePanel(private val project: Project) : SimpleToolWindowPanel
             renderTheoryAndTaskView()
         }
 
+        langCombo.addActionListener {
+            val selected = langCombo.selectedItem as? PluginLang ?: PluginLang.RU
+            if (selected != JavadaI18n.currentLang) {
+                JavadaI18n.currentLang = selected
+                updateLocalizedButtons()
+                backgroundExecutor.execute {
+                    catalog = CourseRepository.loadCatalog(trainerRoot, selected.code)
+                    SwingUtilities.invokeLater {
+                        refreshUiFromProfile(profile)
+                        renderTheoryAndTaskView()
+                    }
+                }
+            }
+        }
+
         syncBtn.addActionListener {
             backgroundExecutor.execute {
-                catalog = CourseRepository.loadCatalog(trainerRoot)
+                catalog = CourseRepository.loadCatalog(trainerRoot, JavadaI18n.currentLang.code)
                 val reloaded = progressManager.reloadFromDisk()
                 SwingUtilities.invokeLater {
                     profile = reloaded
                     refreshUiFromProfile(reloaded)
-                    consoleOutputArea.text = "Синхронизировано с ${progressManager.progressFile}"
+                    consoleOutputArea.text = JavadaI18n.tr(
+                        "Синхронизировано с ${progressManager.progressFile}",
+                        "Synchronized with ${progressManager.progressFile}",
+                        "Sincronizado con ${progressManager.progressFile}",
+                        "Synchronisiert mit ${progressManager.progressFile}",
+                        "已与 ${progressManager.progressFile} 同步"
+                    )
                 }
             }
         }
     }
 
+    private fun updateLocalizedButtons() {
+        openFileBtn.text = JavadaI18n.tr("Открыть Main.java", "Open Main.java", "Abrir Main.java", "Main.java öffnen", "打开 Main.java")
+        checkSolutionBtn.text = JavadaI18n.tr("Проверить решение", "Check Solution", "Verificar solución", "Lösung prüfen", "检查解答")
+        hintBtn.text = JavadaI18n.tr("Подсказка", "Hint", "Pista", "Hinweis", "提示")
+        examNextBtn.text = JavadaI18n.tr("Следующий вопрос →", "Next Question →", "Siguiente pregunta →", "Nächste Frage →", "下一题 →")
+        syncBtn.text = JavadaI18n.tr("Синхронизировать", "Sync", "Sincronizar", "Synchronisieren", "同步")
+    }
+
     private fun refreshUiFromProfile(currentProfile: ProgressProfile) {
         val state = currentProfile.state
         val level = (state.xp / 250) + 1
-        xpBadgeLabel.text = "Уровень $level · ${state.xp} XP · Серия: ${state.streak} дн. · Уроков: ${state.completedLessons.size}/99"
+        xpBadgeLabel.text = JavadaI18n.tr(
+            "Уровень $level · ${state.xp} XP · Серия: ${state.streak} дн. · Уроков: ${state.completedLessons.size}/99",
+            "Level $level · ${state.xp} XP · Streak: ${state.streak}d · Lessons: ${state.completedLessons.size}/99",
+            "Nivel $level · ${state.xp} XP · Racha: ${state.streak}d · Lecciones: ${state.completedLessons.size}/99",
+            "Level $level · ${state.xp} XP · Serie: ${state.streak}T · Lektionen: ${state.completedLessons.size}/99",
+            "等级 $level · ${state.xp} XP · 连胜: ${state.streak}天 · 课时: ${state.completedLessons.size}/99"
+        )
         courseTree.rebuildTree(catalog, currentProfile)
     }
 

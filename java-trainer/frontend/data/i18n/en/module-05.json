@@ -1,0 +1,1123 @@
+{
+  "id": 5,
+  "title": "Object-Oriented Programming",
+  "lessons": [
+    {
+      "id": "m05-l01",
+      "title": "Introduction to OOP",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] В объектно-ориентированном подходе данные и операции над ними объединяют в объекты. Вместо разрозненных переменных и функций удобно описать сущность классом с полями и методами.",
+          "The class — чертёж, объект — конкретный экземпляр. Например, у двух счётчиков один тип Counter, но разные значения count. Хорошая модель скрывает детали и предоставляет понятные действия."
+        ],
+        "code": "class Counter {\n    int count;\n    void increment() { count++; }\n}",
+        "caption": "Состояние и поведение живут вместе.",
+        "language": "java",
+        "objective": "[Goal] Объяснить разницу между описанием класса и состоянием отдельного объекта.",
+        "walkthrough": "[Walkthrough] Counter описывает поле count и операцию increment(). Два объекта Counter используют один и тот же код метода, но значения count хранят раздельно.",
+        "pitfall": "[Common Pitfall] Объявление класса само по себе не создаёт объект; для экземпляра нужен new, а перед вызовом метода — ссылка на него.",
+        "deepDive": "Один класс определяет правила поведения, но экземпляры несут собственное состояние. The method increment() исполняет общий код с this каждого получателя; после изменения одного Counter поле другого остаётся прежним.",
+        "useCase": "[Real-World Case] Представьте два счётчика посещений для разных страниц: им нужен общий тип, но отдельные значения. Запишите ожидаемые результаты после чередующихся вызовов, прежде чем решать, делать ли поле static.",
+        "guide": {
+          "why": "The class — описание поведения, а не уже созданный счётчик. Новые объекты используют одни методы, но не обязаны разделять одно и то же значение count.",
+          "steps": [
+            "Create два Counter с помощью new. Поле count при создании каждого объекта автоматически получает ноль.",
+            "Вызов first.increment() обновляет this первого объекта. Обращение second.count читает другое поле и остаётся неизменным."
+          ],
+          "example": {
+            "code": "class Counter { int count; void increment() { count++; } }\n// внутри main:\nCounter first = new Counter();\nCounter second = new Counter();\nfirst.increment();\nSystem.out.println(first.count + \":\" + second.count);",
+            "language": "java",
+            "runnable": false,
+            "label": "The class Counter и действия внутри main"
+          },
+          "result": "Вывод «1:0» показывает независимость экземпляров. Если бы count был static, у объектов было бы общее значение.",
+          "bridge": "В упражнении сначала различите слово class и результат new. При создании объекта используйте имя класса справа, а переменную слева."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m05-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Counter { int count; void increment() { count++; } }\n// внутри main:\nCounter first = new Counter();\nCounter second = new Counter();\nfirst.increment();\nSystem.out.println(first.count + \":\" + second.count);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Вывод «1:0» показывает независимость экземпляров. Если бы count был static, у объектов было бы общее значение."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Чем класс отличается от объекта?",
+          "options": [
+            {
+              "id": "a",
+              "label": "The class — экземпляр, объект — шаблон"
+            },
+            {
+              "id": "b",
+              "label": "The class — шаблон, объект — экземпляр"
+            },
+            {
+              "id": "c",
+              "label": "Это одно и то же"
+            },
+            {
+              "id": "d",
+              "label": "Объект существует только в static-методе"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Один класс может описывать много экземпляров.",
+          "explanation": "The class задаёт структуру, объекты хранят свои состояния.",
+          "id": "m05-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Create объект Counter.",
+          "template": [
+            "Counter c = ",
+            " Counter();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "new",
+              "options": [
+                "this",
+                "new",
+                "final"
+              ]
+            }
+          ],
+          "hint": "[Hint] Оператор создаёт экземпляр в памяти.",
+          "explanation": "[Explanation] new Counter() создаёт новый объект.",
+          "id": "m05-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m05-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Два Counter имеют count=0; первый увеличили два раза, второй один. Какие значения их полей?",
+          "options": [
+            {
+              "id": "a",
+              "label": "3 и 3"
+            },
+            {
+              "id": "b",
+              "label": "2 и 1"
+            },
+            {
+              "id": "c",
+              "label": "1 и 2"
+            },
+            {
+              "id": "d",
+              "label": "0 и 0"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Нестатическое поле хранится у каждого экземпляра отдельно.",
+          "explanation": "[Explanation] Верно: 2 и 1. Нестатическое поле хранится у каждого экземпляра отдельно."
+        },
+        {
+          "id": "m05-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m05-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите Counter с полем count и методом increment(). Create два объекта; первому вызовите increment дважды, второму один раз. Print оба значения через двоеточие.",
+          "expectedOutput": "2:1",
+          "hint": "[Hint] Поля экземпляров независимы. Не делайте count статическим, иначе счётчики станут общими.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '2:1'. Поля экземпляров независимы. Не делайте count статическим, иначе счётчики станут общими."
+        }
+      ]
+    },
+    {
+      "id": "m05-l02",
+      "title": "Object-Oriented Paradigm",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] ООП помогает моделировать предметную область: у объекта есть ответственность, данные и операции. Композиция связывает объекты: например, у заказа есть список позиций, а не набор несвязанных переменных.",
+          "[Theory] Четыре привычных понятия ООП — абстракция, инкапсуляция, наследование и полиморфизм. Их смысл не в том, чтобы всегда наследоваться, а в том, чтобы разделять обязанности и упрощать изменения."
+        ],
+        "code": "class Order {\n    Customer customer;\n    int total;\n    Order(Customer customer) { this.customer = customer; }\n}",
+        "caption": "Ссылка на другой объект задаёт связь; композиция дополнительно подразумевает владение.",
+        "language": "java",
+        "objective": "[Goal] Определить ответственность объекта и применить композицию вместо разрозненных полей.",
+        "walkthrough": "[Walkthrough] В Order поле customer связывает заказ с конкретным Customer; конструктор требует эту зависимость при создании. Так связь видна в модели предметной области.",
+        "pitfall": "[Common Pitfall] Само наличие поля Customer не означает наследование: Order содержит ссылку на Customer, а не является Customer.",
+        "deepDive": "[Deep Dive] Композиция моделирует связь «имеет»: Order содержит ссылку на Customer и может делегировать ему связанную работу. Зависимость через конструктор делает требуемого участника видимым при создании и помогает не оставлять заказ без владельца.",
+        "useCase": "[Real-World Case] В каталоге заказов поменяйте способ хранения клиента, не меняя смысл заказа. Если сущность не является разновидностью другой сущности, не наследуйтесь только ради доступа к её методам.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Композиция отвечает на вопрос «что у заказа есть?». Ссылка на Customer внутри Order связывает два объекта, но не превращает заказ в разновидность клиента.",
+          "steps": [
+            "Сначала создайте Customer; его поле name хранит данные клиента. Затем передайте сам объект в конструктор Order.",
+            "Запись order.customer.name проходит по ссылке от заказа к клиенту и читает его поле; это не наследование и не статическое поле."
+          ],
+          "example": {
+            "code": "class Customer { String name = \"Мира\"; }\nclass Order {\n    Customer customer;\n    Order(Customer customer) { this.customer = customer; }\n}\n// внутри main:\nOrder order = new Order(new Customer());\nSystem.out.println(order.customer.name);",
+            "language": "java",
+            "runnable": false,
+            "label": "Два связанных класса и обращение из main"
+          },
+          "result": "Программа покажет «Мира». Если customer не передан, чтение поля через null завершится ошибкой выполнения.",
+          "bridge": "В мини-задании различайте «содержит Customer» и «является Customer». При обращении к полю Order используйте точку и ссылку на объект."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m05-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Customer { String name = \"Мира\"; }\nclass Order {\n    Customer customer;\n    Order(Customer customer) { this.customer = customer; }\n}\n// внутри main:\nOrder order = new Order(new Customer());\nSystem.out.println(order.customer.name);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Программа покажет «Мира». Если customer не передан, чтение поля через null завершится ошибкой выполнения."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что демонстрирует поле Customer customer внутри Order?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Связь объектов: Order хранит ссылку на Customer"
+            },
+            {
+              "id": "b",
+              "label": "Целочисленное деление"
+            },
+            {
+              "id": "c",
+              "label": "Обработку исключений"
+            },
+            {
+              "id": "d",
+              "label": "Статический метод"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Order хранит ссылку на другой объект.",
+          "explanation": "[Explanation] Заказ связан с покупателем как с частью модели.",
+          "id": "m05-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Обратитесь к полю объекта order.",
+          "template": [
+            "System.out.println(order",
+            ".total);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": ".",
+              "options": [
+                ".",
+                "::",
+                "->"
+              ]
+            }
+          ],
+          "hint": "[Hint] Поля экземпляра доступны через оператор доступа.",
+          "explanation": "[Explanation] Точка разделяет объект и его поле.",
+          "id": "m05-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m05-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Order хранит Customer как поле. Как получить имя клиента из order без наследования?",
+          "options": [
+            {
+              "id": "a",
+              "label": "order.name, если имя только в Customer"
+            },
+            {
+              "id": "b",
+              "label": "order.customer.name (или геттер)"
+            },
+            {
+              "id": "c",
+              "label": "new Order.name"
+            },
+            {
+              "id": "d",
+              "label": "Customer extends Order"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Переходите по ссылке на содержащийся объект: отношение «имеет», а не «является».",
+          "explanation": "[Explanation] Верно: order.customer.name (или геттер). Переходите по ссылке на содержащийся объект: отношение «имеет», а не «является»."
+        },
+        {
+          "id": "m05-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m05-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create Customer с именем «Мира» и Order, хранящий ссылку на этого клиента и целую сумму 8. Print имя через ссылку внутри заказа и сумму через двоеточие.",
+          "expectedOutput": "Мира:8",
+          "hint": "[Hint] Order содержит Customer как поле: получите имя через order.customer, не используйте наследование.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Мира:8'. Order содержит Customer как поле: получите имя через order.customer, не используйте наследование."
+        }
+      ]
+    },
+    {
+      "id": "m05-l03",
+      "title": "Classes and Objects in Java",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "The class объявляет поля и методы, а конструктор задаёт начальное состояние объекта. Конструктор совпадает именем с классом, не имеет типа результата и вызывается при new.",
+          "Use this.name = name, если имя параметра совпадает с именем поля. Для ссылочных полей полезно задавать обязательные значения сразу в конструкторе, чтобы объект не остался некорректным."
+        ],
+        "code": "class Book {\n    String title;\n    Book(String title) { this.title = title; }\n}\nBook book = new Book(\"Java\");",
+        "caption": "Конструктор инициализирует объект.",
+        "language": "java",
+        "objective": "[Goal] Создать объект через конструктор и записать параметр в одноимённое поле.",
+        "walkthrough": "[Walkthrough] new Book(\"Java\") вызывает Book(String title), а this.title = title сохраняет аргумент в поле именно созданного объекта. Позже его методы читают «Java».",
+        "pitfall": "[Common Pitfall] Если написать title = title без this при совпадающих именах, вы присвоите параметр самому себе, оставив поле null.",
+        "deepDive": "[Deep Dive] Конструктор получает аргументы до начала обычной работы с объектом и может проверить инварианты. Присваивание this.title = title различает поле и параметр; после создания объект должен быть в состоянии, с которым его методы могут безопасно работать.",
+        "useCase": "[Real-World Case] Не создавайте Book с пустым названием, чтобы потом обязательно вызвать setTitle. Передайте обязательное название в конструктор и проверьте его сразу; так ошибочный объект не попадёт в остальные методы.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Конструктор задаёт обязательные данные в момент new. Это безопаснее, чем создавать наполовину пустой объект и надеяться, что позже его кто-то заполнит.",
+          "steps": [
+            "У класса Book есть поле title и конструктор с параметром title. Параметр временный, а поле живёт вместе с объектом.",
+            "this.title = title сохраняет переданную строку в поле. The method getTitle() может вернуть её позднее в main."
+          ],
+          "example": {
+            "code": "class Book {\n    private String title;\n    Book(String title) { this.title = title; }\n    String getTitle() { return title; }\n}\n// внутри main:\nBook book = new Book(\"Алгоритмы\");\nSystem.out.println(book.getTitle());",
+            "language": "java",
+            "runnable": false,
+            "label": "The class с конструктором и вызов из main"
+          },
+          "result": "На экране «Алгоритмы». Если забыть this и написать title = title, поле останется null.",
+          "bridge": "В мини-задании сохраните значение в поле через this. В практике добавьте геттер и распечатайте его результат, а не сам объект Book."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m05-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Book {\n    private String title;\n    Book(String title) { this.title = title; }\n    String getTitle() { return title; }\n}\n// внутри main:\nBook book = new Book(\"Алгоритмы\");\nSystem.out.println(book.getTitle());",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. На экране «Алгоритмы». Если забыть this и написать title = title, поле останется null."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Когда вызывается конструктор Book(String title)?",
+          "options": [
+            {
+              "id": "a",
+              "label": "При каждом System.out.println"
+            },
+            {
+              "id": "b",
+              "label": "При вызове new Book(\"Java\")"
+            },
+            {
+              "id": "c",
+              "label": "При объявлении класса"
+            },
+            {
+              "id": "d",
+              "label": "Только при сборке javac"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Конструктор и оператор new работают вместе.",
+          "explanation": "[Explanation] new Book(...) создаёт объект и вызывает конструктор.",
+          "id": "m05-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Сохраните параметр title в поле объекта.",
+          "template": [
+            "this.title ",
+            " title;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "=",
+              "options": [
+                "=",
+                "==",
+                "&&"
+              ]
+            }
+          ],
+          "hint": "[Hint] Нужно присваивание, не сравнение.",
+          "explanation": "[Explanation] this.title = title; записывает значение в поле.",
+          "id": "m05-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m05-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] В конструкторе Book(String title) поле тоже называется title. Какая строка запишет параметр в поле?",
+          "options": [
+            {
+              "id": "a",
+              "label": "title = this.title;"
+            },
+            {
+              "id": "b",
+              "label": "this.title = title;"
+            },
+            {
+              "id": "c",
+              "label": "title == title;"
+            },
+            {
+              "id": "d",
+              "label": "Book.title = null;"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] this.title обозначает поле текущего объекта, title справа — параметр.",
+          "explanation": "[Explanation] Верно: this.title = title;. this.title обозначает поле текущего объекта, title справа — параметр."
+        },
+        {
+          "id": "m05-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m05-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create Book с private title, конструктором и getTitle(). В main создайте Book с названием «Java» и выведите строку «Книга:Java» через результат геттера.",
+          "expectedOutput": "Книга:Java",
+          "hint": "[Hint] При совпадении имени параметра и поля конструктор использует this.title = title.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Книга:Java'. При совпадении имени параметра и поля конструктор использует this.title = title."
+        }
+      ]
+    },
+    {
+      "id": "m05-l04",
+      "title": "Static Fields and Methods",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Поле или метод с static принадлежит классу, а не отдельному экземпляру. Все объекты видят одно статическое поле; статический метод можно вызвать как Counter.total().",
+          "[Theory] В статическом контексте нет текущего объекта this. Не делайте все поля static ради удобства: тогда состояния разных объектов смешаются. Для общего счётчика экземпляров static подходит, для индивидуального имени — нет."
+        ],
+        "code": "class Counter {\n    static int created = 0;\n    Counter() { created++; }\n}\nSystem.out.println(Counter.created);",
+        "caption": "Общие значения принадлежат классу.",
+        "language": "java",
+        "objective": "[Goal] Выбрать между static и полем экземпляра на примере общего счётчика.",
+        "walkthrough": "[Walkthrough] created принадлежит всему Counter. Каждый вызов new Counter() увеличивает одно общее число; после двух созданий Counter.created равно 2.",
+        "pitfall": "[Common Pitfall] Если сделать личные данные пользователя static, все экземпляры разделят одно значение вместо собственных независимых состояний.",
+        "deepDive": "[Deep Dive] static-поле существует для класса независимо от числа созданных экземпляров. Изменение общего счётчика видно через имя класса; статический метод не имеет this и не может напрямую читать персональное поле отдельного объекта.",
+        "useCase": "Для числа созданных заказов общий счётчик уместен, а статус заказа должен храниться в самом Order. Create два объекта, измените статус одного и убедитесь, что состояние другого не поменялось.",
+        "guide": {
+          "why": "[Step-by-Step Guide] static-поле хранит общее состояние класса. Оно подходит для числа созданных объектов, но не для имени или состояния конкретного экземпляра.",
+          "steps": [
+            "В конструкторе Counter увеличьте created: он исполняется каждый раз при new.",
+            "После нескольких созданий читайте Counter.created по имени класса, а не через переменную отдельного счётчика."
+          ],
+          "example": {
+            "code": "class Counter {\n    static int created = 0;\n    Counter() { created++; }\n}\n// внутри main:\nnew Counter();\nnew Counter();\nnew Counter();\nSystem.out.println(Counter.created);",
+            "language": "java",
+            "runnable": false,
+            "label": "Общий счётчик и три создания в main"
+          },
+          "result": "После трёх вызовов конструктора выводится 3. Индивидуальные поля этих трёх объектов в счётчике created не хранятся.",
+          "bridge": "В задании найдите разницу между static и обычным полем. В практике создайте нужное количество объектов и считайте значение через Counter.created."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m05-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Counter {\n    static int created = 0;\n    Counter() { created++; }\n}\n// внутри main:\nnew Counter();\nnew Counter();\nnew Counter();\nSystem.out.println(Counter.created);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. После трёх вызовов конструктора выводится 3. Индивидуальные поля этих трёх объектов в счётчике created не хранятся."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Сколько копий static-поля created у класса Counter?",
+          "options": [
+            {
+              "id": "a",
+              "label": "По одной на каждый объект"
+            },
+            {
+              "id": "b",
+              "label": "Одна на класс"
+            },
+            {
+              "id": "c",
+              "label": "Ни одной"
+            },
+            {
+              "id": "d",
+              "label": "Одна на каждый метод"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Статическое состояние общее для экземпляров.",
+          "explanation": "[Explanation] Поле static принадлежит классу и разделяется объектами.",
+          "id": "m05-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Вызовите статический метод класса Math.",
+          "template": [
+            "int x = Math",
+            "(4, 7);"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": ".max",
+              "options": [
+                ".max",
+                ".new",
+                ".this"
+              ]
+            }
+          ],
+          "hint": "[Hint] Нужен метод выбора большего числа.",
+          "explanation": "[Explanation] Math.max(4, 7) возвращает 7.",
+          "id": "m05-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m05-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] После new Counter() три раза, что означает Counter.created, если конструктор увеличивает static created?",
+          "options": [
+            {
+              "id": "a",
+              "label": "0 в каждом объекте"
+            },
+            {
+              "id": "b",
+              "label": "1 только у последнего"
+            },
+            {
+              "id": "c",
+              "label": "3 для всего класса"
+            },
+            {
+              "id": "d",
+              "label": "ошибка: поле недоступно"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] static-состояние разделяют все экземпляры.",
+          "explanation": "[Explanation] Верно: 3 для всего класса. static-состояние разделяют все экземпляры."
+        },
+        {
+          "id": "m05-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m05-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create Counter со static int created, увеличиваемым в конструкторе, и обычным полем count. Create три объекта и выведите Counter.created и count последнего через двоеточие.",
+          "expectedOutput": "3:0",
+          "hint": "[Hint] created принадлежит классу, а count — новому экземпляру с исходным нулём.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '3:0'. created принадлежит классу, а count — новому экземпляру с исходным нулём."
+        }
+      ]
+    },
+    {
+      "id": "m05-l05",
+      "title": "Static Nested Classes",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Статический вложенный класс объявляют внутри другого класса с модификатором static. Его можно создать как Outer.Nested без экземпляра Outer. В отличие от внутреннего нестатического класса, он не хранит неявную ссылку на внешнюю сущность.",
+          "The class верхнего уровня нельзя объявить static. Вложенный тип полезен, когда он логически относится к внешнему: например, Builder внутри класса создаваемого объекта. Не путайте вложенный класс со статическим методом."
+        ],
+        "code": "class Outer {\n    static class Nested { int value = 5; }\n}\nOuter.Nested n = new Outer.Nested();",
+        "caption": "static class разрешён только для вложенного типа.",
+        "language": "java",
+        "objective": "[Goal] Создать статический вложенный класс без экземпляра внешнего класса.",
+        "walkthrough": "[Walkthrough] Outer.Nested n = new Outer.Nested() создаёт объект вложенного типа; ему не нужен new Outer(). Внутри Nested поле value имеет значение 5.",
+        "pitfall": "[Common Pitfall] static разрешён для вложенного класса, но не для класса верхнего уровня; нестатический inner class создают через экземпляр Outer.",
+        "deepDive": "[Deep Dive] Статический вложенный тип сгруппирован с внешним именем, но не привязан к объекту Outer. Нестатический inner class, напротив, хранит ссылку на конкретный внешний экземпляр; это влияет на создание и срок жизни объектов.",
+        "useCase": "[Real-World Case] Вынесите Builder рядом с создаваемым классом, если он нужен только ему: запись Book.Builder делает назначение понятным. Не храните неявную ссылку на большой внешний объект без необходимости.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Вложенный static-класс удобно располагать рядом с тем типом, которому он логически принадлежит. Он не требует отдельного объекта внешнего класса.",
+          "steps": [
+            "Declare static class Config внутри Outer: модификатор static относится только к вложенному объявлению.",
+            "При создании укажите оба имени: new Outer.Config(). Скобки вызывают конструктор Config; new Outer() не нужен."
+          ],
+          "example": {
+            "code": "class Outer {\n    static class Config { String mode = \"dev\"; }\n}\n// внутри main:\nOuter.Config config = new Outer.Config();\nSystem.out.println(config.mode);",
+            "language": "java",
+            "runnable": false,
+            "label": "Вложенный тип и использование из main"
+          },
+          "result": "Вывод «dev». Попытка объявить static class Outer на уровне файла Java не скомпилируется.",
+          "bridge": "В мини-задании найдите место слова static в определении вложенного типа; затем проследите, почему вызывается new Outer.Nested(), а не new Outer()."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m05-l05-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Outer {\n    static class Config { String mode = \"dev\"; }\n}\n// внутри main:\nOuter.Config config = new Outer.Config();\nSystem.out.println(config.mode);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Вывод «dev». Попытка объявить static class Outer на уровне файла Java не скомпилируется."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Как создать экземпляр static class Nested?",
+          "options": [
+            {
+              "id": "a",
+              "label": "new Nested(Outer)"
+            },
+            {
+              "id": "b",
+              "label": "new Outer.Nested()"
+            },
+            {
+              "id": "c",
+              "label": "new Outer().new Nested()"
+            },
+            {
+              "id": "d",
+              "label": "Outer.new()"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Статическому вложенному классу не нужен объект Outer.",
+          "explanation": "[Explanation] new Outer.Nested() создаёт статический вложенный тип.",
+          "id": "m05-l05-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Допишите объявление статического вложенного класса.",
+          "template": [
+            "class Outer { ",
+            " class Nested { } }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "static",
+              "options": [
+                "static",
+                "final",
+                "void"
+              ]
+            }
+          ],
+          "hint": "[Hint] Модификатор относится к вложенному классу.",
+          "explanation": "[Explanation] static class Nested не захватывает внешний экземпляр.",
+          "id": "m05-l05-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m05-l05-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Как создать экземпляр static-вложенного класса Config внутри Outer без Outer-объекта?",
+          "options": [
+            {
+              "id": "a",
+              "label": "new Outer().new Config()"
+            },
+            {
+              "id": "b",
+              "label": "new Config(Outer)"
+            },
+            {
+              "id": "c",
+              "label": "new Outer.Config()"
+            },
+            {
+              "id": "d",
+              "label": "Outer.new Config()"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Статический вложенный тип доступен через имя внешнего класса.",
+          "explanation": "[Explanation] Верно: new Outer.Config(). Статический вложенный тип доступен через имя внешнего класса."
+        },
+        {
+          "id": "m05-l05-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m05-l05",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create a class Outer со static-вложенным Config, в котором поле version равно 2. Без создания Outer получите Config и напечатайте его version.",
+          "expectedOutput": "2",
+          "hint": "[Hint] Создавайте через new Outer.Config(); внешний объект для статического вложенного типа не нужен.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '2'. Создавайте через new Outer.Config(); внешний объект для статического вложенного типа не нужен."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Module 5 Final Practice",
+    "description": "Создавайте объекты, конструкторы и статические счётчики.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Task] Какой элемент инициализирует новый объект при вызове new?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Пакет"
+          },
+          {
+            "id": "b",
+            "label": "Конструктор"
+          },
+          {
+            "id": "c",
+            "label": "Интерфейс"
+          },
+          {
+            "id": "d",
+            "label": "Аннотация"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Его имя совпадает с именем класса.",
+        "explanation": "[Explanation] Конструктор устанавливает начальное состояние объекта.",
+        "id": "m05-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "Create Book с названием Java.",
+        "template": [
+          "Book b = new Book(",
+          ");"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "\"Java\"",
+            "options": [
+              "\"Java\"",
+              "Java",
+              "new"
+            ]
+          }
+        ],
+        "hint": "[Hint] Название — строковый аргумент.",
+        "explanation": "[Explanation] Строковый литерал передаётся конструктору в кавычках.",
+        "id": "m05-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте термины ООП.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Класс",
+            "right": "Шаблон структуры и поведения"
+          },
+          {
+            "id": "2",
+            "left": "Объект",
+            "right": "Экземпляр класса с состоянием"
+          },
+          {
+            "id": "3",
+            "left": "Конструктор",
+            "right": "Начальная настройка объекта"
+          },
+          {
+            "id": "4",
+            "left": "static",
+            "right": "Принадлежность классу, а не экземпляру"
+          }
+        ],
+        "hint": "[Hint] Разделите чертёж, экземпляр, создание и общее состояние.",
+        "explanation": "[Explanation] Один класс может создавать много объектов.",
+        "id": "m05-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Упорядочьте объявление класса Book.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Book {"
+          },
+          {
+            "id": "b",
+            "text": "String title;"
+          },
+          {
+            "id": "c",
+            "text": "Book(String title) {"
+          },
+          {
+            "id": "d",
+            "text": "this.title = title;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Поле и конструктор находятся в классе; присваивание внутри конструктора.",
+        "explanation": "[Explanation] Конструктор сохраняет полученное название.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m05-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Task] Какие утверждения о static верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "Статическое поле общее для всех экземпляров"
+          },
+          {
+            "id": "b",
+            "label": "Из static-метода доступен this"
+          },
+          {
+            "id": "c",
+            "label": "Статический метод можно вызвать по имени класса"
+          },
+          {
+            "id": "d",
+            "label": "The class верхнего уровня может быть static"
+          }
+        ],
+        "correct": [
+          "a",
+          "c"
+        ],
+        "multiple": true,
+        "hint": "[Hint] this требует конкретный объект, а static class бывает вложенным.",
+        "explanation": "[Explanation] static принадлежит классу, а не отдельному объекту.",
+        "id": "m05-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Create a class Book с конструктором, принимающим String title, и методом getTitle(). В main создайте Book(\"Java\") и выведите название.",
+        "starterCode": "class Book {\n    private String title;\n    Book(String title) {\n        // Сохраните название\n    }\n    String getTitle() {\n        return \"\";\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        // Выведите название книги\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "Java",
+        "hint": "[Hint] Сохраните title через this.title, затем верните поле из getTitle().",
+        "explanation": "[Explanation] Созданный объект вернул название Java.",
+        "id": "m05-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Добавьте в класс Counter статическое поле created, увеличивайте его в конструкторе. Create два объекта и выведите Counter.created.",
+        "starterCode": "class Counter {\n    static int created = 0;\n    Counter() {\n        // Считайте создание объектов\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Counter();\n        new Counter();\n        // Выведите Counter.created\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "2",
+        "hint": "[Hint] Поле static int created общее; в конструкторе выполните created++;.",
+        "explanation": "[Explanation] После двух вызовов new значение общего счётчика равно 2.",
+        "id": "m05-p07"
+      }
+    ],
+    "id": "m05-practice",
+    "primer": {
+      "why": "The class описывает объект, конструктор принимает обязательные данные, метод их читает, а статическое поле хранит общее значение между экземплярами.",
+      "steps": [
+        "The class Ticket можно объявить рядом с Main. У него private-поле и конструктор Ticket(String code), который присваивает this.code = code.",
+        "В main создайте new Ticket(\"A1\") и вызовите метод code(). Если нужно посчитать созданные объекты, увеличивайте static-счётчик в конструкторе."
+      ],
+      "example": {
+        "code": "class Ticket {\n    private final String code;\n    static int created;\n    Ticket(String code) { this.code = code; created++; }\n    String code() { return code; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Ticket first = new Ticket(\"A1\");\n        System.out.println(first.code());\n        System.out.println(Ticket.created);\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "A1\n1"
+      },
+      "result": "Вывод — «A1» и 1. При новом Ticket.created станет 2, но code старого Ticket не изменится.",
+      "hints": [
+        {
+          "taskId": "m05-p06",
+          "text": "Для Book передайте title в конструктор и верните поле методом getTitle(). Печатать надо строку из метода, а не ссылку на объект."
+        },
+        {
+          "taskId": "m05-p07",
+          "text": "Для Counter разместите created в классе с модификатором static и увеличивайте в конструкторе. Читайте через Counter.created после созданий."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m05-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 350,
+    "tasks": [
+      {
+        "id": "m-exam-05-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] Как создать экземпляр static-вложенного класса Config внутри Outer без Outer-объекта?",
+        "options": [
+          {
+            "id": "a",
+            "label": "new Outer().new Config()"
+          },
+          {
+            "id": "b",
+            "label": "new Config(Outer)"
+          },
+          {
+            "id": "c",
+            "label": "new Outer.Config()"
+          },
+          {
+            "id": "d",
+            "label": "Outer.new Config()"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Статический вложенный тип доступен через имя внешнего класса.",
+        "explanation": "[Explanation] Верно: new Outer.Config(). Статический вложенный тип доступен через имя внешнего класса."
+      },
+      {
+        "type": "fill",
+        "prompt": "Create объект Counter.",
+        "template": [
+          "Counter c = ",
+          " Counter();"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "new",
+            "options": [
+              "this",
+              "new",
+              "final"
+            ]
+          }
+        ],
+        "hint": "[Hint] Оператор создаёт экземпляр в памяти.",
+        "explanation": "[Explanation] new Counter() создаёт новый объект.",
+        "id": "m-exam-05-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте термины ООП.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Класс",
+            "right": "Шаблон структуры и поведения"
+          },
+          {
+            "id": "2",
+            "left": "Объект",
+            "right": "Экземпляр класса с состоянием"
+          },
+          {
+            "id": "3",
+            "left": "Конструктор",
+            "right": "Начальная настройка объекта"
+          },
+          {
+            "id": "4",
+            "left": "static",
+            "right": "Принадлежность классу, а не экземпляру"
+          }
+        ],
+        "hint": "[Hint] Разделите чертёж, экземпляр, создание и общее состояние.",
+        "explanation": "[Explanation] Один класс может создавать много объектов.",
+        "id": "m-exam-05-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Упорядочьте объявление класса Book.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "class Book {"
+          },
+          {
+            "id": "b",
+            "text": "String title;"
+          },
+          {
+            "id": "c",
+            "text": "Book(String title) {"
+          },
+          {
+            "id": "d",
+            "text": "this.title = title;"
+          },
+          {
+            "id": "e",
+            "text": "}"
+          },
+          {
+            "id": "f",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 2
+          },
+          {
+            "id": "e",
+            "indent": 1
+          },
+          {
+            "id": "f",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Поле и конструктор находятся в классе; присваивание внутри конструктора.",
+        "explanation": "[Explanation] Конструктор сохраняет полученное название.",
+        "alternativeOrders": [
+          [
+            "a",
+            "c",
+            "d",
+            "e",
+            "b",
+            "f"
+          ]
+        ],
+        "id": "m-exam-05-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Create a class Ticket: название, цена и число проданных билетов — поля объекта;\nконструктор принимает название и цену. The method sell(int) увеличивает проданное количество,\nrevenue() возвращает выручку, label() — название. Статическое поле created считает объекты.\nCreate Ticket(\"Java\", 100) и Ticket(\"Кино\", 80), продайте 1 и 2 билета соответственно.\nPrint название первого события, его выручку, выручку второго и число созданных объектов.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "Java\n100\n160\n2",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\nJava\n100\n160\n2",
+        "id": "m-exam-05-05"
+      }
+    ]
+  }
+}

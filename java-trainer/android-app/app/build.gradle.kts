@@ -50,7 +50,7 @@ android {
 
     val syncCourseAssets by tasks.registering(Copy::class) {
         from(rootProject.projectDir.resolve("../frontend/data")) {
-            include("modules.json", "module-*.json", "labs.json")
+            include("modules.json", "module-*.json", "labs.json", "i18n/**")
             into("data")
         }
         from(rootProject.projectDir.resolve("../private")) {

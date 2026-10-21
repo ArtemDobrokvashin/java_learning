@@ -14,15 +14,17 @@ import java.nio.charset.StandardCharsets
  */
 class AssetCourseRepository(private val context: Context) {
 
-    @Volatile
-    private var cachedCatalog: CourseCatalog? = null
+    private val cachedCatalogs = mutableMapOf<String, CourseCatalog>()
 
-    fun loadCatalog(): CourseCatalog {
-        cachedCatalog?.let { return it }
+    fun loadCatalog(lang: String = "ru"): CourseCatalog {
+        val normalizedLang = if (lang in setOf("ru", "en", "es", "de", "zh")) lang else "ru"
         synchronized(this) {
-            cachedCatalog?.let { return it }
+            cachedCatalogs[normalizedLang]?.let { return it }
 
-            val indexObj = readAssetJson("data/modules.json") ?: return CourseCatalog()
+            val basePrefix = if (normalizedLang == "ru") "data" else "data/i18n/$normalizedLang"
+            val indexObj = readAssetJson("$basePrefix/modules.json")
+                ?: readAssetJson("data/modules.json")
+                ?: return CourseCatalog()
             val version = indexObj.intOrNull("version") ?: 9
             val modulesArray = indexObj.getAsJsonArray("modules") ?: JsonArray()
 
@@ -31,7 +33,9 @@ class AssetCourseRepository(private val context: Context) {
                 val meta = modEl.asJsonObject
                 val moduleId = meta.intOrNull("id") ?: continue
                 val contentFile = meta.stringOrEmpty("contentFile")
-                val modJson = readAssetJson("data/$contentFile") ?: continue
+                val modJson = readAssetJson("$basePrefix/$contentFile")
+                    ?: readAssetJson("data/$contentFile")
+                    ?: continue
 
                 val lessons = parseLessons(moduleId, modJson.getAsJsonArray("lessons"))
                 val bossTasks = modJson.getAsJsonObject("boss")?.let { bossObj ->
@@ -74,9 +78,9 @@ class AssetCourseRepository(private val context: Context) {
                 )
             }
 
-            val labs = parseLabs()
+            val labs = parseLabs(basePrefix)
             return CourseCatalog(version = version, modules = modules, labs = labs).also {
-                cachedCatalog = it
+                cachedCatalogs[normalizedLang] = it
             }
         }
     }
@@ -209,8 +213,8 @@ class AssetCourseRepository(private val context: Context) {
         }
     }
 
-    private fun parseLabs(): List<CourseTask> {
-        val labsObj = readAssetJson("data/labs.json") ?: return emptyList()
+    private fun parseLabs(basePrefix: String = "data"): List<CourseTask> {
+        val labsObj = readAssetJson("$basePrefix/labs.json") ?: readAssetJson("data/labs.json") ?: return emptyList()
         val casesObj = readAssetJson("private/lab_cases.json") ?: JsonObject()
         val labsArray = labsObj.getAsJsonArray("labs") ?: return emptyList()
 

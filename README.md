@@ -4,6 +4,12 @@
 
 <br/>
 
+**[🇷🇺 Русский](README.md)** · **[🇬🇧 English](docs/i18n/README.en.md)** · **[🇪🇸 Español](docs/i18n/README.es.md)** · **[🇩🇪 Deutsch](docs/i18n/README.de.md)** · **[🇨🇳 中文](docs/i18n/README.zh.md)**
+
+<br/>
+
+[![Release v2.0.0](https://img.shields.io/badge/Release-v2.0.0-10b981?style=for-the-badge&logo=github&logoColor=white)](CHANGELOG.md)
+[![Languages: 5](https://img.shields.io/badge/Languages-RU_%7C_EN_%7C_ES_%7C_DE_%7C_ZH-2563eb?style=for-the-badge)](docs/i18n/README.en.md)
 [![Java 17–25](https://img.shields.io/badge/Java-17%E2%80%9325-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](#быстрый-старт)
 [![IntelliJ IDEA Plugin](https://img.shields.io/badge/IntelliJ_IDEA-2025.3%2B_Plugin-000000?style=for-the-badge&logo=intellijidea&logoColor=white)](java-trainer/idea-plugin/README.md)
 [![Android App](https://img.shields.io/badge/Android-Jetpack_Compose-3DDC84?style=for-the-badge&logo=android&logoColor=white)](java-trainer/android-app/README.md)
@@ -179,6 +185,7 @@ python -m venv .venv
 - [x] **Лабораторные и проекты «К junior»**: 5 алгоритмических лабораторных + 2 стартовых проекта (`task-tracker`, `task-api`)
 - [x] **Полнофункциональный плагин для IntelliJ IDEA (Kotlin)**: дерево курса, Split View теории, нативный `TaskChecker` (`javac`/`java` + `expected.txt` и `JUnit 5`), синхронизация `.javada/progress.json`
 - [x] **📱 Автономное Android-приложение «JavaДа Mobile» (Kotlin + Jetpack Compose)**: 100% офлайн-прохождение всех 22 модулей, 6 форматов задач, мини-экзаменов и синхронизация `.javada/progress.json`
+- [x] **🌍 Мультиязычность (5 языков: `RU`, `EN`, `ES`, `DE`, `ZH`)**: локализация интерфейса, всех 22 модулей курса и документации во всех трёх версиях (Web, IntelliJ IDEA, Android)
 
 ---
 

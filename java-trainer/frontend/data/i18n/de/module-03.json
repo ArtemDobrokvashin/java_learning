@@ -1,0 +1,973 @@
+{
+  "id": 3,
+  "title": "Schleifen & Arrays",
+  "lessons": [
+    {
+      "id": "m03-l01",
+      "title": "Einführung in Schleifen",
+      "duration": 6,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Цикл выполняет блок кода несколько раз. Вместо пяти одинаковых команд вы пишете одну команду и условие повторения. Это упрощает код и помогает изменить число повторов в одном месте.",
+          "[Theorie] У любого цикла должно быть условие завершения. Если переменная в условии не меняется, программа может зависнуть в бесконечном цикле. for удобен, когда число повторений известно заранее; while — когда оно зависит от данных."
+        ],
+        "code": "int count = 0;\nwhile (count < 3) {\n    System.out.println(count);\n    count++;\n}",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Определить число повторений цикла и назвать условие его завершения.",
+        "walkthrough": "[Durchgang] count принимает 0, 1 и 2: эти числа выводятся. После count++ он станет 3; проверка 3 < 3 ложна, поэтому четвёртой итерации нет.",
+        "pitfall": "[Typischer Fehler] Если убрать count++, условие останется истинным бесконечно; изменяйте состояние так, чтобы цикл завершался.",
+        "deepDive": "[Vertiefung] У цикла есть состояние, условие продолжения и шаг, который приближает состояние к остановке. После каждой итерации проверяйте инвариант: например, «обработаны первые i элементов», а не только текущее число на экране.",
+        "useCase": "[Praxisfall] Если отправляете запрос с ограничением попыток, заранее выберите максимум и условие выхода при успехе. Смоделируйте ноль попыток, один успех и постоянную ошибку — цикл не должен длиться бесконечно.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Цикл нужен, когда одно действие должно повториться для ряда значений. Чтобы программа завершилась, в теле нужно менять то, что проверяет условие.",
+          "steps": [
+            "page начинается с 1. Перед каждым шагом while проверяет page <= 3; при true выполняется тело внутри фигурных скобок.",
+            "println(page) показывает текущее число, после чего page++ увеличивает его. Следующая проверка уже увидит новое значение.",
+            "После вывода 3 переменная станет 4; условие 4 <= 3 ложно. Если убрать page++, программа никогда не достигнет выхода."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int page = 1;\n        while (page <= 3) {\n            System.out.println(page);\n            page++;\n        }\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "1\n2\n3"
+          },
+          "result": "Вывод — три строки: 1, 2, 3. При изменении начального значения или границы меняется и количество проходов.",
+          "bridge": "В задании про count проследите его значение после каждого println и поставьте шаг обновления внутри цикла, иначе проверка не изменится."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m03-l01-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int page = 1;\n        while (page <= 3) {\n            System.out.println(page);\n            page++;\n        }\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Вывод — три строки: 1, 2, 3. При изменении начального значения или границы меняется и количество проходов."
+        },
+        {
+          "id": "m03-l01-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Сколько раз выполняется тело while (count < 3), если count начинается с 0 и увеличивается на 1?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2"
+            },
+            {
+              "id": "b",
+              "label": "3"
+            },
+            {
+              "id": "c",
+              "label": "4"
+            },
+            {
+              "id": "d",
+              "label": "Бесконечно"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Проследите значения count: 0, 1, 2, затем 3.",
+          "explanation": "[Erklärung] Тело выполняется при 0, 1 и 2 — три раза.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m03-l01-q2",
+          "type": "fill",
+          "prompt": "[Aufgabe] Добавьте шаг, чтобы цикл завершился.",
+          "template": [
+            "int i = 0;\nwhile (i < 5) {\n    i",
+            ";\n}"
+          ],
+          "blanks": [
+            {
+              "id": "step",
+              "kind": "select",
+              "options": [
+                "++",
+                "--",
+                "==",
+                "<"
+              ],
+              "answer": "++"
+            }
+          ],
+          "hint": "[Hinweis] Переменная должна приближаться к значению 5.",
+          "explanation": "[Erklärung] i++ увеличивает i, и после пяти шагов условие станет ложным.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m03-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Что выведет while (n < 3) { print(n); n++; }, если n начинается с 3?",
+          "options": [
+            {
+              "id": "a",
+              "label": "3"
+            },
+            {
+              "id": "b",
+              "label": "4"
+            },
+            {
+              "id": "c",
+              "label": "ничего"
+            },
+            {
+              "id": "d",
+              "label": "цикл бесконечен"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] while проверяет условие до первого входа в тело.",
+          "explanation": "[Erklärung] Верно: ничего. while проверяет условие до первого входа в тело."
+        },
+        {
+          "id": "m03-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m03-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Verwenden Sie while для целых от 2 до 5 включительно. Geben Sie aus: их через пробел в одной строке (без лишних слов); счётчик должен изменяться в теле цикла.",
+          "expectedOutput": "2 3 4 5",
+          "hint": "[Hinweis] Начинайте с 2; условие должно включать 5. System.out.print не добавляет перевод строки после числа.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '2 3 4 5'. Начинайте с 2; условие должно включать 5. System.out.print не добавляет перевод строки после числа."
+        }
+      ]
+    },
+    {
+      "id": "m03-l02",
+      "title": "Arrays (Felder)",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Массив объединяет несколько значений одного типа. Его длина фиксирована после создания. Элементы доступны по индексу: первый элемент имеет индекс 0, последний — length - 1.",
+          "[Theorie] Для чтения элемента используйте квадратные скобки: numbers[1]. Длина массива хранится в поле length (без круглых скобок). Попытка обратиться к индексу за пределами массива приведёт к ArrayIndexOutOfBoundsException."
+        ],
+        "code": "int[] numbers = {4, 7, 9};\nSystem.out.println(numbers[0]); // 4\nSystem.out.println(numbers.length); // 3",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Найти первый, последний элемент и длину массива без выхода за границы.",
+        "walkthrough": "[Durchgang] Для {4, 7, 9} numbers[0] печатает 4, а numbers.length — 3. Последний элемент расположен по индексу length - 1, то есть 2.",
+        "pitfall": "[Typischer Fehler] numbers[3] вызовет ArrayIndexOutOfBoundsException: длина равна 3, но допустимые индексы — 0, 1 и 2.",
+        "deepDive": "[Vertiefung] Массив хранит фиксированное количество элементов одного типа. После new int[3] в ячейках лежат нули, но это не означает, что вы записали туда полезные данные; отдельно следите за числом реально заполненных позиций.",
+        "useCase": "[Praxisfall] Для трёх оценок допустимы индексы 0, 1 и 2. Перед чтением пользовательского индекса проверьте 0 <= index && index < scores.length; если коллекция должна расти, позже выбирайте List вместо массива.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] Массив хранит однотипные данные рядом. Для чтения элемента используют индекс в квадратных скобках: первый индекс 0, последний на единицу меньше length.",
+          "steps": [
+            "scores содержит два числа. scores[0] обращается к первому — 8; число после массива в квадратных скобках не обозначает длину.",
+            "scores.length возвращает 2. Поэтому индекс scores.length - 1 равен 1 и указывает на последнюю оценку, равную 6.",
+            "println нужен для просмотра результата. Не пишите scores[2]: длина равна 2, а допустимые индексы только 0 и 1."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int[] scores = {8, 6};\n        System.out.println(scores[0]);\n        System.out.println(scores[scores.length - 1]);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "8\n6"
+          },
+          "result": "На экране появятся 8 и 6 на разных строках. Пустой массив требует отдельной проверки перед чтением первого или последнего элемента.",
+          "bridge": "В мини-задании замените scores на указанный массив и определите последний индекс через length - 1. В практике цикл переберёт все элементы по индексам."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m03-l02-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int[] scores = {8, 6};\n        System.out.println(scores[0]);\n        System.out.println(scores[scores.length - 1]);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. На экране появятся 8 и 6 на разных строках. Пустой массив требует отдельной проверки перед чтением первого или последнего элемента."
+        },
+        {
+          "id": "m03-l02-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Как получить последний элемент массива int[] a без знания его длины заранее?",
+          "options": [
+            {
+              "id": "a",
+              "label": "a[a.length]"
+            },
+            {
+              "id": "b",
+              "label": "a[a.length - 1]"
+            },
+            {
+              "id": "c",
+              "label": "a[-1]"
+            },
+            {
+              "id": "d",
+              "label": "a.length()"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Первый индекс — 0, поэтому последний на единицу меньше длины.",
+          "explanation": "[Erklärung] a[a.length - 1] обращается к последнему элементу.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m03-l02-q2",
+          "type": "matching",
+          "prompt": "[Aufgabe] Для массива {4, 7, 9} найдите значения выражений.",
+          "pairs": [
+            {
+              "id": "1",
+              "left": "numbers[0]",
+              "right": "4"
+            },
+            {
+              "id": "2",
+              "left": "numbers[1]",
+              "right": "7"
+            },
+            {
+              "id": "3",
+              "left": "numbers[2]",
+              "right": "9"
+            },
+            {
+              "id": "4",
+              "left": "numbers.length",
+              "right": "3"
+            }
+          ],
+          "hint": "[Hinweis] Индексация начинается с нуля, а length — число элементов.",
+          "explanation": "[Erklärung] Все элементы доступны по индексам 0, 1 и 2.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m03-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Как получить последний элемент массива int[] a = {8, 4, 2} без выхода за границы?",
+          "options": [
+            {
+              "id": "a",
+              "label": "a[a.length]"
+            },
+            {
+              "id": "b",
+              "label": "a[a.length - 1]"
+            },
+            {
+              "id": "c",
+              "label": "a[3]"
+            },
+            {
+              "id": "d",
+              "label": "a[-1]"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Индексы трёх элементов — 0, 1, 2.",
+          "explanation": "[Erklärung] Верно: a[a.length - 1]. Индексы трёх элементов — 0, 1, 2."
+        },
+        {
+          "id": "m03-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m03-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Erstellen Sie int[] values = {9, 7, 4}. Geben Sie aus: длину массива, первый и последний элементы в этом порядке по одному на строке.",
+          "expectedOutput": "3\n9\n4",
+          "hint": "[Hinweis] Первый индекс — 0, последний — values.length - 1; длина не равна последнему индексу.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '3\\n9\\n4'. Первый индекс — 0, последний — values.length - 1; длина не равна последнему индексу."
+        }
+      ]
+    },
+    {
+      "id": "m03-l03",
+      "title": "Zählschleife: for",
+      "duration": 8,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] Заголовок for содержит три части: начальное значение счётчика; условие продолжения; действие после каждой итерации. Например, for (int i = 0; i < 3; i++) выполнит тело три раза.",
+          "[Theorie] Для перебора массива обычно используют i < array.length. Если написать <=, последний индекс окажется равным длине массива и вызовет ошибку. Увеличение i++ должно приближать счётчик к завершению цикла."
+        ],
+        "code": "int[] points = {2, 4, 6};\nfor (int i = 0; i < points.length; i++) {\n    System.out.println(points[i]);\n}",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Проследить значения счётчика в for и пройти массив без ошибки на границе.",
+        "walkthrough": "[Durchgang] Массив points содержит три элемента. Цикл берёт i = 0, 1, 2 и печатает 2, 4, 6; при i = 3 условие i < points.length ложно.",
+        "pitfall": "[Typischer Fehler] Сравнение i <= points.length добавит лишнюю итерацию и обратится к points[3] вне массива.",
+        "deepDive": "[Vertiefung] В for инициализация исполняется один раз, условие — перед каждым проходом, обновление — после тела. При i < length значения счётчика совпадают с индексами массива; после последнего элемента счётчик станет равным length.",
+        "useCase": "Суммируя значения, начните sum с нуля, затем добавляйте array[i] на каждом проходе. Prüfen Sie пустой массив: тело не выполняется, а сумма остаётся нулём — это осмысленное начальное значение.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] for соединяет начальный индекс, проверку границы и изменение счётчика. Это удобный способ пройти массив и накопить ответ, не выписывая каждую ячейку отдельно.",
+          "steps": [
+            "total начинается с 0: до обхода мы ещё не прибавили ни одной цены.",
+            "i стартует с 0 и пока i < prices.length читает существующий элемент prices[i]. После тела i++ переходит к следующему индексу.",
+            "На каждом проходе total += prices[i] добавляет очередную цену; println(total) стоит ПОСЛЕ цикла, поэтому итог печатается только один раз."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int[] prices = {3, 4, 5};\n        int total = 0;\n        for (int i = 0; i < prices.length; i++) {\n            total += prices[i];\n        }\n        System.out.println(total);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "12"
+          },
+          "result": "Итог — 12 (0 + 3 + 4 + 5). Если передвинуть println внутрь цикла, появятся промежуточные суммы 3, 7 и 12.",
+          "bridge": "Практическая задача на сумму использует тот же накопитель, только перебирает числа от 1 до заданной границы. Для поиска максимума понадобятся другое начальное значение и сравнение."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m03-l03-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int[] prices = {3, 4, 5};\n        int total = 0;\n        for (int i = 0; i < prices.length; i++) {\n            total += prices[i];\n        }\n        System.out.println(total);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Итог — 12 (0 + 3 + 4 + 5). Если передвинуть println внутрь цикла, появятся промежуточные суммы 3, 7 и 12."
+        },
+        {
+          "id": "m03-l03-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Какое условие корректно переберёт массив из четырёх элементов, начиная с i = 0?",
+          "options": [
+            {
+              "id": "a",
+              "label": "i <= 4"
+            },
+            {
+              "id": "b",
+              "label": "i < 4"
+            },
+            {
+              "id": "c",
+              "label": "i > 4"
+            },
+            {
+              "id": "d",
+              "label": "i == 4"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Допустимые индексы: 0, 1, 2, 3.",
+          "explanation": "[Erklärung] i < 4 допускает именно четыре индекса.",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m03-l03-q2",
+          "type": "parsons",
+          "prompt": "[Aufgabe] Соберите цикл, который выводит 0, 1, 2. Расставьте отступы.",
+          "lines": [
+            {
+              "id": "a",
+              "text": "for (int i = 0; i < 3; i++) {"
+            },
+            {
+              "id": "b",
+              "text": "System.out.println(i);"
+            },
+            {
+              "id": "c",
+              "text": "}"
+            }
+          ],
+          "solution": [
+            {
+              "id": "a",
+              "indent": 0
+            },
+            {
+              "id": "b",
+              "indent": 1
+            },
+            {
+              "id": "c",
+              "indent": 0
+            }
+          ],
+          "hint": "[Hinweis] Начните с заголовка for, затем расположите вывод внутри блока.",
+          "explanation": "[Erklärung] Тело for находится между открывающей и закрывающей скобками.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m03-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Что выведет сумма, если for проходит i от 0 до i < 4 и прибавляет i только при i % 2 == 0?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2"
+            },
+            {
+              "id": "b",
+              "label": "4"
+            },
+            {
+              "id": "c",
+              "label": "6"
+            },
+            {
+              "id": "d",
+              "label": "0"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] Подходят индексы 0 и 2, их сумма равна 2.",
+          "explanation": "[Erklärung] Верно: 2. Подходят индексы 0 и 2, их сумма равна 2."
+        },
+        {
+          "id": "m03-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m03-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Переберите массив int[] values = {2, 3, 4, 5, 6} циклом for. Сложите только чётные элементы и выведите итог одним числом.",
+          "expectedOutput": "12",
+          "hint": "[Hinweis] Накопитель инициализируйте нулём, а проверку на чётность сделайте оператором % до прибавления.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '12'. Накопитель инициализируйте нулём, а проверку на чётность сделайте оператором % до прибавления."
+        }
+      ]
+    },
+    {
+      "id": "m03-l04",
+      "title": "while- und do-while-Schleifen",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theorie] while сначала проверяет условие, а потом выполняет тело: если условие сразу ложно, тело не выполнится ни разу. do-while сначала выполнит тело и только затем проверит условие — минимум один проход гарантирован.",
+          "[Theorie] Выбирайте while для повторения с неизвестным числом шагов и do-while, когда действие обязательно нужно выполнить хотя бы раз. В обоих случаях следите, чтобы состояние изменялось и цикл мог завершиться."
+        ],
+        "code": "int attempts = 0;\ndo {\n    attempts++;\n} while (attempts < 1);\nSystem.out.println(attempts); // 1",
+        "caption": "Kurzes Fragment für main; darunter ein vollständiges Beispiel mit Ausgabe.",
+        "objective": "[Lernziel] Выбрать между while и do-while и объяснить гарантированный первый проход.",
+        "walkthrough": "[Durchgang] do выполняет attempts++ ещё до первой проверки. Начиная с нуля, получаем 1; условие 1 < 1 ложно и программа печатает 1.",
+        "pitfall": "[Typischer Fehler] В while с тем же условием и начальным значением 0 будет один проход, но при начальном 1 не будет ни одного; do-while всё равно выполнится раз.",
+        "deepDive": "[Vertiefung] while проверяет возможность первого шага заранее, а do-while откладывает проверку до конца блока. Постусловие не отменяет необходимость выхода: если повторять ввод, состояние меняется при каждой новой попытке.",
+        "useCase": "[Praxisfall] Меню с обязательным первым показом удобно организовать через do-while; ожидание события, которое могло уже наступить, — через while. Прогоните оба варианта при изначально ложном условии и сравните число выполнений.",
+        "guide": {
+          "why": "[Schritt-für-Schritt] while проверяет условие до тела, а do-while — после. Разница заметна, если на старте условие ложно: do выполняет действие хотя бы раз.",
+          "steps": [
+            "attempts начинается с нуля. Внутри do сначала увеличиваем его и выводим текущее число; первая проверка ещё не состоялась.",
+            "После вывода 1 проверка 1 < 2 истинна, поэтому происходит второй проход. После вывода 2 условие становится ложным.",
+            "Точка с запятой после while (attempts < 2); обязательна в do-while. У обычного while такого хвоста после закрывающей скобки нет."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int attempts = 0;\n        do {\n            attempts++;\n            System.out.println(attempts);\n        } while (attempts < 2);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Vollständiges Programm Main.java — ausführbar",
+            "stdout": "1\n2"
+          },
+          "result": "Выводятся 1 и 2 на отдельных строках. При attempts = 2 до запуска тело всё равно выполнится один раз — в отличие от while.",
+          "bridge": "В мини-задании с обратным отсчётом меняйте значение счётчика так, чтобы условие в конце стало ложным; затем сравните первый проход while и do-while."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m03-l04-copy",
+          "type": "copy",
+          "prompt": "Tippen Sie das unten gezeigte Beispiel aus der Schritt-für-Schritt-Erklärung von Hand ab. Behalten Sie Reihenfolge, Bezeichner, String-Literale und Einrückungen bei.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int attempts = 0;\n        do {\n            attempts++;\n            System.out.println(attempts);\n        } while (attempts < 2);\n    }\n}",
+          "language": "java",
+          "hint": "Vergleichen Sie Befehle, Groß-/Kleinschreibung, Anführungszeichen und schließende Klammern mit der Vorlage.",
+          "explanation": "Dies ist dasselbe Fragment, das in der Theorie besprochen wurde. Выводятся 1 и 2 на отдельных строках. При attempts = 2 до запуска тело всё равно выполнится один раз — в отличие от while."
+        },
+        {
+          "id": "m03-l04-q1",
+          "type": "choice",
+          "prompt": "[Aufgabe] Какой цикл гарантирует хотя бы одно выполнение тела?",
+          "options": [
+            {
+              "id": "a",
+              "label": "for"
+            },
+            {
+              "id": "b",
+              "label": "while"
+            },
+            {
+              "id": "c",
+              "label": "do-while"
+            },
+            {
+              "id": "d",
+              "label": "Ни один"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] В этом цикле условие проверяется после тела.",
+          "explanation": "[Erklärung] do-while проверяет условие после первого прохода.",
+          "variant": "theory",
+          "difficulty": "easy"
+        },
+        {
+          "id": "m03-l04-q2",
+          "type": "fill",
+          "prompt": "[Aufgabe] Допишите цикл, который выводит 3, 2, 1.",
+          "template": [
+            "int n = 3;\n",
+            " (n > 0) {\n    System.out.println(n);\n    n--;\n}"
+          ],
+          "blanks": [
+            {
+              "id": "keyword",
+              "kind": "select",
+              "options": [
+                "if",
+                "while",
+                "switch"
+              ],
+              "answer": "while"
+            }
+          ],
+          "hint": "[Hinweis] Нужно повторять блок, пока n остаётся больше нуля.",
+          "explanation": "[Erklärung] while проверяет n > 0 перед каждой итерацией.",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m03-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Aufgabe] Сколько раз выполнится тело do { n++; } while(n < 3), если n начинается с 5?",
+          "options": [
+            {
+              "id": "a",
+              "label": "0"
+            },
+            {
+              "id": "b",
+              "label": "1"
+            },
+            {
+              "id": "c",
+              "label": "3"
+            },
+            {
+              "id": "d",
+              "label": "5"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hinweis] do-while проверяет условие после первого прохода.",
+          "explanation": "[Erklärung] Верно: 1. do-while проверяет условие после первого прохода."
+        },
+        {
+          "id": "m03-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m03-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Aufgabe] Пусть int attempts = 5. Запустите do-while, выводящий attempts и увеличивающий его, пока attempts < 5. После него запустите обычный while с тем же условием, считая проходы, и выведите их число.",
+          "expectedOutput": "5\n0",
+          "hint": "[Hinweis] do сначала выполняет тело, обычный while проверяет условие заранее; не забудьте ; после do-while.",
+          "explanation": "[Erklärung] Сопоставьте свой результат с ожидаемым выводом: '5\\n0'. do сначала выполняет тело, обычный while проверяет условие заранее; не забудьте ; после do-while."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "id": "m03-practice",
+    "title": "Abschlusspraxis Modul 3",
+    "description": "Пройдите по массиву, найдите границы цикла и напишите настоящие Java-программы.",
+    "tasks": [
+      {
+        "id": "m03-p01",
+        "type": "choice",
+        "prompt": "[Aufgabe] Какие утверждения верны для int[] a = {3, 6, 9}?",
+        "options": [
+          {
+            "id": "a",
+            "label": "a.length равно 3"
+          },
+          {
+            "id": "b",
+            "label": "a[0] равно 3"
+          },
+          {
+            "id": "c",
+            "label": "a[3] равно 9"
+          },
+          {
+            "id": "d",
+            "label": "a[2] равно 9"
+          }
+        ],
+        "correct": [
+          "a",
+          "b",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hinweis] Допустимые индексы массива из трёх элементов: 0, 1, 2.",
+        "explanation": "[Erklärung] У массива длина 3; a[0] = 3 и a[2] = 9."
+      },
+      {
+        "id": "m03-p02",
+        "type": "fill",
+        "prompt": "[Aufgabe] Допишите безопасное условие перебора массива.",
+        "template": [
+          "for (int i = 0; i ",
+          " items.length; i++) {\n    System.out.println(items[i]);\n}"
+        ],
+        "blanks": [
+          {
+            "id": "operator",
+            "kind": "select",
+            "options": [
+              "<",
+              "<=",
+              ">",
+              "=="
+            ],
+            "answer": "<"
+          }
+        ],
+        "hint": "[Hinweis] Последний допустимый индекс — items.length - 1.",
+        "explanation": "[Erklärung] Оператор < останавливает цикл до выхода за границы."
+      },
+      {
+        "id": "m03-p03",
+        "type": "matching",
+        "prompt": "[Aufgabe] Сопоставьте конструкцию и её поведение.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "for",
+            "right": "Удобен при известном числе повторений"
+          },
+          {
+            "id": "2",
+            "left": "while",
+            "right": "Проверяет условие перед телом"
+          },
+          {
+            "id": "3",
+            "left": "do-while",
+            "right": "Проверяет условие после тела"
+          },
+          {
+            "id": "4",
+            "left": "length",
+            "right": "Количество элементов массива"
+          }
+        ],
+        "hint": "[Hinweis] Одна проверка происходит до тела, другая — после.",
+        "explanation": "[Erklärung] Форма цикла выбирается в зависимости от задачи."
+      },
+      {
+        "id": "m03-p04",
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите вычисление суммы чисел от 1 до 3. Настройте порядок и отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int sum = 0;"
+          },
+          {
+            "id": "b",
+            "text": "for (int i = 1; i <= 3; i++) {"
+          },
+          {
+            "id": "c",
+            "text": "sum += i;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          },
+          {
+            "id": "e",
+            "text": "System.out.println(sum);"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "Erstellen Sie sum перед циклом; внутри цикла прибавляйте i, после цикла выводите сумму.",
+        "explanation": "[Erklärung] После трёх итераций sum равно 1 + 2 + 3 = 6."
+      },
+      {
+        "id": "m03-p05",
+        "type": "choice",
+        "prompt": "[Aufgabe] Что выведет код int i = 5; while (i < 5) { System.out.println(i); }?",
+        "options": [
+          {
+            "id": "a",
+            "label": "5"
+          },
+          {
+            "id": "b",
+            "label": "0"
+          },
+          {
+            "id": "c",
+            "label": "Ничего"
+          },
+          {
+            "id": "d",
+            "label": "Бесконечное количество пятёрок"
+          }
+        ],
+        "correct": [
+          "c"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] while проверяет условие до первого выполнения.",
+        "explanation": "[Erklärung] 5 < 5 ложно, поэтому тело не запустится."
+      },
+      {
+        "id": "m03-p06",
+        "type": "code",
+        "prompt": "[Aufgabe] С помощью цикла for вычислите сумму целых чисел от 1 до 5 включительно и выведите результат.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        int sum = 0;\n        // Добавьте цикл от 1 до 5 и выведите sum\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "15",
+        "hint": "[Hinweis] Начните с i = 1, повторяйте, пока i <= 5, добавляйте i к sum.",
+        "explanation": "[Erklärung] Сумма чисел от 1 до 5 равна 15."
+      },
+      {
+        "id": "m03-p07",
+        "type": "code",
+        "prompt": "Erstellen Sie массив int[] numbers = {4, 9, 2}. Переберите его и выведите наибольший элемент.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        int[] numbers = {4, 9, 2};\n        // Найдите максимум и выведите его\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "9",
+        "hint": "[Hinweis] Начните с numbers[0], затем сравнивайте элементы в цикле for.",
+        "explanation": "[Erklärung] Максимальный элемент массива — 9."
+      }
+    ],
+    "primer": {
+      "why": "В циклах заранее определите границу обхода, начальное значение накопителя и то, что будете печатать только после вычисления. Сумма и максимум похожи циклом, но различаются началом.",
+      "steps": [
+        "Сумму можно начать с 0 и прибавлять элементы на каждом шаге. Для максимума непустого массива безопаснее взять первый элемент: ноль сломает поиск среди отрицательных чисел.",
+        "Цикл for (int value : values) перебирает значения без ручного индекса. Если нужен индекс, используйте i < values.length: последний допустимый индекс на единицу меньше длины.",
+        "Сравнивайте каждый value с best, обновляйте best при большем числе. println вне цикла печатает итог один раз; внутри цикла показывал бы промежуточные результаты."
+      ],
+      "example": {
+        "code": "public class Main {\n    public static void main(String[] args) {\n        int[] values = {6, 2, 5};\n        int sum = 0;\n        int best = values[0];\n        for (int value : values) {\n            sum += value;\n            if (value > best) best = value;\n        }\n        System.out.println(sum);\n        System.out.println(best);\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "13\n6"
+      },
+      "result": "Программа выведет 13 и 6. Для отрицательных values поиск best по той же схеме остаётся корректным.",
+      "hints": [
+        {
+          "taskId": "m03-p06",
+          "text": "Для суммы от 1 до указанной границы вместо массива нужен счётчик: начинайте с 1, включите последнее число в условие и прибавляйте к сумме."
+        },
+        {
+          "taskId": "m03-p07",
+          "text": "Для максимума сначала создайте numbers из условия, затем возьмите первый элемент за начальный best и сравните его с остальными в цикле."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m03-exam",
+    "title": "Mini-Prüfung",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 330,
+    "tasks": [
+      {
+        "id": "m-exam-03-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Aufgabe] Сколько раз выполнится тело do { n++; } while(n < 3), если n начинается с 5?",
+        "options": [
+          {
+            "id": "a",
+            "label": "0"
+          },
+          {
+            "id": "b",
+            "label": "1"
+          },
+          {
+            "id": "c",
+            "label": "3"
+          },
+          {
+            "id": "d",
+            "label": "5"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hinweis] do-while проверяет условие после первого прохода.",
+        "explanation": "[Erklärung] Верно: 1. do-while проверяет условие после первого прохода."
+      },
+      {
+        "id": "m-exam-03-02",
+        "type": "fill",
+        "prompt": "[Aufgabe] Добавьте шаг, чтобы цикл завершился.",
+        "template": [
+          "int i = 0;\nwhile (i < 5) {\n    i",
+          ";\n}"
+        ],
+        "blanks": [
+          {
+            "id": "step",
+            "kind": "select",
+            "options": [
+              "++",
+              "--",
+              "==",
+              "<"
+            ],
+            "answer": "++"
+          }
+        ],
+        "hint": "[Hinweis] Переменная должна приближаться к значению 5.",
+        "explanation": "[Erklärung] i++ увеличивает i, и после пяти шагов условие станет ложным.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "m-exam-03-03",
+        "type": "matching",
+        "prompt": "[Aufgabe] Сопоставьте конструкцию и её поведение.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "for",
+            "right": "Удобен при известном числе повторений"
+          },
+          {
+            "id": "2",
+            "left": "while",
+            "right": "Проверяет условие перед телом"
+          },
+          {
+            "id": "3",
+            "left": "do-while",
+            "right": "Проверяет условие после тела"
+          },
+          {
+            "id": "4",
+            "left": "length",
+            "right": "Количество элементов массива"
+          }
+        ],
+        "hint": "[Hinweis] Одна проверка происходит до тела, другая — после.",
+        "explanation": "[Erklärung] Форма цикла выбирается в зависимости от задачи.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "m-exam-03-04",
+        "type": "parsons",
+        "prompt": "[Aufgabe] Соберите вычисление суммы чисел от 1 до 3. Настройте порядок и отступы.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "int sum = 0;"
+          },
+          {
+            "id": "b",
+            "text": "for (int i = 1; i <= 3; i++) {"
+          },
+          {
+            "id": "c",
+            "text": "sum += i;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          },
+          {
+            "id": "e",
+            "text": "System.out.println(sum);"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 0
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          },
+          {
+            "id": "e",
+            "indent": 0
+          }
+        ],
+        "hint": "Erstellen Sie sum перед циклом; внутри цикла прибавляйте i, после цикла выводите сумму.",
+        "explanation": "[Erklärung] После трёх итераций sum равно 1 + 2 + 3 = 6.",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Обработайте массив {1, -2, 7, 0, 1 + 3}. Циклами найдите сумму всех чисел,\nминимум, максимум, число положительных элементов и сумму только положительных.\nЗатем циклом while подсчитайте число нулей. Geben Sie aus: шесть результатов в указанном\nпорядке, каждый на отдельной строке. Начальные минимум и максимум берите из массива.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "10\n-2\n7\n3\n12\n1",
+        "hint": "[Hinweis] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Prüfen Sie вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n10\n-2\n7\n3\n12\n1",
+        "id": "m-exam-03-05"
+      }
+    ]
+  }
+}

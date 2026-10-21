@@ -1,0 +1,931 @@
+{
+  "id": 4,
+  "title": "Methods & Introduction to Classes",
+  "lessons": [
+    {
+      "id": "m04-l01",
+      "title": "Introduction to Decomposition",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "Программа Java организована в классы, а выполнение обычного приложения начинается с метода main. The class Main хранится в файле Main.java; точное написание имени и регистр букв важны для компилятора.",
+          "The method — именованный блок команд. Точка входа имеет сигнатуру public static void main(String[] args): JVM вызывает именно её, поэтому при ошибке в названии или сигнатуре программа не стартует."
+        ],
+        "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Старт\");\n    }\n}",
+        "caption": "Точка входа находится внутри класса.",
+        "language": "java",
+        "objective": "[Goal] Распознать класс Main, файл Main.java и корректную точку входа.",
+        "walkthrough": "[Walkthrough] JVM ищет main(String[] args) и выполняет System.out.println(\"Старт\"): результат — строка «Старт». Имя публичного класса Main совпадает с именем файла.",
+        "pitfall": "[Common Pitfall] Пропуск static, неправильный регистр Main или имя файла при public class Main помешают привычному запуску.",
+        "deepDive": "[Deep Dive] При запуске JVM загружает классы и ищет подходящую точку входа; объявление класса само по себе ничего не выводит. Имя публичного класса и имя исходного файла должны совпадать, а чувствительность к регистру действует и для main.",
+        "useCase": "Create Main.java и измените по очереди имя файла, имя метода и выводимую строку. Сравните сообщение компилятора с ошибкой запуска: это разные этапы, и исправлять их нужно в разных местах.",
+        "guide": {
+          "why": "[Step-by-Step Guide] JVM не исполняет отдельные строки файла сверху вниз: ей нужен класс и стартовый метод main. Обёртка кажется длинной, зато компилятор знает, с чего начать.",
+          "steps": [
+            "Назовите файл Main.java, а публичный класс внутри — Main: имена должны совпасть с учётом регистра.",
+            "Команды поместите в public static void main(String[] args). Именно его JVM вызывает при обычном запуске программы."
+          ],
+          "example": {
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int step = 7;\n        System.out.println(\"Шаг \" + step);\n    }\n}",
+            "language": "java",
+            "runnable": true,
+            "label": "Complete Main.java program — runnable",
+            "stdout": "Шаг 7"
+          },
+          "result": "При запуске увидим «Шаг 7». Строка и число соединяются оператором + до передачи результата в println.",
+          "bridge": "Проверяя сигнатуру в задании, отделите имя метода main от имени класса Main. В практике дописывайте методы рядом с main, а вызывайте их внутри main."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m04-l01-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "public class Main {\n    public static void main(String[] args) {\n        int step = 7;\n        System.out.println(\"Шаг \" + step);\n    }\n}",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. При запуске увидим «Шаг 7». Строка и число соединяются оператором + до передачи результата в println."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какой метод запускает обычную Java-программу?",
+          "options": [
+            {
+              "id": "a",
+              "label": "start()"
+            },
+            {
+              "id": "b",
+              "label": "run()"
+            },
+            {
+              "id": "c",
+              "label": "main(String[] args)"
+            },
+            {
+              "id": "d",
+              "label": "init()"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Вспомните точную точку входа JVM.",
+          "explanation": "[Explanation] JVM ищет public static void main(String[] args).",
+          "id": "m04-l01-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Заполните имя метода входа.",
+          "template": [
+            "public static void ",
+            "(String[] args) { }"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "main",
+              "options": [
+                "run",
+                "main",
+                "start"
+              ]
+            }
+          ],
+          "hint": "[Hint] Имя пишется строчными буквами.",
+          "explanation": "[Explanation] main — обязательное имя точки входа.",
+          "id": "m04-l01-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m04-l01-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Какой метод запускается JVM при выполнении java Main после компиляции Main.java?",
+          "options": [
+            {
+              "id": "a",
+              "label": "static void start()"
+            },
+            {
+              "id": "b",
+              "label": "public static void main(String[] args)"
+            },
+            {
+              "id": "c",
+              "label": "void Main()"
+            },
+            {
+              "id": "d",
+              "label": "public void run()"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Точка входа имеет имя main, модификаторы public static и аргумент String[].",
+          "explanation": "[Explanation] Верно: public static void main(String[] args). Точка входа имеет имя main, модификаторы public static и аргумент String[]."
+        },
+        {
+          "id": "m04-l01-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m04-l01",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "[Task] Напишите самостоятельный файл Main.java. В main объявите int stage = 3 и напечатайте одну строку «Этап 3» соединением текста и значения переменной.",
+          "expectedOutput": "Этап 3",
+          "hint": "[Hint] Публичный класс назовите Main, метод входа — public static void main(String[] args).",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'Этап 3'. Публичный класс назовите Main, метод входа — public static void main(String[] args)."
+        }
+      ]
+    },
+    {
+      "id": "m04-l02",
+      "title": "Introduction to Methods and Classes",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "The class задаёт шаблон объектов: поля описывают состояние, методы — поведение. Объект создают оператором new, после чего можно обращаться к его доступным полям и методам через точку.",
+          "Статический метод принадлежит классу и вызывается без объекта. The method экземпляра работает с конкретным объектом. В main нельзя обращаться к методу экземпляра напрямую без создания экземпляра."
+        ],
+        "code": "class Lamp { boolean on; void turnOn() { on = true; } }\nLamp lamp = new Lamp();\nlamp.turnOn();",
+        "caption": "У каждого объекта своё состояние.",
+        "language": "java",
+        "objective": "[Goal] Отличить статический метод от метода экземпляра и создать объект для вызова.",
+        "walkthrough": "[Walkthrough] new Lamp() создаёт лампу с on = false. lamp.turnOn() работает с этой лампой и меняет её поле on на true. Фрагмент вызова размещают внутри метода, например main.",
+        "pitfall": "[Common Pitfall] Нельзя вызвать turnOn() напрямую из статического main без объекта: у метода экземпляра должен быть получатель.",
+        "deepDive": "Каждый new создаёт самостоятельный экземпляр с собственными полями, а статический метод не знает, с каким экземпляром работать. The variable lamp хранит ссылку на объект; вызов lamp.turnOn() передаёт методу нужного получателя.",
+        "useCase": "[Real-World Case] Для двух ламп включите только первую и проверьте состояние второй: независимость экземпляров — причина объединять поведение с данными. Если вызов относится ко всем лампам сразу, подумайте об отдельной операции класса.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Объект позволяет разным экземплярам хранить независимое состояние. Статический main может управлять лампой, только если получит ссылку на конкретную Lamp.",
+          "steps": [
+            "Сначала опишите класс Lamp: поле on хранит состояние, метод turnOn() его меняет.",
+            "В main вызовите new Lamp(), запишите объект в lamp и обратитесь к его методу через точку: lamp.turnOn()."
+          ],
+          "example": {
+            "code": "class Lamp {\n    boolean on;\n    void turnOn() { on = true; }\n}\n// внутри main:\nLamp lamp = new Lamp();\nlamp.turnOn();\nSystem.out.println(lamp.on);",
+            "language": "java",
+            "runnable": false,
+            "label": "Определение класса и команды внутри main"
+          },
+          "result": "На экран попадёт true. Другой объект new Lamp() по-прежнему имел бы on = false.",
+          "bridge": "В мини-задании создавайте экземпляр с new, затем вызывайте метод у переменной-объекта. Поле и метод принадлежат экземпляру, а не main."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m04-l02-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Lamp {\n    boolean on;\n    void turnOn() { on = true; }\n}\n// внутри main:\nLamp lamp = new Lamp();\nlamp.turnOn();\nSystem.out.println(lamp.on);",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. На экран попадёт true. Другой объект new Lamp() по-прежнему имел бы on = false."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Какая запись создаёт объект класса Lamp?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Lamp lamp = new Lamp();"
+            },
+            {
+              "id": "b",
+              "label": "Lamp lamp = Lamp;"
+            },
+            {
+              "id": "c",
+              "label": "new Lamp = lamp;"
+            },
+            {
+              "id": "d",
+              "label": "Lamp();"
+            }
+          ],
+          "correct": [
+            "a"
+          ],
+          "multiple": false,
+          "hint": "Use оператор new и круглые скобки конструктора.",
+          "explanation": "[Explanation] new Lamp() создаёт экземпляр класса.",
+          "id": "m04-l02-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "Create экземпляр класса Counter.",
+          "template": [
+            "Counter c = new ",
+            "();"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "Counter",
+              "options": [
+                "Main",
+                "Counter",
+                "static"
+              ]
+            }
+          ],
+          "hint": "[Hint] После new указывают имя создаваемого класса.",
+          "explanation": "[Explanation] Имя конструктора совпадает с именем класса.",
+          "id": "m04-l02-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m04-l02-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Два объекта Lamp созданы через new. Изменили поле on только у первого. Какое состояние у второго?",
+          "options": [
+            {
+              "id": "a",
+              "label": "тоже изменилось"
+            },
+            {
+              "id": "b",
+              "label": "осталось исходным"
+            },
+            {
+              "id": "c",
+              "label": "удалён"
+            },
+            {
+              "id": "d",
+              "label": "не скомпилируется"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Поля экземпляра принадлежат каждому объекту отдельно.",
+          "explanation": "[Explanation] Верно: осталось исходным. Поля экземпляра принадлежат каждому объекту отдельно."
+        },
+        {
+          "id": "m04-l02-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m04-l02",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Опишите класс Lamp с boolean on и методом turnOn(), меняющим поле на true. Create две лампы, включите только первую и выведите их состояния через двоеточие.",
+          "expectedOutput": "true:false",
+          "hint": "[Hint] new создаёт независимые экземпляры. В main обращайтесь к методу первой лампы через точку.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: 'true:false'. new создаёт независимые экземпляры. В main обращайтесь к методу первой лампы через точку."
+        }
+      ]
+    },
+    {
+      "id": "m04-l03",
+      "title": "Methods, Parameters, and Return",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "The method может принимать параметры и возвращать результат. Тип результата пишут перед именем метода; если метод ничего не возвращает, используют void. Параметры доступны только внутри тела метода.",
+          "[Theory] Вызов передаёт аргументы в том же порядке, что параметры. Оператор return завершает метод и передаёт значение подходящего типа; компилятор проверит несовпадение типа результата."
+        ],
+        "code": "static int add(int a, int b) {\n    return a + b;\n}\nint sum = add(2, 3); // 5",
+        "caption": "Параметры дают методу входные данные.",
+        "language": "java",
+        "objective": "[Goal] Объявить метод с параметрами и типом результата и вызвать его с аргументами.",
+        "walkthrough": "[Walkthrough] Вызов add(5, 7) связывает a с 5, b с 7; return a + b отдаёт 12 вызывающему коду. Проверяйте и тип результата, и порядок аргументов.",
+        "pitfall": "[Common Pitfall] println внутри метода не заменяет return: если объявлен int, метод должен вернуть значение int на всех путях.",
+        "deepDive": "[Deep Dive] Параметры — локальные переменные метода, создаваемые при каждом вызове. return передаёт значение вызывающему коду и прекращает выполнение метода; перегрузка по другим параметрам выбирается компилятором до запуска.",
+        "useCase": "Выделите расчёт скидки в метод с аргументами price и percent, возвращающий итоговую цену. Check ноль, граничный процент и ошибочное значение; печатать итог можно уже после вызова метода.",
+        "guide": {
+          "why": "The method выделяет повторяемое вычисление: параметры заменяют конкретные числа, return отдаёт результат вызывающему коду. Выводить результат можно отдельно.",
+          "steps": [
+            "Опишите static int triple(int n) на уровне класса, но вне main. int перед именем обещает вернуть целое число.",
+            "Внутри метода напишите return n * 3; — выражение вычисляется для переданного аргумента. Вызов triple(4) вернёт 12, и его можно передать в println."
+          ],
+          "example": {
+            "code": "static int triple(int n) {\n    return n * 3;\n}\n// внутри main:\nSystem.out.println(triple(4));",
+            "language": "java",
+            "runnable": false,
+            "label": "The method рядом с main и его вызов внутри main"
+          },
+          "result": "Консоль покажет 12. Если вместо return только напечатать n * 3, метод с объявленным типом int не скомпилируется.",
+          "bridge": "В задании о сумме замените умножение на сложение двух параметров; в практике передайте аргументы add из main и выведите возвращённое значение."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m04-l03-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "static int triple(int n) {\n    return n * 3;\n}\n// внутри main:\nSystem.out.println(triple(4));",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Консоль покажет 12. Если вместо return только напечатать n * 3, метод с объявленным типом int не скомпилируется."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Что означает int перед именем метода add?",
+          "options": [
+            {
+              "id": "a",
+              "label": "Тип первого параметра"
+            },
+            {
+              "id": "b",
+              "label": "Тип возвращаемого значения"
+            },
+            {
+              "id": "c",
+              "label": "Имя класса"
+            },
+            {
+              "id": "d",
+              "label": "Число аргументов"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Смотрите на место типа перед именем метода.",
+          "explanation": "[Explanation] int указывает тип результата, который вернёт return.",
+          "id": "m04-l03-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Верните сумму двух параметров.",
+          "template": [
+            "return a ",
+            " b;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "+",
+              "options": [
+                "+",
+                "==",
+                "&&"
+              ]
+            }
+          ],
+          "hint": "[Hint] Для сложения чисел нужен арифметический оператор.",
+          "explanation": "[Explanation] return a + b; возвращает сумму.",
+          "id": "m04-l03-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m04-l03-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Где следует объявить метод static int square(int n), чтобы main мог его вызвать?",
+          "options": [
+            {
+              "id": "a",
+              "label": "внутри println"
+            },
+            {
+              "id": "b",
+              "label": "внутри main"
+            },
+            {
+              "id": "c",
+              "label": "в классе Main, вне main"
+            },
+            {
+              "id": "d",
+              "label": "вне всех классов"
+            }
+          ],
+          "correct": [
+            "c"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Методы объявляют на уровне класса; вложенное объявление метода внутри main невозможно.",
+          "explanation": "[Explanation] Верно: в классе Main, вне main. Методы объявляют на уровне класса; вложенное объявление метода внутри main невозможно."
+        },
+        {
+          "id": "m04-l03-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m04-l03",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create в Main метод static int square(int n), который возвращает квадрат. Вызовите его для 3 и 4 и напечатайте сумму двух возвращённых значений.",
+          "expectedOutput": "25",
+          "hint": "[Hint] Объявление метода поместите на уровне класса, вне main; вычисление верните через return.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '25'. Объявление метода поместите на уровне класса, вне main; вычисление верните через return."
+        }
+      ]
+    },
+    {
+      "id": "m04-l04",
+      "title": "Variable Scope",
+      "duration": 7,
+      "theory": {
+        "paragraphs": [
+          "[Theory] Локальные переменные существуют внутри блока, ограниченного фигурными скобками. Переменная, объявленная в методе, недоступна из другого метода; переменная внутри if не видна за пределами его блока.",
+          "Поля класса доступны методам объекта, а локальная переменная с тем же именем может скрыть поле. Use this.field, чтобы явно обратиться к полю экземпляра, и держите область видимости как можно уже."
+        ],
+        "code": "class Box {\n    int size = 2;\n    void grow() { int delta = 3; this.size += delta; }\n}",
+        "caption": "Область видимости ограничена блоком.",
+        "language": "java",
+        "objective": "[Goal] Показать, где видна локальная переменная и чем она отличается от поля объекта.",
+        "walkthrough": "[Walkthrough] Переменная, объявленная в блоке метода, доступна после объявления только до закрывающей скобки этого блока. Поле живёт вместе с объектом и доступно его методам.",
+        "pitfall": "[Common Pitfall] Одноимённая локальная переменная может скрыть поле: используйте this.field для явного обращения к полю.",
+        "deepDive": "[Deep Dive] Фигурные скобки создают вложенные области видимости, а объявление локальной переменной начинает её действие только с этой строки. Поле привязано к экземпляру и остаётся между вызовами, поэтому путать его с одноимённым параметром особенно легко.",
+        "useCase": "[Real-World Case] Если счётчик должен сохраняться после вызова increment(), сделайте его полем, а временную прибавку — параметром. Затем проследите, что станет доступно после закрывающей скобки if и после выхода из метода.",
+        "guide": {
+          "why": "[Step-by-Step Guide] Область видимости определяет, где существует имя переменной. Временный параметр нужен одному вызову, а поле объекта сохраняется между вызовами.",
+          "steps": [
+            "size — поле каждого Box, его начальное значение хранится в объекте. Параметр delta доступен только в методе grow.",
+            "this.size выбирает поле именно текущего Box; после grow(2) результат можно прочитать методом getSize(), даже если локального delta больше нет."
+          ],
+          "example": {
+            "code": "class Box {\n    private int size = 3;\n    void grow(int delta) { this.size += delta; }\n    int getSize() { return size; }\n}\n// внутри main:\nBox box = new Box();\nbox.grow(2);\nSystem.out.println(box.getSize());",
+            "language": "java",
+            "runnable": false,
+            "label": "The class и пример вызова из main"
+          },
+          "result": "Результат 5: исходное 3 и прибавка 2. Попытка прочитать delta из main вызвала бы ошибку компиляции.",
+          "bridge": "Для мини-задания определите, какие имена видны после закрывающей скобки метода, и используйте this.field при совпадении поля с параметром."
+        }
+      },
+      "tasks": [
+        {
+          "id": "m04-l04-copy",
+          "type": "copy",
+          "prompt": "Retype the worked example shown below by hand. Keep the statement order, identifiers, string literals, and indentation; then review what each line does.",
+          "sourceCode": "class Box {\n    private int size = 3;\n    void grow(int delta) { this.size += delta; }\n    int getSize() { return size; }\n}\n// внутри main:\nBox box = new Box();\nbox.grow(2);\nSystem.out.println(box.getSize());",
+          "language": "java",
+          "hint": "Check statements, letter case, quotes, and closing braces against the sample. Only Java whitespace formatting may vary.",
+          "explanation": "This is the same snippet analyzed in the lesson theory. Результат 5: исходное 3 и прибавка 2. Попытка прочитать delta из main вызвала бы ошибку компиляции."
+        },
+        {
+          "type": "choice",
+          "prompt": "[Task] Где доступна переменная delta из примера?",
+          "options": [
+            {
+              "id": "a",
+              "label": "В любом классе"
+            },
+            {
+              "id": "b",
+              "label": "Только внутри метода grow"
+            },
+            {
+              "id": "c",
+              "label": "Во всех объектах Box как поле"
+            },
+            {
+              "id": "d",
+              "label": "Только в main"
+            }
+          ],
+          "correct": [
+            "b"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Посмотрите на фигурные скобки вокруг объявления.",
+          "explanation": "[Explanation] delta локальна для метода grow.",
+          "id": "m04-l04-q1",
+          "difficulty": "easy"
+        },
+        {
+          "type": "fill",
+          "prompt": "[Task] Явно обратитесь к полю size текущего объекта.",
+          "template": [
+            "",
+            ".size += delta;"
+          ],
+          "blanks": [
+            {
+              "id": "answer",
+              "kind": "select",
+              "answer": "this",
+              "options": [
+                "Box",
+                "this",
+                "static"
+              ]
+            }
+          ],
+          "hint": "Use ссылку на текущий экземпляр.",
+          "explanation": "[Explanation] this.size отличает поле от локальной переменной.",
+          "id": "m04-l04-q2",
+          "difficulty": "medium"
+        },
+        {
+          "id": "m04-l04-hard",
+          "type": "choice",
+          "difficulty": "hard",
+          "prompt": "[Task] Поле size=2; метод grow(3) прибавляет к нему параметр. Что будет после двух вызовов?",
+          "options": [
+            {
+              "id": "a",
+              "label": "2"
+            },
+            {
+              "id": "b",
+              "label": "3"
+            },
+            {
+              "id": "c",
+              "label": "5"
+            },
+            {
+              "id": "d",
+              "label": "8"
+            }
+          ],
+          "correct": [
+            "d"
+          ],
+          "multiple": false,
+          "hint": "[Hint] Изменение поля сохраняется между вызовами; 2 + 3 + 3 = 8.",
+          "explanation": "[Explanation] Верно: 8. Изменение поля сохраняется между вызовами; 2 + 3 + 3 = 8."
+        },
+        {
+          "id": "m04-l04-hardcore",
+          "type": "code",
+          "difficulty": "hardcore",
+          "optional": true,
+          "lessonId": "m04-l04",
+          "mode": "run",
+          "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // Напишите решение и выведите результат\n    }\n}\n",
+          "prompt": "Create a class Box с приватным size = 2 и методом grow(int delta), меняющим поле через this. Дважды вызовите grow(3) и выведите размер через геттер.",
+          "expectedOutput": "8",
+          "hint": "[Hint] Локальный параметр delta исчезает после вызова, а поле size остаётся в объекте.",
+          "explanation": "[Explanation] Сопоставьте свой результат с ожидаемым выводом: '8'. Локальный параметр delta исчезает после вызова, а поле size остаётся в объекте."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "title": "Module 4 Final Practice",
+    "description": "Напишите первые методы и потренируйтесь работать с областью видимости.",
+    "tasks": [
+      {
+        "type": "choice",
+        "prompt": "[Task] Какое объявление метода возвращает целое число?",
+        "options": [
+          {
+            "id": "a",
+            "label": "void value() { return 1; }"
+          },
+          {
+            "id": "b",
+            "label": "int value() { return 1; }"
+          },
+          {
+            "id": "c",
+            "label": "int value() { return; }"
+          },
+          {
+            "id": "d",
+            "label": "static value() { return 1; }"
+          }
+        ],
+        "correct": [
+          "b"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Тип результата должен совпадать с возвращаемым значением.",
+        "explanation": "[Explanation] int value() возвращает значение типа int.",
+        "id": "m04-p01"
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Вызовите метод square с аргументом 4.",
+        "template": [
+          "int result = ",
+          "(4);"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "square",
+            "options": [
+              "square",
+              "return",
+              "class"
+            ]
+          }
+        ],
+        "hint": "[Hint] Нужен идентификатор метода перед скобками.",
+        "explanation": "[Explanation] square(4) передаёт аргумент 4.",
+        "id": "m04-p02"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте элемент метода с назначением.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Параметр",
+            "right": "The variable в объявлении метода, получающая аргумент при вызове"
+          },
+          {
+            "id": "2",
+            "left": "return",
+            "right": "Возврат результата и выход из метода"
+          },
+          {
+            "id": "3",
+            "left": "void",
+            "right": "The method не возвращает значение"
+          },
+          {
+            "id": "4",
+            "left": "this",
+            "right": "Ссылка на текущий объект"
+          }
+        ],
+        "hint": "[Hint] Вспомните, что стоит в скобках объявления, а что — перед именем.",
+        "explanation": "[Explanation] У каждого элемента сигнатуры и тела метода своя роль.",
+        "id": "m04-p03"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите метод square с правильными отступами.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "static int square(int n) {"
+          },
+          {
+            "id": "b",
+            "text": "int result = n * n;"
+          },
+          {
+            "id": "c",
+            "text": "return result;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Сначала сигнатура, затем вычисление, потом return.",
+        "explanation": "The method возвращает квадрат аргумента.",
+        "id": "m04-p04"
+      },
+      {
+        "type": "choice",
+        "prompt": "[Task] Какие утверждения о методах верны?",
+        "options": [
+          {
+            "id": "a",
+            "label": "The method может иметь несколько параметров"
+          },
+          {
+            "id": "b",
+            "label": "void-метод обязан вернуть int"
+          },
+          {
+            "id": "c",
+            "label": "Локальная переменная доступна только в своём блоке"
+          },
+          {
+            "id": "d",
+            "label": "static-метод можно вызвать через имя класса"
+          }
+        ],
+        "correct": [
+          "a",
+          "c",
+          "d"
+        ],
+        "multiple": true,
+        "hint": "[Hint] void не означает число; проверьте область видимости.",
+        "explanation": "[Explanation] Методы принимают параметры; локальные переменные ограничены блоком; static относится к классу.",
+        "id": "m04-p05"
+      },
+      {
+        "type": "code",
+        "prompt": "Create статический метод add(int a, int b), возвращающий сумму. В main выведите результат add(5, 7).",
+        "starterCode": "public class Main {\n    static int add(int a, int b) {\n        // Верните сумму\n        return 0;\n    }\n    public static void main(String[] args) {\n        // Выведите add(5, 7)\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "12",
+        "hint": "Declare static int add(...) с return a + b; и вызовите метод из main.",
+        "explanation": "The method вернул 12.",
+        "id": "m04-p06"
+      },
+      {
+        "type": "code",
+        "prompt": "Create a method static boolean isEven(int n). В main выведите результат isEven(8).",
+        "starterCode": "public class Main {\n    static boolean isEven(int n) {\n        // Замените return\n        return false;\n    }\n    public static void main(String[] args) {\n        // Вызовите метод с аргументом 8\n    }\n}\n",
+        "mode": "run",
+        "expectedOutput": "true",
+        "hint": "[Hint] Остаток от деления на 2 равен 0 у чётного числа.",
+        "explanation": "[Explanation] isEven(8) вернул true.",
+        "id": "m04-p07"
+      }
+    ],
+    "id": "m04-practice",
+    "primer": {
+      "why": "The method объявляют внутри класса, но ВНЕ main; вызов делают из main. static-метод можно вызвать без new. return отдаёт результат, а println показывает его человеку.",
+      "steps": [
+        "Укажите возвращаемый тип, имя, параметры в скобках и тело. Параметр доступен только внутри метода; его можно использовать в вычислении и передать в return.",
+        "Вызов из main подставит аргумент вместо параметра. System.out.println(square(4)) сначала получит возвращённое значение, затем выведет его."
+      ],
+      "example": {
+        "code": "public class Main {\n    static int square(int side) {\n        return side * side;\n    }\n    public static void main(String[] args) {\n        System.out.println(square(4));\n    }\n}",
+        "language": "java",
+        "runnable": true,
+        "label": "Полная аналогичная программа Main.java",
+        "stdout": "16"
+      },
+      "result": "Будет напечатано 16. Если поместить объявление square внутрь main, Java сообщит об ошибке компиляции.",
+      "hints": [
+        {
+          "taskId": "m04-p06",
+          "text": "Для add нужны два параметра int и int в качестве результата. Вычислите сумму в методе, а печать оставьте в main."
+        },
+        {
+          "taskId": "m04-p07",
+          "text": "Для isEven выражение с остатком от деления на 2 возвращает boolean. Проверьте, что вы возвращаете результат сравнения, а не печатаете его из метода."
+        }
+      ]
+    }
+  },
+  "exam": {
+    "id": "m04-exam",
+    "title": "Mini-Exam",
+    "description": "Проверьте, как вы применяете материал модуля самостоятельно. Жизни не расходуются. Пропущенные задания можно открыть снова до отправки.",
+    "passingPercent": 80,
+    "cooldownSeconds": 3600,
+    "xpBonus": 340,
+    "tasks": [
+      {
+        "id": "m-exam-04-01",
+        "type": "choice",
+        "difficulty": "easy",
+        "prompt": "[Task] Поле size=2; метод grow(3) прибавляет к нему параметр. Что будет после двух вызовов?",
+        "options": [
+          {
+            "id": "a",
+            "label": "2"
+          },
+          {
+            "id": "b",
+            "label": "3"
+          },
+          {
+            "id": "c",
+            "label": "5"
+          },
+          {
+            "id": "d",
+            "label": "8"
+          }
+        ],
+        "correct": [
+          "d"
+        ],
+        "multiple": false,
+        "hint": "[Hint] Изменение поля сохраняется между вызовами; 2 + 3 + 3 = 8.",
+        "explanation": "[Explanation] Верно: 8. Изменение поля сохраняется между вызовами; 2 + 3 + 3 = 8."
+      },
+      {
+        "type": "fill",
+        "prompt": "[Task] Заполните имя метода входа.",
+        "template": [
+          "public static void ",
+          "(String[] args) { }"
+        ],
+        "blanks": [
+          {
+            "id": "answer",
+            "kind": "select",
+            "answer": "main",
+            "options": [
+              "run",
+              "main",
+              "start"
+            ]
+          }
+        ],
+        "hint": "[Hint] Имя пишется строчными буквами.",
+        "explanation": "[Explanation] main — обязательное имя точки входа.",
+        "id": "m-exam-04-02",
+        "difficulty": "easy"
+      },
+      {
+        "type": "matching",
+        "prompt": "[Task] Сопоставьте элемент метода с назначением.",
+        "pairs": [
+          {
+            "id": "1",
+            "left": "Параметр",
+            "right": "The variable в объявлении метода, получающая аргумент при вызове"
+          },
+          {
+            "id": "2",
+            "left": "return",
+            "right": "Возврат результата и выход из метода"
+          },
+          {
+            "id": "3",
+            "left": "void",
+            "right": "The method не возвращает значение"
+          },
+          {
+            "id": "4",
+            "left": "this",
+            "right": "Ссылка на текущий объект"
+          }
+        ],
+        "hint": "[Hint] Вспомните, что стоит в скобках объявления, а что — перед именем.",
+        "explanation": "[Explanation] У каждого элемента сигнатуры и тела метода своя роль.",
+        "id": "m-exam-04-03",
+        "difficulty": "medium"
+      },
+      {
+        "type": "parsons",
+        "prompt": "[Task] Соберите метод square с правильными отступами.",
+        "lines": [
+          {
+            "id": "a",
+            "text": "static int square(int n) {"
+          },
+          {
+            "id": "b",
+            "text": "int result = n * n;"
+          },
+          {
+            "id": "c",
+            "text": "return result;"
+          },
+          {
+            "id": "d",
+            "text": "}"
+          }
+        ],
+        "solution": [
+          {
+            "id": "a",
+            "indent": 0
+          },
+          {
+            "id": "b",
+            "indent": 1
+          },
+          {
+            "id": "c",
+            "indent": 1
+          },
+          {
+            "id": "d",
+            "indent": 0
+          }
+        ],
+        "hint": "[Hint] Сначала сигнатура, затем вычисление, потом return.",
+        "explanation": "The method возвращает квадрат аргумента.",
+        "id": "m-exam-04-04",
+        "difficulty": "medium"
+      },
+      {
+        "type": "code",
+        "mode": "run",
+        "difficulty": "hard",
+        "prompt": "Create a methodы static int sum(int[]), static int countAtLeast(int[], int)\nи static double average(int[]). Для пустого массива среднее равно 0.0.\nВ main обработайте {1, 4, 8}: выведите сумму, количество значений >= 4,\nсреднее, затем среднее пустого массива — на отдельных строках. Use вызовы методов.",
+        "starterCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        // TODO: реализуйте программу по условиям задания.\n    }\n}\n",
+        "expectedOutput": "13\n2\n4.333333333333333\n0.0",
+        "hint": "[Hint] Разбейте программу на небольшие части и проверьте порядок строк отчёта.",
+        "explanation": "Check вычисления, ограничения предметной области и порядок вывода. Ожидаемый результат:\n13\n2\n4.333333333333333\n0.0",
+        "id": "m-exam-04-05"
+      }
+    ]
+  }
+}
